@@ -1,0 +1,44 @@
+# 근거 매핑 (Evidence Map)
+
+이 워크플로우의 모든 규칙·단계는 아래 1차 출처에서 왔다. "인기 있어서"가 아니라
+**여러 권위 출처가 수렴**할 때만 규칙으로 승격했다(solution-planner ETHOS와 동일 기준).
+
+## 출처와 권위
+
+| 출처 | 유형 | 권위 신호 | 제공한 것 |
+|---|---|---|---|
+| **gstack** (garrytan/gstack) | 오픈소스 하네스 | Garry Tan(YC CEO), ~120k★, MIT | 스프린트 모델, 페르소나 phased skill, hard gate, forcing question, completion enum, 핸드오프 아티팩트, 라우터, 품질 게이트, ETHOS 프리앰블, User Sovereignty |
+| **Anthropic — Prompt engineering** | 1차 벤더 문서 | 대상 모델 제작사 | 명시성, 이유 제공, 예시(few-shot), XML 구조화, 역할, CoT, "하지마 대신 해라" |
+| **Anthropic — Claude Code best practices** | 1차 도구 문서 | 대상 도구 제작사 | Explore→Plan→Code→Commit, 루프 닫기(증거), TDD Writer/Reviewer, CLAUDE.md, 인터뷰→SPEC.md, 컨텍스트 위생, 적대적 리뷰 |
+| **Anthropic — Building effective agents / Context engineering** | 1차 엔지니어링 | 널리 인용 | 단순함 우선, 워크플로우 5패턴(chaining/routing/parallel/orchestrator/evaluator-optimizer), just-in-time 컨텍스트, 서브에이전트 |
+| **OpenAI — Prompt engineering guide** | 1차 벤더 문서 | 업계 표준 레퍼런스 | 6전략(명확한 지시·참조 텍스트·작업 분할·생각할 시간·외부도구·체계적 테스트) |
+| **GitHub spec-kit** | 오픈소스 | GitHub 공식, ~118k★ | Spec-Driven Development: constitution→specify→clarify→plan→tasks→analyze→implement, "명세가 진실원", test-first Article III, 작은 증분 |
+| **Harper Reed — LLM codegen workflow** | 실무자 워크플로우 | Simon Willison 등 인용, 사실상 커뮤니티 표준 | idea honing(한 번에 한 질문)→prompt_plan.md+todo.md→실행 |
+| **promptingguide.ai** (dair-ai) | 기법 색인 | ~76k★ | 기법 카탈로그(zero/few-shot, CoT, self-consistency, ReAct, RAG, reflexion) |
+| **MengTo/Skills** | 스킬 라이브러리 | Design+Code 창립자, ~1.1k★ | SKILL.md 포맷(Use When/Workflow/Guardrails/Avoid), "prompts are assets", 프론트 slop 체크리스트, design dial |
+| **f/awesome-chatgpt-prompts** | 프롬프트 모음 | ~165k★ | 역할/페르소나 프롬프트 대중화 |
+| **AGENTS.md 표준** | 오픈 규약 | Linux Foundation, >20k repos | 저장소 지침 파일 규약(CLAUDE.md 동종) |
+
+## 13개 공통분모 원칙 → ETHOS 매핑
+
+수렴 출처가 3개 이상인 것만 절대 규칙으로. (SKILL.md의 규칙 번호와 대응)
+
+1. 명시·구체 — Anthropic, OpenAI, Claude Code, Brex
+2. 이유(why) — Anthropic, OpenAI, Claude Code
+3. 탐색/계획과 구현 분리 — Claude Code, spec-kit, Harper Reed, OpenAI
+4. 명세·계획 파일화 — spec-kit, gstack, Harper Reed, Claude Code
+5. 작게 쪼개 개별 검증 — OpenAI, spec-kit, prompt chaining, Harper Reed
+6. 루프 닫기(증거) — Claude Code, OpenAI, evaluator-optimizer, spec-kit
+7. 테스트 우선 — Claude Code, spec-kit Article III
+8. 사용자 주권(한 번에 하나) — gstack, Claude Code
+9. 컨텍스트 위생 — Claude Code, Context engineering
+10. 단순함 우선 — Building effective agents, spec-kit
+
++ 구조화(XML/구분자), 역할/페르소나, 예시(few-shot), 사고 유도(CoT), 근거+독립 리뷰는
+프롬프트 작성 기법으로 각 단계 템플릿에 반영.
+
+## 주의(변동 사항)
+
+- Anthropic의 고전 "프리필(assistant 턴 미리 채우기)" 기법은 **Claude 4.6+에서 미지원**.
+  대체: 시스템 프롬프트 직접 지시 / 구조화 출력 / 도구 호출. 템플릿은 프리필을 쓰지 않는다.
+- 스타 수·버전은 조사 시점(2026-07) 값이며 규칙의 근거는 "수렴"이지 "인기"가 아니다.

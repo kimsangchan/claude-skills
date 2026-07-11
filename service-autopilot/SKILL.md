@@ -1,0 +1,110 @@
+---
+name: service-autopilot
+description: |
+  서비스 기획·설계 오토파일럿 — 한 줄 아이디어를 구현 착수 가능한 설계 패키지(PRD·아키텍처+위협모델·
+  API계약/ERD·테스트설계·IaC/관측성)로 바꾸는 8단계 파이프라인. solution-planner(구버전)를 대체한다.
+  사용 시점: 신규 서비스/솔루션/기능 기획(신규 기획, 서비스 기획, 초기 기획, PRD, 기획서), 기술스택
+  추천, MVP 범위, 도메인을 모르는 상태의 착수("IoT 카메라 서비스 만들고 싶어" 같은 한 줄 아이디어),
+  위협모델·API 설계·배포/모니터링 설계가 필요할 때. 도메인 조사→블라인드스팟 심문(객관식 최대 5문항
+  1회)→설계 산출물 생성을 사용자 개입 최소로 자동 진행한다. 구현 실행은 service-prompt-workflow가
+  이어받는다 (이 스킬의 산출물이 그쪽 SPEC 입력).
+---
+
+# Service Autopilot (서비스 기획·설계 오토파일럿)
+
+한 줄 아이디어 → **구현 착수 가능한 설계 패키지**. 사용자가 빈칸을 채우는 게 아니라
+**AI가 조사하고, 사각지대를 스스로 찾아 덮고, 가정으로 못 덮는 위험 결정만 객관식으로 1회 묻는다.**
+
+- 대체: `solution-planner` (deprecated — 이 스킬이 후속)
+- 후속: 산출물을 `service-prompt-workflow`의 SPEC 단계에 입력하여 구현 실행
+- 근거: 모든 단계 구조·질문 프로토콜은 검증된 프레임워크(spec-kit 118.9k★, MetaGPT 69.3k★,
+  BMAD 50.3k★)와 실무 표준(ISO 29148, STRIDE, AWS Well-Architected, Google SRE)의 실측 이식.
+  매핑은 `references/evidence.md`.
+
+## 절대 규칙
+
+1. **근거 없는 추천 금지.** 모든 추천(기술·표준·범위·기본값)에 출처를 붙인다. 웹 검색으로 현재
+   시점 데이터를 확인하고, 학습 지식만으로 스타 수·버전·규제를 단정하지 않는다. (`references/evidence-map.md`)
+2. **인기 ≠ 적합.** fit 판단은 사용자 제약(팀 역량·운영 환경·규모·예산)과의 매칭이다.
+3. **질문은 파이프라인 전체에서 배치 1회, 최대 5문항.** 형식은 반드시 객관식(2~4옵션) +
+   `추천:` 표시 + 근거. 선정 기준은 **Impact × Uncertainty** — "틀리면 재작업이 비싸고, 조사로는
+   답을 정할 수 없는 것"만 묻는다. 나머지는 전부 현업 기본값으로 가정하고 가정임을 명시. *(spec-kit /clarify 이식)*
+4. **사각지대 전수 기록.** 심문 택소노미의 모든 축을 `02-blindspot-register.md`에
+   Clear(해결)/Assumed(가정 채택)/Asked(질문) 중 하나로 마킹한다. 마킹 안 된 축이 남으면 게이트 통과 불가 —
+   "덮었다"는 기록으로만 증명된다.
+5. **모르면 조사, 조사해도 모르면 가정, 가정이 위험하면 질문.** 이 우선순위를 뒤집지 않는다.
+6. **검증 기준 없는 질적 표현 금지.** "직관적인·빠른·유연한"은 측정 가능 기준으로 변환한다. (`references/quality-decomposition.md`)
+7. **모든 결정은 decision-log에.** 무엇을·왜 선택했고 어떤 대안을 왜 버렸는지. 산출물은 생성 즉시
+   파일로 저장(원자적) — 대화에만 남기지 않는다.
+8. **최종 게이트는 적대적 자기검토.** fresh context 서브에이전트가 "문제를 반드시 찾는" 자세로
+   산출물 정합성을 검사하고 PASS/CONCERNS/FAIL을 판정한다. 거짓 양성이 나올 수 있으므로 지적은
+   반영 전에 타당성을 필터링한다. *(BMAD adversarial review + spec-kit /analyze 이식)*
+
+## 파이프라인 (A0~A7 + GATE)
+
+사용자 7단계 비전과의 대응: A3=①PRD, A4=②아키텍처·위협모델, A5=③API·스키마, A6=④TDD 설계,
+A7=⑥IaC·⑦관측성. ④실행·⑤구현은 핸드오프 후 service-prompt-workflow BUILD가 담당.
+
+| # | 단계 | 하는 일 | 산출물 | 하드 게이트 |
+|---|---|---|---|---|
+| A0 | **SEED** | 한 줄 아이디어 정규화: 서비스 유형·주/인접 도메인·감지된 제약 분류. 되묻지 않음 | `00-seed.md` | 유형·도메인 분류 완료 |
+| A1 | **RECON** | 근거 조사: 도메인 업무 흐름, 이해관계자, 규제/표준, 유사 솔루션 3~5개, 스택 후보 | `01-recon.md` | 전 항목 출처 URL |
+| A2 | **INTERROGATE** | 심문 택소노미(`references/blindspot-checklists.md`) 전축 스캔 → 축별 Clear/Assumed/Asked 마킹 → Impact×Uncertainty 상위 최대 5문항을 **객관식 배치 1회**로 질문 → 답변·가정을 register에 반영 | `02-blindspot-register.md` | 전 축 마킹 완료 (규칙 4) |
+| A3 | **PRD** | 제품 목표(≤3·직교) · 유저스토리(3~5, P1만으로 MVP 성립) · 엣지케이스(Given/When/Then) · 요구사항 풀(P0/P1/P2) · 측정 가능 성공기준(SC-###) · 가정 목록 | `03-prd.md` | 성공기준 전부 pass/fail 판정 가능 |
+| A4 | **ARCHITECT** | 구현 접근·컴포넌트 구조(mermaid) · 데이터 흐름(sequenceDiagram) · **위협모델**: 4질문 프레임 + STRIDE 6범주 각각 검토(해당없음도 근거 명시) + 상위 리스크 완화책 | `04-architecture.md` | STRIDE 6범주 전수 검토 |
+| A5 | **CONTRACT** | API 계약: 엔드포인트 표(메서드·경로·요청/응답·에러 포맷·버저닝·페이지네이션·멱등성) · ERD(mermaid erDiagram) · **요구사항↔엔드포인트 커버리지 매핑**(매핑 0건 요구사항 = 결함) | `05-api-contract.md` | P0/P1 요구사항 커버리지 100% |
+| A6 | **TEST-DESIGN** | 수용기준 전부를 실패하는 테스트 시나리오(Given/When/Then)로 변환 · 단위/통합/E2E 매트릭스 · 리스크 기반 커버리지 목표 | `06-test-design.md` | 수용기준→시나리오 누락 0 |
+| A7 | **OPS-DESIGN** | 배포 설계(런타임·IaC 스케치·CI/CD 단계) · 관측성(무엇을·어디에·얼마나 로깅, 핵심 지표+알림 조건, SLO-lite) · 장애 시나리오별 복구 절차 | `07-ops-design.md` | 로그·백업·복구 각각 "어디에·얼마나·어떻게" 답변됨 |
+| G | **GATE** | fresh context 적대적 검토: 산출물 교차 정합성(중복·모호·커버리지 공백·용어 드리프트) + 준비도 판정 → 핸드오프 프롬프트 생성 | `08-readiness-report.md` | PASS 또는 CONCERNS(사유 명시). FAIL이면 해당 단계 재실행 |
+
+각 단계의 상세 산출물 템플릿과 프롬프트 블록은 `references/stage-templates.md`.
+
+## 질문 프로토콜 (A2 전용 — 개입 최소화의 핵심)
+
+1. 택소노미 전축을 스캔해 축마다 Clear/Partial/Missing 상태를 매긴다.
+2. Partial/Missing 축 중 **Impact(틀리면 재작업·데이터 손실·법적 문제·하드웨어 재구매) ×
+   Uncertainty(조사로 못 정함 — 답이 사용자의 실제 환경·예산·운영 인력에 달림)** 상위 최대 5개만 질문으로 승격.
+3. 질문 형식 (spec-kit 표준 이식):
+   - 객관식 2~4옵션, 각 옵션에 근거·트레이드오프 한 줄.
+   - 첫 옵션 = 추천안, `(추천)` 표시 + 추천 이유.
+   - 도구 사용 가능 환경이면 AskUserQuestion으로 배치 제시. 아니면 마크다운 표 1회 출력.
+4. **배치 1회로 끝.** 무응답·스킵된 문항은 추천안을 가정으로 채택하고 register에 `Assumed(무응답)` 마킹.
+5. 답변은 받는 즉시 register와 영향받는 산출물에 반영하고 파일 저장(원자적).
+6. 예외: 사용자가 "단계별로 보자"고 명시하면 단계마다 게이트에서 확인받는 대화형 모드로 전환.
+
+## 실행 절차 (오토파일럿 기본)
+
+1. 사용자 입력을 A0으로 정규화. **여기서 아무것도 묻지 않는다.**
+2. A1 조사 → A2 심문(질문 배치 최대 1회) → A3~A7을 논스톱 생성. 각 산출물은 생성 즉시 저장.
+3. GATE 적대적 검토 → `08-readiness-report.md`에 판정 + 다음 명령(핸드오프)을 담아 보고.
+4. 최종 보고는 (a) 판정, (b) 핵심 결정 5줄 요약, (c) 질문에서 가정으로 채택된 항목 목록,
+   (d) service-prompt-workflow로 넘어가는 복붙 프롬프트로 구성한다.
+
+### 산출물 디렉토리
+
+```
+autopilot/<service-slug>/
+├─ 00-seed.md            ├─ 04-architecture.md
+├─ 01-recon.md           ├─ 05-api-contract.md
+├─ 02-blindspot-register.md  ├─ 06-test-design.md
+├─ 03-prd.md             ├─ 07-ops-design.md
+├─ 08-readiness-report.md    └─ decision-log.md
+```
+
+### 핸드오프 (구현으로)
+
+GATE 통과 후 service-prompt-workflow의 SPEC 단계에 다음을 입력한다:
+`03-prd.md`(요구사항) + `04/05`(설계·계약) + `06`(테스트 계획) + `07`(배포·운영 요건).
+UI가 포함되면 BUILD·REVIEW에서 `frontend-design-taste` 스킬을 함께 적용한다.
+
+## 참조 파일
+
+- `references/blindspot-checklists.md` — 심문 택소노미(공통 축 + 도메인 프로파일). **A2 진입 전 필독.**
+- `references/stage-templates.md` — A0~GATE 단계별 산출물 템플릿·프롬프트 블록. 각 단계 진입 시 읽는다.
+- `references/evidence.md` — 단계·규칙별 출처 매핑(무엇을 어디서 이식했고 무엇을 왜 바꿨는지). 스킬 수정 시 읽는다.
+- `references/evidence-map.md` — RECON 조사 항목별 근거 소스 매핑 (solution-planner 승계).
+- `references/quality-decomposition.md` — 질적 표현→측정 기준 변환 규칙 (승계).
+- `references/ux-principles-kr.md` — UI/UX 기획 원칙 (승계). 화면이 포함된 기획이면 A3에서 읽는다.
+- `eval/PROTOCOL.md` — 이 스킬이 "값을 하는지" 측정하는 A/B 평가 절차. 스킬을 수정하면 동결 시드로 회귀 평가.
+
+현재 버전: v1.0.0 (2026-07-09). 변경 시 eval 회귀 필수.
