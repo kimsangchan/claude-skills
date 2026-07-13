@@ -116,7 +116,34 @@ React·Tailwind·Zustand에 특화(다른 스택도 적용 가능). MengTo/Skill
 
 ---
 
-## 4. solution-planner — ⚠ 폐기됨 (2026-07-09)
+## 4. catch-up — 세션 이어받기 부트스트랩
+
+**새 세션·다른 AI 툴이 이전 작업 맥락을 토큰 낭비 없이 "바로 따라잡게(catch up)" 프로젝트 구조를
+1회로 세팅한다.** 핵심 원칙은 Progressive Disclosure(Anthropic) — 항상 읽히는 층은 얇게, 상세는 필요할 때만.
+
+- **언제 쓰나**: 프로젝트 시작/정리 시, "세션마다 맥락 다시 설명하기 귀찮다", "새 세션이 이전 걸
+  기억 못 한다", "CLAUDE.md가 너무 커졌다", "Antigravity·Cursor에서도 지시 없이 프로젝트를 이해시키고 싶다".
+- **세팅하는 구조**: 얇은 `CLAUDE.md`(행동규칙 + `@AGENTS.md`) · `AGENTS.md`(크로스툴 단일 원본 —
+  Claude Code·Antigravity v1.20.3+·Cursor 공유) · `NEXT.md`(다음-할일) + SessionStart 훅(그 블록만 주입) ·
+  폴더별 `CLAUDE.md`(그 폴더 만질 때만 로드) · `WORKLOG.md`(히스토리 분리).
+- **5 페이즈**: SCAN(현황) → CLASSIFY(스코프·이관계획) → PROPOSE(diff 제시) → APPLY(승인 후 clean-tree
+  git 체크포인트) → VERIFY(자동 점검). **비파괴·가역**(`git revert` 한 번).
+- **근거**: Anthropic Progressive Disclosure/Just-in-time, Claude Code 중첩 CLAUDE.md 온디맨드 로딩,
+  AGENTS.md 오픈표준, Memory Bank 패턴 (`catch-up/references/PRINCIPLES.md`).
+
+**사용 예시:**
+
+```
+> /catch-up
+```
+
+→ 현재 프로젝트를 스캔해 "이렇게 바꾸겠다"는 diff를 **먼저 보여주고**, 승인하면 얇은 컨텍스트 구조를
+세팅한다. 부작용이 있어 **사용자 호출 전용**(모델이 알아서 실행하지 않음).
+다른 툴 어댑터까지: `/catch-up --tools antigravity,cursor`
+
+---
+
+## 5. solution-planner — ⚠ 폐기됨 (2026-07-09)
 
 service-autopilot으로 대체됐다. **새 기획 요청에는 쓰지 않는다.**
 과거 산출물(`solution-planning/` 디렉토리, ICT inspection-run-ux 등)을 해석할 때만 참조용으로 남겨둔다.
