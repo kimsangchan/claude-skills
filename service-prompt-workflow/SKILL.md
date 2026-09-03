@@ -6,6 +6,10 @@ description: |
   프롬프트를 어떻게 써야 할지 막힐 때, SPEC·PLAN·구현·리뷰·배포 명령이 필요할 때, 스택 선정 후
   실제 빌드로 넘어갈 때. 기획 자체가 막연하거나 도메인을 모르면 먼저 service-autopilot을 쓴다.
   gstack 스프린트 모델 + Anthropic/OpenAI/GitHub spec-kit 검증 기법을 종합한 근거 기반 하네스.
+argument-hint: "[요청 한 문장 또는 단계명]"
+metadata:
+  version: "0.2.0"
+  updated: "2026-09-03"
 ---
 
 # Service Prompt Workflow (서비스 프롬프트 워크플로우)
@@ -45,12 +49,12 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 7. **테스트 우선.** 실패하는 테스트/수용 기준을 먼저 쓰고 통과시킨다. *(Claude Code, spec-kit Article III)*
 8. **사용자 주권.** AI는 추천하고 사용자가 결정한다. 두 모델이 동의해도 "신호일 뿐 증명이 아니다." 방향 전환은 반드시 묻는다 — **한 번에 하나씩**. *(gstack User Sovereignty)*
 9. **컨텍스트 위생.** 무관한 작업 사이엔 `/clear`. 같은 지시를 2번 고쳐도 안 되면 세션을 비우고 프롬프트를 다시 쓴다. 조사·리뷰는 서브에이전트에 위임해 메인 컨텍스트를 아낀다. *(Claude Code, Context engineering)*
-10. **단순함 우선.** 가장 단순한 해법부터. 복잡도는 효과가 증명될 때만 추가한다. *(Building effective agents, spec-kit anti-abstraction)*
+10. **단순함 우선.** 가장 단순한 해법부터. 복잡도는 효과가 증명될 때만 추가한다. BUILD에서는 ponytail 결정 사다리(필요한가→이미 있나→표준 라이브러리→네이티브→설치된 의존성→한 줄→최소 코드)로 강제한다. *(Building effective agents, spec-kit anti-abstraction, ponytail)*
 
 ## 파이프라인 (9단계)
 
 각 단계는 **목적 · 하드 게이트(통과 조건) · 산출물**을 갖는다. 게이트를 못 넘으면 다음 단계로 가지 않는다.
-각 단계의 **복붙 프롬프트 블록**은 `references/prompt-templates.md`에 있다.
+각 단계의 **복붙 프롬프트 블록**은 `references/prompt-templates.md`에, 단계별로 호출할 전문 스킬은 `references/skill-routing.md`에 있다.
 
 | # | 단계 | 목적 | 하드 게이트 (넘어야 다음 단계) | 산출물 |
 |---|---|---|---|---|
@@ -83,10 +87,15 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 ## 실행 절차
 
 1. 라우터로 진입 단계를 정한다. 필요하면 사용자에게 **한 번에 하나** 확인한다.
-2. 해당 단계의 프롬프트 블록을 `references/prompt-templates.md`에서 가져와 빈칸(`{{...}}`)을 채운다.
-3. 하드 게이트를 확인한다. 못 넘으면 그 단계에 머문다.
-4. 산출물을 파일로 남긴다 (대화에만 두지 않는다).
-5. 다음 단계로. 완료 상태는 `DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT` 중 하나로 명시한다.
+2. `references/skill-routing.md`에서 그 단계의 행을 읽어 설치된 스킬을 호출한다(없으면 대체 열). 사용 기록은 decision-log 한 줄.
+3. 해당 단계의 프롬프트 블록을 `references/prompt-templates.md`에서 가져와 빈칸(`{{...}}`)을 채운다.
+4. 하드 게이트를 확인한다. 못 넘으면 그 단계에 머문다.
+5. 산출물을 파일로 남긴다 (대화에만 두지 않는다).
+6. 다음 단계로. 완료 상태는 `DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT` 중 하나로 명시한다.
+
+코드를 쓰는 단계(BUILD)와 보는 단계(REVIEW)는 ponytail을 함께 적용한다 — BUILD 진입 시 `ponytail:ponytail`
+(미설치면 `references/skill-routing.md`의 내장 사다리), REVIEW에서 `/code-review` 뒤 `ponytail:ponytail-review`.
+정확성 리뷰 1회 + 복잡도 리뷰 1회를 넘기지 않는다.
 
 프론트엔드가 포함된 단계(SPEC·BUILD·REVIEW)는 두 가지를 함께 적용한다:
 - **적극적 지침** — `frontend-design-taste` 스킬(있으면)의 dial·프로파일·하드룰·토큰으로 "이렇게 만들라".
@@ -95,7 +104,8 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 ## 참조 파일
 
 - `references/prompt-templates.md` — 단계별 XML 구조 복붙 프롬프트 블록. 각 단계 진입 시 읽는다.
+- `references/skill-routing.md` — 단계별 스킬 라우팅 표 + ponytail 배선 + 충돌 우선순위. 각 단계 진입 시 해당 행을 읽는다.
 - `references/anti-patterns.md` — AI slop/거짓 진척 체크리스트 · anti-sycophancy · 리뷰 루브릭. REVIEW와 프론트 작업 시 읽는다.
 - `references/evidence.md` — 각 규칙·단계의 출처 매핑(gstack·Anthropic·OpenAI·spec-kit·Harper Reed·MengTo). 규칙을 바꿀 때 읽는다.
 
-현재 버전: v0.1.0
+버전·갱신일은 프론트매터 `metadata`. 라우팅·ponytail 배선 변경 시 `eval/` 대리 A/B로 확인.

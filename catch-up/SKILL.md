@@ -11,6 +11,10 @@ description: |
   로딩, AGENTS.md 오픈표준(Antigravity v1.20.3+ 네이티브), Memory Bank 패턴.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 disable-model-invocation: true
+argument-hint: "[--tools antigravity,cursor]"
+metadata:
+  version: "1.0.1"
+  updated: "2026-09-03"
 ---
 
 # Catch-Up (세션 이어받기 부트스트랩)
@@ -93,4 +97,4 @@ disable-model-invocation: true
 
 원칙·근거(왜 이렇게 하나)와 출처는 필요할 때만 `references/PRINCIPLES.md`를 읽는다.
 
-버전: v1.0.0
+버전은 프론트매터 `metadata`.

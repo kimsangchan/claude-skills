@@ -17,6 +17,9 @@
 | **promptingguide.ai** (dair-ai) | 기법 색인 | ~76k★ | 기법 카탈로그(zero/few-shot, CoT, self-consistency, ReAct, RAG, reflexion) |
 | **MengTo/Skills** | 스킬 라이브러리 | Design+Code 창립자, ~1.1k★ | SKILL.md 포맷(Use When/Workflow/Guardrails/Avoid), "prompts are assets", 프론트 slop 체크리스트, design dial |
 | **f/awesome-chatgpt-prompts** | 프롬프트 모음 | ~165k★ | 역할/페르소나 프롬프트 대중화 |
+| **DietrichGebert/ponytail** | 오픈소스 스킬·플러그인 | 121.6k★ (2026-09-03), MIT, v4.9.0, 자체 에이전틱 벤치마크(LOC −54%·비용 −20%·시간 −27%·안전 100%) | BUILD `<ladder>` 결정 사다리 7단, REVIEW의 과잉설계 전용 패스(`ponytail-review` 형식), "검증 하나는 남긴다" |
+| **affaan-m/everything-claude-code** (ecc) | 스킬 마켓플레이스 | 246.4k★ (2026-09-03), 설치 v1.10.0 | `skill-routing.md`의 단계별 1순위 스킬(product-lens·blueprint·tdd-workflow·verification-loop·git-workflow 등) |
+| **Anthropic — Skill authoring best practices / agentskills.io** | 1차 벤더 문서·오픈 스펙 | 대상 도구 제작사 | `metadata`·`argument-hint` 프론트매터, 시간 민감 수치는 근거 파일로, `evals/evals.json` 형식 |
 | **AGENTS.md 표준** | 오픈 규약 | Linux Foundation, >20k repos | 저장소 지침 파일 규약(CLAUDE.md 동종) |
 
 ## 13개 공통분모 원칙 → ETHOS 매핑
@@ -41,4 +44,4 @@
 
 - Anthropic의 고전 "프리필(assistant 턴 미리 채우기)" 기법은 **Claude 4.6+에서 미지원**.
   대체: 시스템 프롬프트 직접 지시 / 구조화 출력 / 도구 호출. 템플릿은 프리필을 쓰지 않는다.
-- 스타 수·버전은 조사 시점(2026-07) 값이며 규칙의 근거는 "수렴"이지 "인기"가 아니다.
+- 스타 수·버전은 조사 시점(2026-07, ponytail·ecc·Anthropic 행은 2026-09-03) 값이며 규칙의 근거는 "수렴"이지 "인기"가 아니다.

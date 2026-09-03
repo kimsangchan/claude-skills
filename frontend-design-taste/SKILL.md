@@ -6,6 +6,9 @@ description: |
   화면을 만들거나 다시 디자인할 때, 색/그림자/타이포/레이아웃/모션을 정할 때, "디자인이 밋밋하다/
   AI스럽다"를 고칠 때 사용. 프로젝트별로 밀도·모션 "dial"을 정하고, 하드룰과 anti-slop을 강제한다.
   MengTo/Skills의 design-taste-frontend를 이식·일반화. service-prompt-workflow의 BUILD·REVIEW가 참조.
+metadata:
+  version: "0.1.1"
+  updated: "2026-09-03"
 ---
 
 # Frontend Design Taste (프론트엔드 디자인 취향)
@@ -107,4 +110,4 @@ description: |
 - `references/tokens.md` — 그림자 3종·의미 상태색쌍·룩업맵 패턴·폰트 페어링 (복붙). 프론트 구현/리뷰 시 읽는다.
 
 출처: MengTo/Skills `design-taste-frontend`·`tailwindcss`·`beautiful-shadows`·`minimalist-ui` 이식·일반화.
-현재 버전: v0.1.0
+버전은 프론트매터 `metadata`.
