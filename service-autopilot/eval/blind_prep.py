@@ -21,12 +21,19 @@ SEEDS = {  # eval/seeds.md 동결 시드
 }
 # 스킬 흔적: 파일명 헤더·단계 표기·스킬/도구 이름. 내용 문장은 건드리지 않는다.
 TRACES = [
+    (r"^<!--.*?-->\s*$", ""),  # 병합 시 넣은 파일명 구분자
     (r"^#+\s*\d\d-[a-z-]+\.md.*$", ""),
     (r"^#+\s*(A[0-7]|GATE)\b[^\n]*", "## "),
     (r"\b(service-autopilot|service-prompt-workflow|skill-routing\.md|stage-templates\.md|blindspot-checklists\.md|decision-log\.md)\b", "(문서)"),
     (r"\b(ecc|ponytail):[a-z0-9-]+", "(참고자료)"),
     (r"autopilot/[A-Za-z0-9_-]+/", ""),
     (r"Skill 도구", "참고자료"),
+    (r"\b\d\d-[a-z-]+\.md", "(문서)"),            # 본문 안 파일명 인용 (뒤에 한글 조사가 붙어도)
+    (r"[A-Za-z]:/Users/[^\s)\]>,]*", "(경로)"),     # 핸드오프 프롬프트의 절대 경로
+    (r"skill-routing|스킬 사용 기록", "참고자료 사용 기록"),
+    (r"스킬", "참고자료"),
+    (r"\bGATE\b", "최종 검토"),
+    (r"\bA[0-7](?=[^0-9A-Za-z])", "단계"),          # 단계 표기 A0~A7
 ]
 
 
@@ -39,7 +46,8 @@ def blind(text: str) -> str:
 def main(run_dir: Path, seeds):
     judge_tmpl = (HERE / "judge-prompt.md").read_text(encoding="utf-8")
     judge_tmpl = judge_tmpl.split("```", 1)[1].rsplit("```", 1)[0].strip()  # 코드블록 안 프롬프트만
-    mapping = ["# Blind Mapping (판정 종료 전 열지 말 것)"]
+    mapping_path = run_dir / "mapping.md"
+    mapping = [] if mapping_path.exists() else ["# Blind Mapping (판정 종료 전 열지 말 것)"]
     for s in seeds:
         n = s.lower()
         a = blind((run_dir / f"{n}-a.md").read_text(encoding="utf-8"))
@@ -54,7 +62,8 @@ def main(run_dir: Path, seeds):
                       .replace("{{문서 1 전문}}", d1).replace("{{문서 2 전문}}", d2))
             (run_dir / f"{n}-judge-{k}.md").write_text(prompt, encoding="utf-8")
         print(f"{s}: a={len(a):,}자 b={len(b):,}자 → doc1/doc2 배정 완료, judge 프롬프트 2개")
-    (run_dir / "mapping.md").write_text("\n".join(mapping) + "\n", encoding="utf-8")
+    with mapping_path.open("a", encoding="utf-8") as f:
+        f.write("\n".join(mapping) + "\n")
     print("mapping.md 저장 (판정 끝나기 전에 열지 않는다)")
 
 

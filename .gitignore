@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+
+# 평가 런의 재생성 가능 파일 (blind_prep.py가 만든다)
+service-autopilot/eval/runs/*/*-judge-*.md
+service-autopilot/eval/runs/*/*-doc[12].md
