@@ -8,8 +8,8 @@ description: |
   gstack 스프린트 모델 + Anthropic/OpenAI/GitHub spec-kit 검증 기법을 종합한 근거 기반 하네스.
 argument-hint: "[요청 한 문장 또는 단계명]"
 metadata:
-  version: "0.2.0"
-  updated: "2026-09-03"
+  version: "0.3.0"
+  updated: "2026-09-04"
 ---
 
 # Service Prompt Workflow (서비스 프롬프트 워크플로우)
@@ -88,6 +88,8 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 
 1. 라우터로 진입 단계를 정한다. 필요하면 사용자에게 **한 번에 하나** 확인한다.
 2. `references/skill-routing.md`에서 그 단계의 행을 읽어 설치된 스킬을 호출한다(없으면 대체 열). 사용 기록은 decision-log 한 줄.
+   서브에이전트에 위임하는 작업은 `references/model-routing.md`의 작업 클래스로 `model`을 고른다
+   (PLAN에서 tasks.md에 `model:` 태그 → BUILD 위임 시 그대로, REVIEW 정확성은 `opus` fresh). 기록 줄에 모델을 병기한다.
 3. 해당 단계의 프롬프트 블록을 `references/prompt-templates.md`에서 가져와 빈칸(`{{...}}`)을 채운다.
 4. 하드 게이트를 확인한다. 못 넘으면 그 단계에 머문다.
 5. 산출물을 파일로 남긴다 (대화에만 두지 않는다).
@@ -105,6 +107,7 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 
 - `references/prompt-templates.md` — 단계별 XML 구조 복붙 프롬프트 블록. 각 단계 진입 시 읽는다.
 - `references/skill-routing.md` — 단계별 스킬 라우팅 표 + ponytail 배선 + 충돌 우선순위. 각 단계 진입 시 해당 행을 읽는다.
+- `references/model-routing.md` — 작업 클래스(판단 집약/패턴 반복/기계적/검증/리뷰) → 모델 등급(opus/sonnet/haiku) 표 + 승급 규칙. PLAN과 서브에이전트 위임 전에 읽는다.
 - `references/anti-patterns.md` — AI slop/거짓 진척 체크리스트 · anti-sycophancy · 리뷰 루브릭. REVIEW와 프론트 작업 시 읽는다.
 - `references/evidence.md` — 각 규칙·단계의 출처 매핑(gstack·Anthropic·OpenAI·spec-kit·Harper Reed·MengTo). 규칙을 바꿀 때 읽는다.
 

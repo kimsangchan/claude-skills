@@ -21,6 +21,7 @@
 | **affaan-m/everything-claude-code** (ecc) | 스킬 마켓플레이스 | 246.4k★ (2026-09-03), 설치 v1.10.0 | `skill-routing.md`의 단계별 1순위 스킬(product-lens·blueprint·tdd-workflow·verification-loop·git-workflow 등) |
 | **Anthropic — Skill authoring best practices / agentskills.io** | 1차 벤더 문서·오픈 스펙 | 대상 도구 제작사 | `metadata`·`argument-hint` 프론트매터, 시간 민감 수치는 근거 파일로, `evals/evals.json` 형식 |
 | **AGENTS.md 표준** | 오픈 규약 | Linux Foundation, >20k repos | 저장소 지침 파일 규약(CLAUDE.md 동종) |
+| **Anthropic `claude-api` 번들 스킬** (Claude Code 2.1.259, 모델표 캐시 2026-06-24) + Agent 도구 `model` 파라미터 | 1차 벤더 문서 · 도구 스키마 | `references/model-routing.md`: 작업 클래스→등급 표, "캐스케이드 전에 최상위 모델+낮은 effort", "완료된 작업당 비용", 캐시는 모델 단위 |
 
 ## 13개 공통분모 원칙 → ETHOS 매핑
 

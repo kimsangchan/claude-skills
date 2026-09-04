@@ -3,6 +3,7 @@
 각 단계가 설치된 전문 스킬을 근거로 실행하게 하는 정적 표. 설치 여부·미배정은
 `python _tools/skill_catalog.py`(저장소 루트)가 검사한다. 사용 규칙은 service-autopilot과 같다:
 진입 시 행을 읽고, 있으면 호출·없으면 대체, 단계당 최대 2개, 사용 기록은 decision-log 한 줄.
+서브에이전트에 위임하는 작업의 모델은 `model-routing.md`(작업 클래스 → opus/sonnet/haiku)로 고른다.
 
 ## 목차
 - 라우팅 표

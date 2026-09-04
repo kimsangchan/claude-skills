@@ -10,8 +10,8 @@ description: |
   이어받는다 (이 스킬의 산출물이 그쪽 SPEC 입력).
 argument-hint: "[한 줄 아이디어]"
 metadata:
-  version: "1.1.0"
-  updated: "2026-09-03"
+  version: "1.2.0"
+  updated: "2026-09-04"
 ---
 
 # Service Autopilot (서비스 기획·설계 오토파일럿)
@@ -83,7 +83,9 @@ A7=⑥IaC·⑦관측성. ④실행·⑤구현은 핸드오프 후 service-prompt
 1. 사용자 입력을 A0으로 정규화. **여기서 아무것도 묻지 않는다.**
 2. A1 조사 → A2 심문(질문 배치 최대 1회) → A3~A7을 논스톱 생성. 각 산출물은 생성 즉시 저장.
    각 단계 진입 시 `references/skill-routing.md`의 행대로 스킬을 호출하고 사용 기록을 decision-log에 남긴다.
-3. GATE 적대적 검토 → `08-readiness-report.md`에 판정 + 다음 명령(핸드오프)을 담아 보고.
+   서브에이전트에 맡기는 단계(A1 조사·A4 검토·GATE)는 `references/model-routing.md`의 등급으로 `model`을 명시하고,
+   decision-log 사용 기록 줄에 모델을 병기한다. 판단 단계(A2~A5)는 위임하지 않는다.
+3. GATE 적대적 검토(fresh-context 서브에이전트, `model=opus` 이상) → `08-readiness-report.md`에 판정 + 다음 명령(핸드오프)을 담아 보고.
 4. 최종 보고는 (a) 판정, (b) 핵심 결정 5줄 요약, (c) 질문에서 가정으로 채택된 항목 목록,
    (d) service-prompt-workflow로 넘어가는 복붙 프롬프트로 구성한다.
 
@@ -103,12 +105,15 @@ autopilot/<service-slug>/
 GATE 통과 후 service-prompt-workflow의 SPEC 단계에 다음을 입력한다:
 `03-prd.md`(요구사항) + `04/05`(설계·계약) + `06`(테스트 계획) + `07`(배포·운영 요건).
 UI가 포함되면 BUILD·REVIEW에서 `frontend-design-taste` 스킬을 함께 적용한다.
+08의 핸드오프 블록에는 구현 작업 클래스별 `<model_hints>`(opus/sonnet/haiku — `references/model-routing.md` 하단 표)를
+붙여, service-prompt-workflow PLAN이 tasks.md `model:` 태그의 초기값으로 쓰게 한다.
 
 ## 참조 파일
 
 - `references/blindspot-checklists.md` — 심문 택소노미(공통 축 + 도메인 프로파일). **A2 진입 전 필독.**
 - `references/stage-templates.md` — A0~GATE 단계별 산출물 템플릿·프롬프트 블록. 각 단계 진입 시 읽는다.
 - `references/skill-routing.md` — 단계별 스킬 라우팅 표 + 진입 사전조사 프로토콜 + 충돌 우선순위. **각 단계 진입 시 해당 행을 읽는다.**
+- `references/model-routing.md` — 단계별 모델 라우팅(어느 단계를 어느 등급 서브에이전트에 맡기나) + 핸드오프 모델 힌트. 서브에이전트를 띄우기 전에 읽는다.
 - `references/evidence.md` — 단계·규칙별 출처 매핑(무엇을 어디서 이식했고 무엇을 왜 바꿨는지). 스킬 수정 시 읽는다.
 - `references/evidence-map.md` — RECON 조사 항목별 근거 소스 매핑 (solution-planner 승계).
 - `references/quality-decomposition.md` — 질적 표현→측정 기준 변환 규칙 (승계).

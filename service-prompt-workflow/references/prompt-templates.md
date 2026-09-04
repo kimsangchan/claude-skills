@@ -105,6 +105,9 @@ tasks.md 작성:
 - 순서(의존성)를 명시하고, 서로 독립인 작업은 [P](병렬 가능)로 표기.
 - 각 작업에 "검증 가능한 완료 기준"을 붙인다.
 - 테스트 우선: 각 기능 작업 앞에 "실패하는 테스트 작성" 작업을 둔다.
+- 각 작업에 `model: opus|sonnet|haiku` 태그를 붙인다 (분류: references/model-routing.md —
+  불변식·동시성·인증·마이그레이션=opus / CRUD·화면·RED 테스트·설정=sonnet / 리네임·문구·포맷=haiku).
+  service-autopilot 08의 <model_hints>가 있으면 그 값을 초기값으로 쓴다.
 </make_tasks_md>
 <output>tasks.md 저장.</output>
 ```
@@ -118,7 +121,7 @@ tasks.md 작성:
 ```
 <role>{{예: 시니어 백엔드}} 엔지니어. 기존 코드처럼 읽히는 코드를 쓴다.</role>
 <spec>{{SPEC.md}}</spec>
-<tasks>{{tasks.md, 이번에 할 작업 번호}}</tasks>
+<tasks>{{tasks.md, 이번에 할 작업 번호, 그 작업의 model 태그}}</tasks>
 <ladder>
 코드를 쓰기 전에, 문제와 그 코드가 닿는 파일을 다 읽은 뒤, 첫 번째로 성립하는 단에서 멈춘다 (ponytail):
 1 필요한가(YAGNI) → 2 이 코드베이스에 이미 있나 → 3 표준 라이브러리 → 4 플랫폼 네이티브 →
@@ -131,6 +134,8 @@ tasks.md 작성:
 - 반드시 기존 패턴을 모방해라(참조: {{탐색 노트에서 지목한 file:line}}).
 - 라이브러리 import 전 package.json/의존성에 실제 존재하는지 확인. 없는 걸 가정하지 마라.
 - 오류는 억누르지 말고 근본 원인을 고쳐라.
+- 이 작업을 서브에이전트에 위임하면 tasks.md의 `model:` 태그를 Agent `model`에 그대로 준다.
+  VERIFY에서 2회 실패하면 한 등급 올려 재시도, 그래도 실패면 모델이 아니라 명세 문제 — SPEC으로 되돌아간다.
 </how>
 <examples>{{입출력/엣지케이스 예시 3~5개 — 있으면}}</examples>
 <stop_condition>같은 문제로 3번 고쳐도 안 되면 멈추고 무엇이 막혔는지 보고해라.</stop_condition>
@@ -157,6 +162,7 @@ tasks.md 작성:
 ## 7) REVIEW — 적대적 검토 (새 컨텍스트)
 
 서브에이전트/새 세션에게 **diff와 기준만** 준다(구현 맥락 오염 없이).
+정확성 리뷰어는 `model=opus`(생성 모델과 같거나 높은 등급), ponytail-review는 `sonnet` — `references/model-routing.md`.
 
 ```
 <role>적대적 코드 리뷰어. 이 변경을 만든 사람이 아니다. 통과시키는 게 목표가 아니라 결함을 찾는 게 목표.</role>

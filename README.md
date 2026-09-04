@@ -18,6 +18,7 @@ service-autopilot        →   service-prompt-workflow   →   frontend-design-t
 A0~A7 + GATE                 0 BASE ~ 9 REFLECT               BUILD·REVIEW에서 참조
       │                            │
       └── 각 단계 진입 시 references/skill-routing.md 의 행을 읽어 설치된 전문 스킬(ecc:* 등)을 호출
+      └── 서브에이전트에 맡기는 단계·작업은 references/model-routing.md 로 모델 등급(opus/sonnet/haiku)을 고름
                                    └── BUILD·REVIEW 는 ponytail 결정 사다리(있으면 플러그인, 없으면 내장) 적용
 
 [세션 부트스트랩]  catch-up — 얇은 CLAUDE.md/AGENTS.md/NEXT.md 구조를 1회 세팅 (사용자 호출 전용)
@@ -42,6 +43,9 @@ design-taste가 인테리어 품질 기준을 잡는다.** 각 공정마다 어�
   예: A1은 `ecc:research-ops`, A4는 `ecc:architecture-decision-records`+`ecc:security-review`, A5는 `ecc:api-design`,
   A6은 `ecc:tdd-workflow`, A7은 `ecc:deployment-patterns`. 미설치면 대체 절차. 사용 기록은 decision-log에 남는다.
 - **단계 진입 사전조사**: A3~A7은 각 단계의 결정에 필요한 근거를 정량(숫자+출처+확인일)·정성(실무자 인용)·사용자 영향 3줄로 산출물 상단에 남긴다.
+- **단계별 모델 라우팅** (`references/model-routing.md`): 메인 세션 모델은 못 바꾸므로 서브에이전트 `model`로 고른다 —
+  A1 조사는 `sonnet`, A4 독립 검토·GATE 검토관은 `opus`(생성 모델 이상), 판단 단계(A2~A5)는 위임하지 않는다.
+  08 핸드오프에 구현 작업 클래스별 `<model_hints>`를 붙인다.
 - **산출물**: `00-seed.md` ~ `08-readiness-report.md` + `decision-log.md` (9개 파일).
 - **평가**: `eval/PROTOCOL.md`(블라인드 pairwise A/B, 동결 시드 10개) + `evals/evals.json`(skill-creator 호환).
 
@@ -59,6 +63,9 @@ design-taste가 인테리어 품질 기준을 잡는다.** 각 공정마다 어�
 
 - **파이프라인**: 0 BASE → 1 FRAME → 2 EXPLORE → 3 SPEC → 4 PLAN → 5 BUILD → 6 VERIFY → 7 REVIEW → 8 SHIP → 9 REFLECT.
 - **라우터 내장**: "구현해" → BUILD, "리뷰해줘" → REVIEW, "커밋해" → SHIP.
+- **작업 클래스별 모델 라우팅** (`references/model-routing.md`): PLAN에서 tasks.md에 `model:` 태그
+  (불변식·동시성·인증·마이그레이션=`opus`, CRUD·화면·RED 테스트·설정=`sonnet`, 리네임·문구·포맷=`haiku`),
+  BUILD 위임 시 그대로 적용, REVIEW 정확성은 `opus` fresh. VERIFY 2회 실패 시 한 등급 승급, 그래도 실패면 SPEC으로.
 - **단계별 스킬 라우팅** (`references/skill-routing.md`): FRAME은 `ecc:product-lens`, PLAN은 `ecc:blueprint`,
   VERIFY는 `/verify`·`ecc:verification-loop`, REVIEW는 `/code-review` + `ponytail:ponytail-review`, SHIP은 `ecc:git-workflow`.
 - **ponytail 배선**: BUILD 진입 시 결정 사다리(필요한가 → 이미 있나 → 표준 라이브러리 → 네이티브 → 설치된 의존성 → 한 줄 → 최소 코드)를

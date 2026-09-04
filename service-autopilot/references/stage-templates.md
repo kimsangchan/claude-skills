@@ -191,7 +191,7 @@ Q1 답 → {{영향받은 산출물·결정}} (decision-log #{{n}})
 
 ---
 
-## GATE — `08-readiness-report.md` (fresh context 서브에이전트로 실행)
+## GATE — `08-readiness-report.md` (fresh context 서브에이전트, `model=opus` 이상 — `model-routing.md`)
 
 적대적 검토 프롬프트 (BMAD adversarial review + spec-kit /analyze 이식):
 
@@ -220,4 +220,9 @@ Q1 답 → {{영향받은 산출물·결정}} (decision-log #{{n}})
 06-test-design.md, 07-ops-design.md</inputs>
 <first_task>SPEC.md 작성 — 위 문서를 진실원으로, 낯선 구현자 실행 가능 수준(≥7/10)</first_task>
 {{UI 있으면}} BUILD·REVIEW에서 frontend-design-taste dial={{…}} 적용
+<model_hints>
+opus: {{판단 집약 — INV 불변식·동시성·인증·마이그레이션에 걸린 FR}}
+sonnet: {{패턴 반복 — CRUD·화면·RED 테스트 작성·설정 파일}}
+haiku: {{기계적 — 문구·리네임·포맷}}
+</model_hints>  (분류 기준: references/model-routing.md 하단 표)
 ```
