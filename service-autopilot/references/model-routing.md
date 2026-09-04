@@ -5,9 +5,10 @@
 
 ## 전제 — 모델을 바꾸는 유일한 수단
 
-메인 세션은 사용자가 고른 모델(`/model`)로 돈다. 스킬이 메인 세션의 모델을 바꿀 수는 없다.
-단계별로 모델을 달리하는 유일한 수단은 **서브에이전트의 `model` 파라미터**다
-(Claude Code Agent 도구: `haiku` · `sonnet` · `opus` 별칭. 별칭이 가리키는 실제 버전은 Claude Code 릴리스에 따라 바뀐다 —
+메인 세션은 사용자가 고른 모델(`/model`)로 돈다. 스킬 프론트매터 `model:`·`effort:`로 **그 턴 전체**의 모델을 바꿀 수는 있지만
+(Claude Code 확장 필드, 다음 프롬프트에서 원복), 파이프라인 한 번이 한 턴 안에서 다 돌기 때문에 단계별로 달리할 수 없고
+세션 모델보다 낮은 등급을 강제할 이유도 없어 채택하지 않는다. 단계별로 모델을 달리하는 수단은 **서브에이전트의 `model` 파라미터**다
+(Claude Code Agent 도구: `haiku` · `sonnet` · `opus` · `fable` 별칭. 별칭이 가리키는 실제 버전은 Claude Code 릴리스에 따라 바뀐다 —
 `claude --version`과 `/model`로 확인). 따라서 "모델 선택" = "그 단계를 어느 등급 서브에이전트에 위임하나"이며,
 위임하지 않는 단계는 세션 모델로 돈다.
 
@@ -20,7 +21,8 @@ Anthropic 가격 페이지(`claude-api` 스킬 `shared/live-sources.md`의 Prici
 |---|---|---|---|
 | `haiku` | `claude-haiku-4-5` | 1 / 5 | 판단이 없는 정형 작업 — 형식 변환, 목록 채우기, 명령 실행·결과 보고 |
 | `sonnet` | `claude-sonnet-5` | 2 / 10 | 근거 수집·긴 원문 읽기·템플릿 충실도가 높은 초안 |
-| `opus` | `claude-opus-5` | 5 / 25 | 설계 판단·트레이드오프·적대적 검토 |
+| `opus` | `claude-opus-5` | 5 / 25 | 설계 판단·트레이드오프·적대적 검토. eval judge(생성과 다른 모델) |
+| `fable` | `claude-fable-5-1` | 미확인 — 캐시(2026-06-24)에 없음, 가격 페이지로 확인 | 최상위 등급(Opus 위, 2026-09-01 출시). 세션이 Fable이면 GATE·독립 검토도 이 등급 |
 | (세션 모델) | 사용자가 고른 것 | — | 기본값. 위임하지 않는 단계 전부 |
 
 ## 라우팅 표
@@ -33,10 +35,10 @@ Anthropic 가격 페이지(`claude-api` 스킬 `shared/live-sources.md`의 Prici
 | A2 INTERROGATE | 메인 | 세션 | 질문 5개 선정(Impact×Uncertainty)이 파이프라인에서 가장 비싼 결정. 낮추지 않는다 |
 | A3 PRD · A4 ARCHITECT · A5 CONTRACT | 메인 | 세션 | 문서 간 ID·용어·정책 숫자 정합이 생명. 위임하면 드리프트가 생기고 GATE HIGH의 다수가 그 드리프트다 |
 | A3~A7 진입 사전조사 (검색 ≤3회) | 메인 (기본) | 세션 | 3줄이면 왕복 비용이 더 크다. 검색이 3회를 넘게 생기면 그 조사만 `sonnet`에 위임 |
-| A4 독립 검토자 (`ecc:architect`) | 서브에이전트 | `opus` | 독립 판단. 세션이 `opus` 이상이면 세션과 같은 등급으로 |
+| A4 독립 검토자 (`ecc:architect`) | 서브에이전트 | 세션 등급 이상 (`fable` 세션이면 `fable`, `opus` 세션이면 `opus`) | 독립 판단은 생성 모델보다 낮은 등급이 잡지 못한다 |
 | A6 TEST-DESIGN · A7 OPS-DESIGN | 메인 (기본) | 세션 | 템플릿 충실도가 높은 단계. **컨텍스트가 60%를 넘었으면** 03~05를 입력으로 주고 `sonnet` 서브에이전트에 초안을 맡기고, 메인이 ID·slug·정책 숫자 정합만 검사한다 |
-| GATE 검토관 | 서브에이전트 (fresh context) | `opus` | "문제를 반드시 찾는" 정밀 교차 검토. 생성 모델과 등급이 같거나 높아야 한다. `haiku`·`sonnet` 금지 |
-| GATE 2차 (`ecc:santa-method`, 돈·안전·법) | 서브에이전트 2명 | `opus` + `sonnet` | 독립성 — 등급을 달리해 같은 맹점을 공유하지 않게 |
+| GATE 검토관 | 서브에이전트 (fresh context) | 세션 등급 이상 (`fable` 세션이면 `fable`) | "문제를 반드시 찾는" 정밀 교차 검토. 생성 모델과 등급이 같거나 높아야 한다. `haiku`·`sonnet` 금지 |
+| GATE 2차 (`ecc:santa-method`, 돈·안전·법) | 서브에이전트 2명 | 세션 등급 + `opus` (opus 세션이면 `opus` + `sonnet`) | 독립성 — 모델을 달리해 같은 맹점을 공유하지 않게. 둘 다 생성 모델보다 두 등급 아래로 내려가지 않는다 |
 | eval judge (`eval/PROTOCOL.md`) | 다른 계열 모델 | — | self-preference 방어. PROTOCOL.md 규칙 그대로 |
 
 ## 적용 규칙

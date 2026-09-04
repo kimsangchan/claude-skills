@@ -1,7 +1,7 @@
 # 작업 클래스별 모델 라우팅 (PLAN · BUILD · VERIFY · REVIEW)
 
-"구현 기능에 맞는 모델"을 고르는 정적 표. 메인 세션의 모델은 바꿀 수 없으므로, **tasks.md의 작업을 서브에이전트에
-위임할 때 `model` 파라미터**(Claude Code Agent 도구: `haiku` · `sonnet` · `opus`)로 고른다.
+"구현 기능에 맞는 모델"을 고르는 정적 표. 스킬 프론트매터 `model:`은 턴 전체를 바꾸는 거친 수단이라 쓰지 않고, **tasks.md의 작업을 서브에이전트에
+위임할 때 `model` 파라미터**(Claude Code Agent 도구: `haiku` · `sonnet` · `opus` · `fable`)로 고른다.
 등급표·가격·근거는 `service-autopilot/references/model-routing.md`와 같다(원본은 번들 `claude-api` 스킬, 캐시 2026-06-24).
 
 ## 작업 클래스 → 모델
@@ -12,9 +12,9 @@
 | **패턴 반복** | CRUD 엔드포인트, DTO·스키마·zod, 폼·리스트·그리드 화면, RED 테스트 작성(시나리오 → 코드), 설정·compose·CI 파일, 문서 | `sonnet` | 명세(SPEC·05·06)가 정확하면 등급 차이가 결과 차이를 만들지 않는다 |
 | **기계적** | 리네임, 포맷, 로그·에러 문구 일괄(해요체), 주석, 의존성 버전 올림, 파일 이동 | `haiku` | 판단 0 |
 | **VERIFY 실행** | 테스트·빌드·린트 실행, 스크린샷 수집, 종료코드 보고 | `haiku` | 명령 실행과 결과 보고. 해석은 메인이 한다 |
-| **REVIEW 정확성** | diff + 수용 기준 | `opus` (fresh context) | 생성 모델과 같거나 높은 등급이어야 잡는다 |
+| **REVIEW 정확성** | diff + 수용 기준 | 세션 등급 이상, fresh context (`fable` 세션이면 `fable`) | 생성 모델과 같거나 높은 등급이어야 잡는다 |
 | **REVIEW 복잡도** (`ponytail:ponytail-review`) | diff | `sonnet` | 삭제 후보 나열 |
-| **santa-method 2인** (돈·안전·법) | diff | `opus` + `sonnet` | 등급을 달리해 맹점을 공유하지 않게 |
+| **santa-method 2인** (돈·안전·법) | diff | 세션 등급 + `opus` (opus 세션이면 `opus` + `sonnet`) | 모델을 달리해 맹점을 공유하지 않게 |
 
 ## 규칙
 
