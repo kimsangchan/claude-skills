@@ -138,7 +138,8 @@ python _tools/skill_catalog.py --available  # 마켓플레이스에 있지만 �
 5. **겹침**: `--unassigned`와 라우팅 표를 보고 이미 같은 역할을 하는 스킬이 있으면 둘 중 하나만 남긴다.
 6. **컨텍스트 비용**: description이 항상 로드된다. 플러그인 하나가 수십 개 스킬을 들여오면 `--catalog`로 토큰 추정치를 보고 결정.
 
-현재 흡수 후보(미설치): `superpowers`(280k★, 공식 마켓), `skill-creator`(공식 마켓, 스킬 평가 도구), `ponytail`(121k★ — 설치 명령은 위 2절).
+현재 흡수 후보(미설치): `superpowers`(280k★, 공식 마켓), `skill-creator`(공식 마켓, 스킬 평가 도구). `ponytail`(121k★)은 2026-09-04 설치됨.
+Remote Control 세션에서는 `/plugin`이 막혀 있으므로 같은 PC의 터미널에서 `claude plugin marketplace add <repo>` → `claude plugin install <name>@<marketplace>`를 쓴다.
 
 ## 다른 PC에서 쓰는 법
 
