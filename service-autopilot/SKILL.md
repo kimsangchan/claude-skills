@@ -8,10 +8,10 @@ description: |
   위협모델·API 설계·배포/모니터링 설계가 필요할 때. 도메인 조사→블라인드스팟 심문(객관식 최대 5문항
   1회)→설계 산출물 생성을 사용자 개입 최소로 자동 진행한다. 구현 실행은 service-prompt-workflow가
   이어받는다 (이 스킬의 산출물이 그쪽 SPEC 입력).
-argument-hint: "[한 줄 아이디어]"
+argument-hint: "[lite|full] [한 줄 아이디어]"
 metadata:
-  version: "1.2.0"
-  updated: "2026-09-04"
+  version: "1.3.0"
+  updated: "2026-09-07"
 ---
 
 # Service Autopilot (서비스 기획·설계 오토파일럿)
@@ -43,6 +43,12 @@ metadata:
 8. **최종 게이트는 적대적 자기검토.** fresh context 서브에이전트가 "문제를 반드시 찾는" 자세로
    산출물 정합성을 검사하고 PASS/CONCERNS/FAIL을 판정한다. 거짓 양성이 나올 수 있으므로 지적은
    반영 전에 타당성을 필터링한다. *(BMAD adversarial review + spec-kit /analyze 이식)*
+9. **상류 개정은 하류로 전파한다.** 산출물마다 머리에 `버전: vX.Y` (04~07은 `· 기준 03 vX.Y`)를 적고, 03·04·05를 고치면
+   그 버전을 참조하는 하류 문서를 같은 턴에 재검토해 버전을 올린다. 상한·기간·임계·용량 같은 숫자는 03의 **상수 표**에만 쓰고
+   다른 문서는 이름으로 참조한다. *(2026-09 스모크 S4: 03 v1.1 미전파로 세션 상한이 4·8·16 세 값으로 공존)*
+10. **자기 선언은 스크립트로 검증한다.** "누락 0", "미결정 0건"은 모델이 세지 않는다. GATE 전에
+    `python scripts/check_package.py autopilot/<slug>`를 돌려 출력을 검토관 입력에 넣고, CRITICAL이 남으면 GATE에 들어가지 않는다.
+    *(Anthropic plan-validate-execute; 2026-09 스모크 S4·S8에서 거짓 카운트 발견)*
 
 ## 파이프라인 (A0~A7 + GATE)
 
@@ -65,6 +71,31 @@ A7=⑥IaC·⑦관측성. ④실행·⑤구현은 핸드오프 후 service-prompt
 단계 진입 시 어떤 전문 스킬을 호출할지는 `references/skill-routing.md` — 설치된 스킬이 있으면 그것을
 근거로 쓰고(없으면 대체), A3~A7은 정량·정성·사용자 영향 3줄 사전조사를 산출물 상단에 남긴다.
 
+## 강도 (lite / full)
+
+한 바퀴 비용이 규모와 무관하게 같으면 작은 일에 큰 도구를 쓰게 된다 (2026-09 스모크 실측: full 한 바퀴 약 32만 토큰,
+GATE 검토 서브에이전트 1명 약 20만). A0에서 강도를 판정해 `00-seed.md`에 `강도: lite|full (사유)`로 적는다.
+사용자가 `/service-autopilot lite …`처럼 지정하면 그것이 우선한다.
+
+| 신호 — 하나라도 있으면 full | 없으면 lite |
+|---|---|
+| 돈·안전·법·민감정보가 걸림 · 외부 시스템 연동 2개 이상 · 동시 사용자 100명 이상이거나 데이터 볼륨이 설계 변수 · 하드웨어/엣지 · 팀 2명 이상이 이어받음 · 사용자가 "정식/본격/납품"이라 말함 | 사내 도구, 1인 운영, 프로토타입, 기존 시스템의 bounded 변경 |
+
+| 단계 | lite 상한 | full |
+|---|---|---|
+| A1 | 검색 ≤5회, 유사 솔루션 3개, 스택 후보 2개 | 현행 |
+| A2 | 질문 0 (전부 Assumed. 단 Impact가 데이터 손실·법이면 1문항 허용) | 최대 5문항 1회 |
+| A3 | 목표 ≤2, 스토리 ≤3, FR ≤10, SC ≤5. 진입 사전조사 3줄은 A3·A4만 | 현행 |
+| A4 | 신호 표 항목이 있을 때만 STRIDE 전수, 없으면 "해당 없음 + 사유" 한 단락 | STRIDE 전수 |
+| A5 | 엔드포인트 표 + 커버리지 매핑만 (OpenAPI 스케치 생략, ERD는 엔티티·관계만) | 현행 |
+| A6 | P0 수용기준만 시나리오화 | 전부 |
+| A7 | 배포·로그·백업·복구 각 1~2줄 + 착수 자산 | 현행 |
+| GATE | 메인이 `scripts/check_package.py` + 자기 점검, 서브에이전트 없음 | 서브에이전트 검토 1회 (돈·안전·법이면 santa 2인) |
+| 목표 토큰 | ≤ 8만 | 상한 60만. 넘으면 멈추고 사용자에게 보고 |
+
+산출물 9개의 파일명·형식은 강도와 무관하게 같다 (핸드오프·스크립트 호환). lite 중에 신호가 발견되면 그 단계부터 full로
+올리고 decision-log에 적는다. *(superpowers brainstorming의 spike/bounded/architectural 3등급에서 착안 — `references/evidence.md`)*
+
 ## 질문 프로토콜 (A2 전용 — 개입 최소화의 핵심)
 
 1. 택소노미 전축을 스캔해 축마다 Clear/Partial/Missing 상태를 매긴다.
@@ -86,7 +117,13 @@ A7=⑥IaC·⑦관측성. ④실행·⑤구현은 핸드오프 후 service-prompt
    서브에이전트에 맡기는 단계(A1 조사·A4 검토·GATE)는 `references/model-routing.md`의 등급으로 `model`을 명시하고,
    decision-log 사용 기록 줄에 모델을 병기한다. 판단 단계(A2~A5)는 위임하지 않는다.
 3. GATE 적대적 검토(fresh-context 서브에이전트, `model=opus` 이상) → `08-readiness-report.md`에 판정 + 다음 명령(핸드오프)을 담아 보고.
-4. 최종 보고는 (a) 판정, (b) 핵심 결정 5줄 요약, (c) 질문에서 가정으로 채택된 항목 목록,
+4. **예산과 재실행.** GATE FAIL은 해당 단계 재실행 1회까지. 두 번째도 FAIL이면 CONCERNS로 마감하고 잔여 지적을 08과
+   핸드오프 선행 조건에 넘긴다. 검토 서브에이전트는 full에서 1명(돈·안전·법이면 santa 2명), 재검토는 1회.
+5. **중단과 재개.** 세션 한도·오류로 끊기면 `autopilot/<slug>/`의 산출물을 읽고 **없는 첫 파일의 단계부터** 이어 간다.
+   있는 파일은 다시 만들지 않는다. 재개 사실과 시각을 decision-log에 적는다.
+6. **비용 기록.** 런이 끝나면 decision-log 말미에 `강도 · 검색 횟수 · 서브에이전트 수 · 소요 시간`(알면 토큰도)을 적는다.
+   다음 강도 판정의 근거가 된다.
+7. 최종 보고는 (a) 판정, (b) 핵심 결정 5줄 요약, (c) 질문에서 가정으로 채택된 항목 목록,
    (d) service-prompt-workflow로 넘어가는 복붙 프롬프트로 구성한다.
 
 ### 산출물 디렉토리
@@ -102,9 +139,10 @@ autopilot/<service-slug>/
 
 ### 핸드오프 (구현으로)
 
-GATE 통과 후 service-prompt-workflow의 SPEC 단계에 다음을 입력한다:
-`03-prd.md`(요구사항) + `04/05`(설계·계약) + `06`(테스트 계획) + `07`(배포·운영 요건).
-UI가 포함되면 BUILD·REVIEW에서 `frontend-design-taste` 스킬을 함께 적용한다.
+GATE 통과 후 사용자가 08의 핸드오프 프롬프트를 붙여 넣는 것이 **설계 승인**이다 (superpowers brainstorming의 승인 게이트와
+같은 역할 — 그 뒤 brainstorming을 다시 하지 않는다). service-prompt-workflow SPEC의 입력은 `03-prd.md`(요구사항·상수 표) +
+`05-api-contract.md`(계약) + `08`의 착수 조건·첫 작업 3개(워킹 스켈레톤)만이다. `04·06·07`은 경로만 넘기고 필요할 때 읽는다
+(핸드오프 130KB → 입력 40KB 목표). UI가 포함되면 BUILD·REVIEW에서 `frontend-design-taste` 스킬을 함께 적용한다.
 08의 핸드오프 블록에는 구현 작업 클래스별 `<model_hints>`(opus/sonnet/haiku — `references/model-routing.md` 하단 표)를
 붙여, service-prompt-workflow PLAN이 tasks.md `model:` 태그의 초기값으로 쓰게 한다.
 
@@ -114,6 +152,7 @@ UI가 포함되면 BUILD·REVIEW에서 `frontend-design-taste` 스킬을 함께 
 - `references/stage-templates.md` — A0~GATE 단계별 산출물 템플릿·프롬프트 블록. 각 단계 진입 시 읽는다.
 - `references/skill-routing.md` — 단계별 스킬 라우팅 표 + 진입 사전조사 프로토콜 + 충돌 우선순위. **각 단계 진입 시 해당 행을 읽는다.**
 - `references/model-routing.md` — 단계별 모델 라우팅(어느 단계를 어느 등급 서브에이전트에 맡기나) + 핸드오프 모델 힌트. 서브에이전트를 띄우기 전에 읽는다.
+- `scripts/check_package.py` — 자기 선언 검증(FR→05 커버리지, SC→06 시나리오, 미결정, register 마킹, 버전 전파). **GATE 전에 실행한다** (규칙 10).
 - `references/evidence.md` — 단계·규칙별 출처 매핑(무엇을 어디서 이식했고 무엇을 왜 바꿨는지). 스킬 수정 시 읽는다.
 - `references/evidence-map.md` — RECON 조사 항목별 근거 소스 매핑 (solution-planner 승계).
 - `references/quality-decomposition.md` — 질적 표현→측정 기준 변환 규칙 (승계).

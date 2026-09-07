@@ -18,8 +18,12 @@ service-autopilot        →   service-prompt-workflow   →   frontend-design-t
 A0~A7 + GATE                 0 BASE ~ 9 REFLECT               BUILD·REVIEW에서 참조
       │                            │
       └── 각 단계 진입 시 references/skill-routing.md 의 행을 읽어 설치된 전문 스킬(ecc:* 등)을 호출
-      └── 서브에이전트에 맡기는 단계·작업은 references/model-routing.md 로 모델 등급(opus/sonnet/haiku)을 고름
+      └── 서브에이전트에 맡기는 단계·작업은 references/model-routing.md 로 모델 등급(opus/sonnet/haiku/fable)을 고름
+      └── 강도 lite/full: A0에서 신호(돈·안전·법·연동·규모)로 판정, lite는 8만 토큰 상한
+                                   └── PLAN 이후는 superpowers(writing-plans → TDD → verification → code-review)로 넘김
                                    └── BUILD·REVIEW 는 ponytail 결정 사다리(있으면 플러그인, 없으면 내장) 적용
+
+[경계 규칙]  ~/.claude/CLAUDE.md — 설계는 service-autopilot, 저장소 안 구현은 superpowers, 웹 UI는 frontend-design-taste (이름 부를 필요 없음)
 
 [세션 부트스트랩]  catch-up — 얇은 CLAUDE.md/AGENTS.md/NEXT.md 구조를 1회 세팅 (사용자 호출 전용)
 [스킬 추천]        sk — "/sk 문구" 로 맞는 스킬 최대 3개 추천
@@ -46,6 +50,13 @@ design-taste가 인테리어 품질 기준을 잡는다.** 각 공정마다 어�
 - **단계별 모델 라우팅** (`references/model-routing.md`): 메인 세션 모델은 못 바꾸므로 서브에이전트 `model`로 고른다 —
   A1 조사는 `sonnet`, A4 독립 검토·GATE 검토관은 `opus`(생성 모델 이상), 판단 단계(A2~A5)는 위임하지 않는다.
   08 핸드오프에 구현 작업 클래스별 `<model_hints>`를 붙인다.
+- **강도 lite/full**: A0에서 신호(돈·안전·법·민감정보, 외부 연동 2개↑, 사용자 100명↑, 하드웨어, 팀 2명↑, "납품")로 판정.
+  lite는 질문 0·검색 ≤5·위협모델 조건부·GATE 자기 점검, 목표 8만 토큰. full은 상한 60만. `/service-autopilot lite …`로 강제 가능.
+- **자기 선언 검증**: GATE 전에 `python scripts/check_package.py autopilot/<slug>` — FR→05 커버리지, SC→06 시나리오, 미결정, register 마킹,
+  버전 전파를 스크립트가 센다. CRITICAL이면 GATE 진입 금지.
+- **개정 전파·상수 표**: 산출물마다 `버전:`, 04~07은 `기준 03 v`. 숫자는 03 상수 표에만.
+- **착수 자산**: A3 화면 스케치 1장, A7 디렉터리 구조·`.env.example`(값 없음)·첫 작업 3개(워킹 스켈레톤).
+- **예산·재개**: GATE 재실행 1회, 끊기면 없는 첫 파일의 단계부터 재개, 런 끝에 비용 기록.
 - **산출물**: `00-seed.md` ~ `08-readiness-report.md` + `decision-log.md` (9개 파일).
 - **평가**: `eval/PROTOCOL.md`(블라인드 pairwise A/B, 동결 시드 10개) + `evals/evals.json`(skill-creator 호환).
 
@@ -66,8 +77,12 @@ design-taste가 인테리어 품질 기준을 잡는다.** 각 공정마다 어�
 - **작업 클래스별 모델 라우팅** (`references/model-routing.md`): PLAN에서 tasks.md에 `model:` 태그
   (불변식·동시성·인증·마이그레이션=`opus`, CRUD·화면·RED 테스트·설정=`sonnet`, 리네임·문구·포맷=`haiku`),
   BUILD 위임 시 그대로 적용, REVIEW 정확성은 `opus` fresh. VERIFY 2회 실패 시 한 등급 승급, 그래도 실패면 SPEC으로.
-- **단계별 스킬 라우팅** (`references/skill-routing.md`): FRAME은 `ecc:product-lens`, PLAN은 `ecc:blueprint`,
-  VERIFY는 `/verify`·`ecc:verification-loop`, REVIEW는 `/code-review` + `ponytail:ponytail-review`, SHIP은 `ecc:git-workflow`.
+- **superpowers가 실행 엔진** (설치 시): PLAN `superpowers:writing-plans`, BUILD `superpowers:subagent-driven-development`/`executing-plans`
+  + `test-driven-development`, VERIFY `verification-before-completion`, 실패 시 `systematic-debugging`, REVIEW `requesting/receiving-code-review`
+  + `/code-review` + `ponytail:ponytail-review`, SHIP `finishing-a-development-branch`. 이 스킬은 라우터·ETHOS·배선만 맡는다.
+  **직접 부를 일은 없다** — "구현해·리뷰해줘·커밋해"에 자동으로 뜬다. 미설치 PC에서는 `prompt-templates.md` 블록이 대체.
+- **PLAN 순서 규칙**: 첫 작업 3개는 워킹 스켈레톤(핵심 여정을 끝까지 얇게), 그다음 위험 큰 것부터. 로그인·화면은 보통 마지막.
+- **단계별 스킬 라우팅** (`references/skill-routing.md`): FRAME은 bounded면 `superpowers:brainstorming`, 새 서비스면 `service-autopilot`.
 - **ponytail 배선**: BUILD 진입 시 결정 사다리(필요한가 → 이미 있나 → 표준 라이브러리 → 네이티브 → 설치된 의존성 → 한 줄 → 최소 코드)를
   코드 작성 전에 탄다. 플러그인이 있으면 훅이 자동 주입하고, 없으면 템플릿의 `<ladder>` 블록이 같은 역할을 한다.
   REVIEW는 정확성 1회 + 과잉설계 1회를 넘기지 않는다.
@@ -145,7 +160,8 @@ python _tools/skill_catalog.py --available  # 마켓플레이스에 있지만 �
 5. **겹침**: `--unassigned`와 라우팅 표를 보고 이미 같은 역할을 하는 스킬이 있으면 둘 중 하나만 남긴다.
 6. **컨텍스트 비용**: description이 항상 로드된다. 플러그인 하나가 수십 개 스킬을 들여오면 `--catalog`로 토큰 추정치를 보고 결정.
 
-현재 흡수 후보(미설치): `superpowers`(280k★, 공식 마켓), `skill-creator`(공식 마켓, 스킬 평가 도구). `ponytail`(121k★)은 2026-09-04 설치됨.
+흡수 완료: `ponytail`(121k★, 2026-09-04), `superpowers`(281k★, 2026-09-07 — 구현 단계 엔진으로 배선). 후보(미설치): `skill-creator`(공식 마켓, 스킬 평가 도구).
+플러그인 사이 경계(누가 설계하고 누가 구현하나)는 `~/.claude/CLAUDE.md`에 사용자 지시로 둔다 — superpowers가 "사용자 지시 > 스킬"이라 명시하기 때문. 새 PC에서는 이 파일도 복사한다.
 Remote Control 세션에서는 `/plugin`이 막혀 있으므로 같은 PC의 터미널에서 `claude plugin marketplace add <repo>` → `claude plugin install <name>@<marketplace>`를 쓴다.
 
 ## 다른 PC에서 쓰는 법

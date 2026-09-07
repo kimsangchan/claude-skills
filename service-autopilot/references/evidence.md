@@ -40,7 +40,8 @@
 | [Claude Code — Skills](https://code.claude.com/docs/en/skills) | 2.1.259 문서 | `when_to_use`·`context: fork`·`paths` 등 확장 필드 확인. `context: fork`는 미채택(아래 의도적 변경 6) |
 | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) (ecc) | 246.4k★, 설치 v1.10.0 (2026-04-09) | `references/skill-routing.md`의 1순위 스킬 대부분 (research-ops·product-lens·api-design·tdd-workflow·deployment-patterns·santa-method 등). 설치본이 5개월 구버전이므로 갱신 시 라우팅 재검사 |
 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | 121.6k★, MIT, v4.9.0, 마지막 push 2026-08-07 | 구현 단계(service-prompt-workflow BUILD·REVIEW)의 결정 사다리. 자체 벤치마크: 12개 기능 과제·n=4·Haiku 4.5에서 LOC −54%, 토큰 −22%, 비용 −20%, 시간 −27%, 안전 100% (`benchmarks/results/2026-06-18-agentic.md`) |
-| [obra/superpowers](https://github.com/obra/superpowers) | 280.8k★, 미설치 (공식 마켓 `superpowers`) | 채택 없음 — 흡수 후보. README "외부 스킬 흡수 기준" 참조 |
+| [obra/superpowers](https://github.com/obra/superpowers) | 280.8k★, 2026-09-07 설치 v6.3.0 (공식 마켓) | **강도 lite/full**은 brainstorming의 spike/bounded/architectural 3등급 분류에서 착안. 구현 단계(PLAN 이후)는 service-prompt-workflow가 이 플러그인의 writing-plans·executing-plans·TDD·verification·code-review 스킬로 넘긴다. 설계 단계는 이 스킬이 담당(경계: `~/.claude/CLAUDE.md`) |
+| 2026-09 스모크 런 (`eval/runs/run-20260903-smoke/RESULT.md`) | 자체 실측 | 규칙 9(개정 전파·상수 표), 규칙 10(`scripts/check_package.py`), A7 착수 자산, A3 화면 스케치, 예산·재개·비용 기록 규칙 — 전부 이 런의 GATE·judge가 잡은 결함에서 나옴 |
 | Anthropic `claude-api` 번들 스킬 (Claude Code 2.1.259, 모델표 캐시 2026-06-24) + Claude Code Agent 도구 `model` 파라미터 | 1차 벤더 문서 · 도구 스키마 | `references/model-routing.md`: 등급표(모델 id·가격), "캐스케이드 전에 최상위 모델+낮은 effort를 먼저 재라", "완료된 작업당 비용", 캐시는 모델 단위 → 등급 전환 지점을 3곳으로 제한 |
 
 ## 의도적 변경 (출처와 다르게 한 것 — 이유 명시)

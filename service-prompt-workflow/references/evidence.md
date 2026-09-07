@@ -18,6 +18,7 @@
 | **MengTo/Skills** | 스킬 라이브러리 | Design+Code 창립자, ~1.1k★ | SKILL.md 포맷(Use When/Workflow/Guardrails/Avoid), "prompts are assets", 프론트 slop 체크리스트, design dial |
 | **f/awesome-chatgpt-prompts** | 프롬프트 모음 | ~165k★ | 역할/페르소나 프롬프트 대중화 |
 | **DietrichGebert/ponytail** | 오픈소스 스킬·플러그인 | 121.6k★ (2026-09-03), MIT, v4.9.0, 자체 에이전틱 벤치마크(LOC −54%·비용 −20%·시간 −27%·안전 100%) | BUILD `<ladder>` 결정 사다리 7단, REVIEW의 과잉설계 전용 패스(`ponytail-review` 형식), "검증 하나는 남긴다" |
+| **obra/superpowers** | 오픈소스 스킬 플러그인 | 280.8k★ (2026-09-03), MIT, v6.3.0 설치 2026-09-07 | PLAN 이후 실행 엔진: writing-plans(2~5분 작업·자리표시자 금지), executing-plans / subagent-driven-development, test-driven-development, systematic-debugging, verification-before-completion, requesting/receiving-code-review, finishing-a-development-branch. 이 스킬의 4)~8) 템플릿은 미설치 시 대체용으로 강등 |
 | **affaan-m/everything-claude-code** (ecc) | 스킬 마켓플레이스 | 246.4k★ (2026-09-03), 설치 v1.10.0 | `skill-routing.md`의 단계별 1순위 스킬(product-lens·blueprint·tdd-workflow·verification-loop·git-workflow 등) |
 | **Anthropic — Skill authoring best practices / agentskills.io** | 1차 벤더 문서·오픈 스펙 | 대상 도구 제작사 | `metadata`·`argument-hint` 프론트매터, 시간 민감 수치는 근거 파일로, `evals/evals.json` 형식 |
 | **AGENTS.md 표준** | 오픈 규약 | Linux Foundation, >20k repos | 저장소 지침 파일 규약(CLAUDE.md 동종) |

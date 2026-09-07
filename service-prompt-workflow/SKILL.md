@@ -6,10 +6,12 @@ description: |
   프롬프트를 어떻게 써야 할지 막힐 때, SPEC·PLAN·구현·리뷰·배포 명령이 필요할 때, 스택 선정 후
   실제 빌드로 넘어갈 때. 기획 자체가 막연하거나 도메인을 모르면 먼저 service-autopilot을 쓴다.
   gstack 스프린트 모델 + Anthropic/OpenAI/GitHub spec-kit 검증 기법을 종합한 근거 기반 하네스.
+  superpowers가 설치돼 있으면 PLAN·BUILD·VERIFY·REVIEW·SHIP은 그 스킬들로 넘기고, 이 스킬은 한국어 라우터·ETHOS·
+  ponytail·프론트 배선만 맡는다. 사용자가 이름을 부를 필요는 없다 — "구현해·리뷰해줘·커밋해" 문장에 자동으로 뜬다.
 argument-hint: "[요청 한 문장 또는 단계명]"
 metadata:
-  version: "0.3.0"
-  updated: "2026-09-04"
+  version: "0.4.0"
+  updated: "2026-09-07"
 ---
 
 # Service Prompt Workflow (서비스 프롬프트 워크플로우)
@@ -32,7 +34,11 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 
 - 도메인·범위·스택이 불확실하면 **service-autopilot을 먼저** 돌려 설계 패키지를 만든다.
 - 설계 패키지(또는 이미 아는 요구사항)가 있으면 **이 워크플로우로 실행**한다.
-- 둘은 경쟁이 아니라 앞뒤로 물린다. `03~07` 산출물은 그대로 `SPEC` 입력으로 쓴다.
+- 둘은 경쟁이 아니라 앞뒤로 물린다. `03·05·08`이 `SPEC` 입력, `04·06·07`은 참고 경로다.
+- **superpowers**(설치 시)가 PLAN 이후의 실행 엔진이다: writing-plans → executing-plans / subagent-driven-development →
+  test-driven-development → verification-before-completion → requesting-code-review → finishing-a-development-branch.
+  이 스킬은 어느 단계에서 무엇을 부를지만 정한다 (`references/skill-routing.md` "superpowers 경계"). autopilot을 거친 요청은
+  brainstorming을 건너뛴다 — 핸드오프 프롬프트를 붙여 넣은 것이 설계 승인이다.
 - (구) solution-planner는 deprecated. 그 blueprint(05/06/07)를 입력으로 쓴 기존 문서도 여전히 유효하다.
 
 ## 절대 규칙 (ETHOS — 모든 단계에 주입)
@@ -80,6 +86,7 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 - "작업 쪼개줘", "할 일 목록" → **4 PLAN**
 - "구현해", "이 스펙대로 만들어" → **5 BUILD**
 - "이거 진짜 되는지 확인", "테스트 돌려" → **6 VERIFY**
+- "버그야", "테스트가 깨져", "왜 안 되지" → **6 VERIFY의 디버깅 분기** (`superpowers:systematic-debugging`, 증상 패치 금지)
 - "리뷰해줘", "버그 없나 봐줘" → **7 REVIEW**
 - "커밋/PR 만들어" → **8 SHIP**
 - "회고", "뭘 배웠지", "CLAUDE.md 갱신" → **9 REFLECT**
@@ -90,7 +97,8 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 2. `references/skill-routing.md`에서 그 단계의 행을 읽어 설치된 스킬을 호출한다(없으면 대체 열). 사용 기록은 decision-log 한 줄.
    서브에이전트에 위임하는 작업은 `references/model-routing.md`의 작업 클래스로 `model`을 고른다
    (PLAN에서 tasks.md에 `model:` 태그 → BUILD 위임 시 그대로, REVIEW 정확성은 `opus` fresh). 기록 줄에 모델을 병기한다.
-3. 해당 단계의 프롬프트 블록을 `references/prompt-templates.md`에서 가져와 빈칸(`{{...}}`)을 채운다.
+3. 1순위 스킬이 없을 때만 해당 단계의 프롬프트 블록을 `references/prompt-templates.md`에서 가져와 빈칸(`{{...}}`)을 채운다
+   (superpowers 설치 시 4)~8) 블록은 대체용이다).
 4. 하드 게이트를 확인한다. 못 넘으면 그 단계에 머문다.
 5. 산출물을 파일로 남긴다 (대화에만 두지 않는다).
 6. 다음 단계로. 완료 상태는 `DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT` 중 하나로 명시한다.
@@ -105,7 +113,7 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 
 ## 참조 파일
 
-- `references/prompt-templates.md` — 단계별 XML 구조 복붙 프롬프트 블록. 각 단계 진입 시 읽는다.
+- `references/prompt-templates.md` — 단계별 XML 구조 복붙 프롬프트 블록. 1순위 스킬이 없을 때 읽는다 (superpowers 설치 시 4)~8)은 대체용).
 - `references/skill-routing.md` — 단계별 스킬 라우팅 표 + ponytail 배선 + 충돌 우선순위. 각 단계 진입 시 해당 행을 읽는다.
 - `references/model-routing.md` — 작업 클래스(판단 집약/패턴 반복/기계적/검증/리뷰) → 모델 등급(opus/sonnet/haiku) 표 + 승급 규칙. PLAN과 서브에이전트 위임 전에 읽는다.
 - `references/anti-patterns.md` — AI slop/거짓 진척 체크리스트 · anti-sycophancy · 리뷰 루브릭. REVIEW와 프론트 작업 시 읽는다.
