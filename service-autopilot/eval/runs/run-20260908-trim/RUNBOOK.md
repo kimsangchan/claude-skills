@@ -6,6 +6,13 @@
 판정: Opus judge 2회(원순서+스왑), `fresh-reviewer` 타입. 불일치 차원은 tie.
 예산: 생성 약 30% + GATE 약 15% + 판정 2회 약 40% = 5시간 창의 약 85%. 한삼국 세션이 쉬는 시간에 돌린다.
 
+## 변형: 주간 한도 소진 모드 (사용자가 `/limit-reset`을 쓴 경우)
+
+목적이 "주간 리셋(15:05) 전에 이번 주 몫을 최대한 쓰기"이면 S4와 S8 생성을 **동시에** 띄운다
+(`GEN-PROMPT.md`, `GEN-PROMPT-S8.md`, 각각 general-purpose · model fable). 두 생성 ≈ 창의 60%.
+S4 생성이 끝나는 대로 S4 판정 2회를 이어서 띄우고, S8 판정은 창 여유를 보고(없으면 다음 창에서) 돌린다.
+S8 비교 대상 `s8-a.md`는 0907 S8 산출물(1.3.0). 병합은 `python assemble.py S4 S8`, 블라인드화·집계는 `S4 S8` 인자.
+
 ## 절차 (메인 세션이 수행)
 
 1. **생성 b** — Agent 도구, `subagent_type: general-purpose`, `model: fable`(0907 b와 같은 생성 모델), 프롬프트는 `GEN-PROMPT.md` 전문.
