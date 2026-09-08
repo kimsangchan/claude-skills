@@ -11,6 +11,8 @@
   C4 03 "미결정" 절이 비었는지 + 03~07의 미정·TBD·추후 표기 (S8: "미결정 0건"인데 전화 수신자 미정)
   C5 02 register 축 행마다 Clear/Assumed/Asked 마킹, Asked ≤ 5 (규칙 3·4)
   C6 버전 헤더: 03에 `버전: vX`가 있고 04~07이 그 버전을 `기준 03 vX`로 참조 (S4: 03 v1.1이 04~07에 미전파)
+  C7 03 상수 표에서 근거가 '미확인'인 상수가 성공 기준(SC) 절에 쓰임 (한삼국: 인물 120명 목표 vs 사료 실측 16명)
+  C8 문서 머리의 `개정 노트 R# 적용 대기` 배지 — 상류 개정이 아직 전파되지 않은 문서
 """
 import re
 import sys
@@ -33,8 +35,14 @@ def expand_ranges(text: str, prefix: str) -> set:
 
 
 def section(text: str, heading_kw: str) -> str:
-    m = re.search(rf"(?m)^#+[^\n]*{heading_kw}[^\n]*\n(.*?)(?=^#+ |\Z)", text, re.S)
-    return m.group(1) if m else ""
+    """제목 키워드가 든 절의 본문. 같은 레벨 이하의 다음 제목에서 끝난다 (하위 제목 ###은 절 안에 포함)."""
+    m = re.search(rf"(?m)^(#+)[^\n]*{heading_kw}[^\n]*\n", text)
+    if not m:
+        return ""
+    level = len(m.group(1))
+    rest = text[m.end():]
+    end = re.search(rf"(?m)^#{{1,{level}}} ", rest)
+    return rest[:end.start()] if end else rest
 
 
 def main(d: Path):
@@ -86,7 +94,7 @@ def main(d: Path):
     unmarked = [l.strip()[:50] for l in rows if not re.search(r"\b(Clear|Assumed|Asked)\b", l)]
     if unmarked:
         high.append(f"C5 마킹 없는 축 {len(unmarked)}건: " + " / ".join(unmarked[:5]))
-    asked = len(re.findall(r"\bQ\d\b", section(reg, "질문 배치") or ""))
+    asked = len(re.findall(r"(?m)^#+\s*Q\d\b", section(reg, "질문 배치") or ""))  # 제목만 센다(본문의 Q1·Q2 언급 제외)
     if asked > 5:
         crit.append(f"C5 질문 {asked}문항 — 상한 5")
     info.append(f"C5 축 행 {len(rows)}, 마킹 {len(rows) - len(unmarked)}, 질문 {asked}")
@@ -100,6 +108,21 @@ def main(d: Path):
             head = (docs[f] or "")[:600]
             if not re.search(rf"03\s*v?{re.escape(v03.group(1))}\b", head):
                 high.append(f"C6 {f}.md 머리가 `기준 03 v{v03.group(1)}`을 참조하지 않음 — 상류 개정 미전파 의심")
+
+    # C7 미확인 근거 상수 → SC 사용
+    const_sec = section(prd, "상수 표")
+    unverified = [m.group(1) for m in re.finditer(r"^\|\s*([A-Z][A-Z0-9_ /]+?)\s*\|[^\n]*\|[^\n]*\|[^\n]*미확인[^\n]*\|\s*$", const_sec, re.M)]
+    names = [n.strip() for grp in unverified for n in grp.split("/")]
+    sc_sec = section(prd, "성공 기준")
+    used = sorted(n for n in names if n and re.search(rf"\b{re.escape(n)}\b", sc_sec))
+    if used:
+        crit.append(f"C7 근거 '미확인' 상수가 성공 기준에 쓰임 {len(used)}건: {', '.join(used)} — 실측·출처를 붙이거나 SC에서 빼라")
+    info.append(f"C7 상수 {len(names)}개 근거 미확인" if names else "C7 근거 미확인 상수 없음")
+
+    # C8 개정 노트 배지
+    for f, t in docs.items():
+        if t and re.search(r"개정 노트 R\d+[^\n]*적용 대기", t[:800]):
+            high.append(f"C8 {f}.md 머리에 개정 노트 적용 대기 배지 — 전파 후 배지를 지워라")
 
     print(f"# check_package — {d}")
     for label, items in (("CRITICAL", crit), ("HIGH", high), ("INFO", info)):

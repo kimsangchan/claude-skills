@@ -50,7 +50,7 @@ design-taste가 인테리어 품질 기준을 잡는다.** 각 공정마다 어�
 - **단계별 모델 라우팅** (`references/model-routing.md`): 메인 세션 모델은 못 바꾸므로 서브에이전트 `model`로 고른다 —
   A1 조사는 `sonnet`, A4 독립 검토·GATE 검토관은 `opus`(생성 모델 이상), 판단 단계(A2~A5)는 위임하지 않는다.
   08 핸드오프에 구현 작업 클래스별 `<model_hints>`를 붙인다.
-- **강도 lite/full**: A0에서 신호(돈·안전·법·민감정보, 외부 연동 2개↑, 사용자 100명↑, 하드웨어, 팀 2명↑, "납품")로 판정.
+- **강도 spike/lite/full**: 플랫폼·범위·핵심 루프가 미확정이면 spike(엔진+시뮬 워킹 스켈레톤 먼저, 10만 토큰). 아니면 A0에서 신호(돈·안전·법·민감정보, 외부 연동 2개↑, 사용자 100명↑, 하드웨어, 팀 2명↑, "납품")로 lite/full 판정.
   lite는 질문 0·검색 ≤5·위협모델 조건부·GATE 자기 점검, 목표 8만 토큰. full은 상한 60만. `/service-autopilot lite …`로 강제 가능.
 - **자기 선언 검증**: GATE 전에 `python scripts/check_package.py autopilot/<slug>` — FR→05 커버리지, SC→06 시나리오, 미결정, register 마킹,
   버전 전파를 스크립트가 센다. CRITICAL이면 GATE 진입 금지.
