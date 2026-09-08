@@ -51,6 +51,9 @@ Anthropic 가격 페이지(`claude-api` 스킬 `shared/live-sources.md`의 Prici
 4. 검토·판정 서브에이전트(A4 독립 검토·GATE·eval judge·REVIEW 정확성 리뷰)는 `subagent_type: fresh-reviewer`로 띄운다
    (`~/.claude/agents/fresh-reviewer.md`, 원본은 스킬 저장소 `_tools/agents/`). 결과 파일은 메인이 쓴다. ponytail 페르소나는
    구현 서브에이전트에만 주입된다 (`~/.claude/settings.json`의 env `PONYTAIL_SUBAGENT_MATCHER`).
+5. **effort.** 판단·검토·문서 생성은 `high` — 세션이 xhigh여도 긴 산출물은 high가 낫다(xhigh는 초안을 thinking에서 한 번 더 써 출력 2배).
+   조사·초안 위임(sonnet)은 `medium`, 기계적 작업(haiku)은 `low`. Agent 도구 호출로는 effort를 못 바꾸므로 에이전트 정의 파일의
+   `effort:`로 준다(fresh-reviewer = high). 서브에이전트 컨텍스트 상한은 20만 토큰(2026-09-09 실측) — 긴 조사는 결과를 파일로 받는다.
 4. 프롬프트 캐시는 모델 단위로 분리된다. 등급을 자주 바꾸면 캐시를 버린다 — 등급이 바뀌는 지점은
    위 표의 세 곳(A1 조사, A4 검토, GATE)뿐이며 단계마다 바꾸지 않는다.
 5. "가장 싼 모델"이 아니라 **완료된 작업당 비용**으로 판단한다. 재작업이 생기면 싼 게 아니다.

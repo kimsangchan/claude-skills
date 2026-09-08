@@ -24,7 +24,7 @@ TRACES = [
     (r"^<!--.*?-->\s*$", ""),  # 병합 시 넣은 파일명 구분자
     (r"^#+\s*\d\d-[a-z-]+\.md.*$", ""),
     (r"^#+\s*(A[0-7]|GATE)\b[^\n]*", "## "),
-    (r"\b(service-autopilot|service-prompt-workflow|skill-routing\.md|stage-templates\.md|blindspot-checklists\.md|decision-log\.md)\b", "(문서)"),
+    (r"(?<![A-Za-z0-9-])(service-autopilot|service-prompt-workflow|skill-routing(\.md)?|stage-templates(\.md)?|blindspot-checklists(\.md)?|decision-log(\.md)?|autopilot)(?![A-Za-z0-9-])", "(문서)"),
     (r"\b(ecc|ponytail):[a-z0-9-]+", "(참고자료)"),
     (r"autopilot/[A-Za-z0-9_-]+/", ""),
     (r"Skill 도구", "참고자료"),
@@ -33,6 +33,7 @@ TRACES = [
     (r"skill-routing|스킬 사용 기록", "참고자료 사용 기록"),
     (r"스킬", "참고자료"),
     (r"\bGATE\b", "최종 검토"),
+    (r"fresh-reviewer", "독립 검토관"),
     (r"^.*강도\s*[:：]\s*\**(lite|full).*$", ""),      # v1.3 강도 표기 (굵게 표시 포함)
     (r"\s*·?\s*`?기준 03 v[\d.]*`?", ""),               # v1.3 버전 참조 (숫자 없는 언급 포함)
     (r"check_package(\.py)?", "(검증 스크립트)"),

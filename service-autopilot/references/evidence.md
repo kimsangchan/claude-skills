@@ -94,7 +94,9 @@
   실행 절차 1~3의 파이프라인 표 중복, prompt-workflow ETHOS 1·2·3·5·7·9·10, FRAME 템플릿의 "YOU MUST 표기" 지시.
 - 남긴 것: 택소노미, 라우팅·모델 표, 질문 프로토콜, check_package, 형식 계약(ID·버전 줄·상수 표 열), GATE fresh-context 검토, 예산·재개.
 - 훅: ponytail 서브에이전트 주입을 구현 타입으로 한정(`PONYTAIL_SUBAGENT_MATCHER`), 검토·판정은 `fresh-reviewer` 타입. 죽은 suggest-compact 훅 제거.
-- 미완: 각본 뺀 버전의 A/B (S4, 판정 2회). 예산 확인 후 실행.
+- A/B: `eval/runs/run-20260908-trim/RESULT.md` (S4 각본 뺀 1.4.1 vs 1.3.0, Opus 판정 2회).
+- 2026-09-09 추가 반영(Anthropic Fable 5.1 가이드): SKILL·fresh-reviewer `effort: high`(긴 산출물은 xhigh보다 high), model-routing effort 규칙,
+  GATE 검토관에 "수량 주장은 확인한 것만". 실측 사실: 서브에이전트 컨텍스트 상한 20만 토큰(재개 시 58만 토큰 대화가 압축됨), 한도 리셋 명령은 이 계정에서 대상 아님.
 
 ## 이 파일의 용도
 
