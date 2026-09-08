@@ -19,7 +19,7 @@ A0~A7 + GATE                 0 BASE ~ 9 REFLECT               BUILD·REVIEW에�
       │                            │
       └── 각 단계 진입 시 references/skill-routing.md 의 행을 읽어 설치된 전문 스킬(ecc:* 등)을 호출
       └── 서브에이전트에 맡기는 단계·작업은 references/model-routing.md 로 모델 등급(opus/sonnet/haiku/fable)을 고름
-      └── 강도 lite/full: A0에서 신호(돈·안전·법·연동·규모)로 판정, lite는 8만 토큰 상한
+      └── 강도 spike/lite/full: 미확정이면 spike(엔진+시뮬 먼저), 아니면 A0 신호로 판정. 실측 lite 20만·full 70만 토큰(상한 25만·80만)
                                    └── PLAN 이후는 superpowers(writing-plans → TDD → verification → code-review)로 넘김
                                    └── BUILD·REVIEW 는 ponytail 결정 사다리(있으면 플러그인, 없으면 내장) 적용
 
@@ -51,7 +51,7 @@ design-taste가 인테리어 품질 기준을 잡는다.** 각 공정마다 어�
   A1 조사는 `sonnet`, A4 독립 검토·GATE 검토관은 `opus`(생성 모델 이상), 판단 단계(A2~A5)는 위임하지 않는다.
   08 핸드오프에 구현 작업 클래스별 `<model_hints>`를 붙인다.
 - **강도 spike/lite/full**: 플랫폼·범위·핵심 루프가 미확정이면 spike(엔진+시뮬 워킹 스켈레톤 먼저, 10만 토큰). 아니면 A0에서 신호(돈·안전·법·민감정보, 외부 연동 2개↑, 사용자 100명↑, 하드웨어, 팀 2명↑, "납품")로 lite/full 판정.
-  lite는 질문 0·검색 ≤5·위협모델 조건부·GATE 자기 점검, 목표 8만 토큰. full은 상한 60만. `/service-autopilot lite …`로 강제 가능.
+  lite는 질문 0·검색 ≤5·위협모델 조건부·GATE 자기 점검(실측 20만, 상한 25만). full은 상한 80만(서브에이전트 포함). `/service-autopilot spike|lite|full …`로 강제 가능.
 - **자기 선언 검증**: GATE 전에 `python scripts/check_package.py autopilot/<slug>` — FR→05 커버리지, SC→06 시나리오, 미결정, register 마킹,
   버전 전파를 스크립트가 센다. CRITICAL이면 GATE 진입 금지.
 - **개정 전파·상수 표**: 산출물마다 `버전:`, 04~07은 `기준 03 v`. 숫자는 03 상수 표에만.
