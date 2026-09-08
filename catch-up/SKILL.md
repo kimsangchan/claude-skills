@@ -65,7 +65,7 @@ metadata:
 - `CLAUDE.md` ← `templates/CLAUDE.md.tmpl` (행동규칙 + 상단 `@AGENTS.md`)
 - `AGENTS.md` ← `templates/AGENTS.md.tmpl` (프로젝트명·스택·네비 포인터·Session start 지시·NEXT 포인터 채움 + 기존 상세 이관)
 - `NEXT.md` ← `templates/NEXT.md.tmpl` (마커만). 기존 NEXT가 있으면 **진행중 1~3건만** 남기고 완료분은 WORKLOG History로.
-- `WORKLOG.md` ← `templates/WORKLOG.md.tmpl` (Current State + History)
+- `WORKLOG.md` ← `templates/WORKLOG.md.tmpl` (Current State + History). 기존 히스토리를 옮길 때도 결정·제약·버린 대안·미결·정확한 이름과 숫자는 줄이지 않는다.
 - 훅 `tools/hooks/print_next_action.py` ← `templates/print_next_action.py` (그대로 복사, 경로 자동탐색)
 - `.claude/settings.json` ← SessionStart 배열에 훅 **병합**(command에 `print_next_action.py` 있으면 skip=재추가 안 함)
 - 스코프별 `<scope>/CLAUDE.md` ← `templates/scope-CLAUDE.md.tmpl`

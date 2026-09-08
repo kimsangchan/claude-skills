@@ -44,6 +44,13 @@ Anthropic 번들 `claude-api` 스킬의 prompt-audit 기준("모델이 이미 �
 + 구조화(XML/구분자), 역할/페르소나, 예시(few-shot), 사고 유도(CoT), 근거+독립 리뷰는
 프롬프트 작성 기법으로 각 단계 템플릿에 반영.
 
+## Anthropic Fable 5.1 공식 지침 반영 (2026-09-09)
+
+출처: Claude Code 번들 `claude-api` 스킬 `shared/model-migration.md` "Migrating to Claude Fable 5.1" 두 절.
+- 반영: BUILD 템플릿에 scope/test-coverage 지침(요청 밖 수정·테스트 증식 억제). catch-up WORKLOG에 압축 요약 보존 항목.
+- 반영 안 함(하네스가 이미 적용): 진행 상황 알림, 독립 도구 호출 묶음, 승인 작업 끝까지(autonomy), 대화 기록 추가 전용 — Claude Code 시스템 프롬프트가 같은 문장을 넣는다. 스킬에 다시 쓰면 중복.
+- 보류(autopilot 실행 중이라 나중에): 긴 산출물은 effort high(`effort:` 프론트매터), 검토관·서브에이전트 effort 표, 진척 주장은 도구 결과로 대조.
+
 ## 주의(변동 사항)
 
 - Anthropic의 고전 "프리필(assistant 턴 미리 채우기)" 기법은 **Claude 4.6+에서 미지원**.
