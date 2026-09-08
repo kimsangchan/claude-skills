@@ -13,8 +13,8 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 disable-model-invocation: true
 argument-hint: "[--tools antigravity,cursor]"
 metadata:
-  version: "1.0.1"
-  updated: "2026-09-03"
+  version: "1.0.2"
+  updated: "2026-09-08"
 ---
 
 # Catch-Up (세션 이어받기 부트스트랩)
@@ -22,16 +22,16 @@ metadata:
 새 세션이나 다른 AI 툴이 "이전에 뭘 하고 있었는지"를 매번 다시 설명하지 않고 바로 파악하게 한다.
 핵심은 **항상 읽히는 층은 얇게, 상세는 필요할 때만**(Progressive Disclosure).
 
-## 절대 규칙 (먼저 읽어라)
+## 규칙
 
-1. **비파괴.** 기존 파일을 바꾸기 전 반드시 diff/제안을 보여주고 **승인**받는다. 승인 없이 쓰지 않는다.
+1. **비파괴.** 기존 파일을 바꾸기 전 diff/제안을 보여주고 **승인**받는다. 승인 없이 쓰지 않는다.
 2. **clean 트리에서만.** 작업 트리가 dirty면 `git stash` 또는 전용 브랜치를 먼저 요구한다. 롤백은
-   blind `reset --hard` 금지 — **스킬이 만든 커밋만 `git revert`**.
+   **스킬이 만든 커밋만 `git revert`** — `reset --hard`는 사용자 작업까지 지운다.
 3. **단일 출처.** "다음 할 일"은 `NEXT.md` 마커 블록에만. 히스토리는 `WORKLOG.md`에만.
    두 곳에 히스토리를 쌓지 않는다(파일 비대의 근본 원인).
 4. **항상-로드 얇게.** CLAUDE.md ≤ ~4KB, AGENTS.md ≤ ~4KB, 합 ≤ ~8KB 목표. 상세는 스코프/계획
    파일로 내려 온디맨드로 만든다.
-5. **시크릿 금지.** `.env`/키 파일의 **내용**을 컨텍스트 파일에 넣지 않는다(경로 포인터만).
+5. **시크릿은 경로만.** `.env`/키 파일의 **내용**은 컨텍스트 파일에 넣지 않는다.
 
 ## 산출 구조 (목표)
 

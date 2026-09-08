@@ -30,14 +30,14 @@ Anthropic 가격 페이지(`claude-api` 스킬 `shared/live-sources.md`의 Prici
 | 단계 | 실행 위치 | 모델 | 왜 |
 |---|---|---|---|
 | A0 SEED | 메인 | 세션 | 10줄 정규화에 서브에이전트 왕복이 더 비싸다 |
-| A1 RECON (조사) | 서브에이전트 1명 | `sonnet` | 검색 10~15회 + 긴 원문 읽기 = 토큰 대량, 요구되는 판단은 "출처가 있나·교차 확인됐나"뿐. 메인 컨텍스트를 아낀다(조사는 위임 — prompt-workflow ETHOS 9). 결과는 `01-recon.md` 초안으로 받고 메인이 fit 판정을 덧붙인다 |
+| A1 RECON (조사) | 서브에이전트 1명 | `sonnet` | 검색 10~15회 + 긴 원문 읽기 = 토큰 대량, 요구되는 판단은 "출처가 있나·교차 확인됐나"뿐. 메인 컨텍스트를 아낀다. 결과는 `01-recon.md` 초안으로 받고 메인이 fit 판정을 덧붙인다 |
 | A1 스택 후보 fit | 메인 | 세션 | 사용자 제약(팀·환경·규모·예산) 매칭은 판단 |
 | A2 INTERROGATE | 메인 | 세션 | 질문 5개 선정(Impact×Uncertainty)이 파이프라인에서 가장 비싼 결정. 낮추지 않는다 |
 | A3 PRD · A4 ARCHITECT · A5 CONTRACT | 메인 | 세션 | 문서 간 ID·용어·정책 숫자 정합이 생명. 위임하면 드리프트가 생기고 GATE HIGH의 다수가 그 드리프트다 |
 | A3~A7 진입 사전조사 (검색 ≤3회) | 메인 (기본) | 세션 | 3줄이면 왕복 비용이 더 크다. 검색이 3회를 넘게 생기면 그 조사만 `sonnet`에 위임 |
 | A4 독립 검토자 (`ecc:architect`) | 서브에이전트 | 세션 등급 이상 (`fable` 세션이면 `fable`, `opus` 세션이면 `opus`) | 독립 판단은 생성 모델보다 낮은 등급이 잡지 못한다 |
 | A6 TEST-DESIGN · A7 OPS-DESIGN | 메인 (기본) | 세션 | 템플릿 충실도가 높은 단계. **컨텍스트가 60%를 넘었으면** 03~05를 입력으로 주고 `sonnet` 서브에이전트에 초안을 맡기고, 메인이 ID·slug·정책 숫자 정합만 검사한다 |
-| GATE 검토관 | 서브에이전트 (fresh context) | 세션 등급 이상 (`fable` 세션이면 `fable`) | "문제를 반드시 찾는" 정밀 교차 검토. 생성 모델과 등급이 같거나 높아야 한다. `haiku`·`sonnet` 금지 |
+| GATE 검토관 | 서브에이전트 (fresh context, `fresh-reviewer` 타입) | 세션 등급 이상 (`fable` 세션이면 `fable`) | 정밀 교차 검토. 생성 모델보다 낮은 등급은 생성 모델의 맹점을 잡지 못하므로 등급이 같거나 높아야 한다 |
 | GATE 2차 (`ecc:santa-method`, 돈·안전·법) | 서브에이전트 2명 | 세션 등급 + `opus` (opus 세션이면 `opus` + `sonnet`) | 독립성 — 모델을 달리해 같은 맹점을 공유하지 않게. 둘 다 생성 모델보다 두 등급 아래로 내려가지 않는다 |
 | eval judge (`eval/PROTOCOL.md`) | 다른 계열 모델 | — | self-preference 방어. PROTOCOL.md 규칙 그대로 |
 
@@ -45,9 +45,12 @@ Anthropic 가격 페이지(`claude-api` 스킬 `shared/live-sources.md`의 Prici
 
 1. 위임할 때 Agent 도구에 `model`을 **명시**한다. 생략하면 세션 모델을 상속한다 — 그것도 기록한다.
 2. decision-log의 스킬 사용 기록 줄에 모델을 병기한다:
-   `[A1] ecc:research-ops (sonnet 서브에이전트) — …` · `[GATE] general-purpose (opus, fresh) — …`
+   `[A1] ecc:research-ops (sonnet 서브에이전트) — …` · `[GATE] fresh-reviewer (opus, fresh) — …`
 3. 세션 모델이 표의 등급보다 **낮으면**(예: `sonnet` 세션) 판단 단계 A2·A4 검토·GATE만 `opus`로 위임한다.
    세션 모델이 더 높으면(예: 최상위 모델) 표대로 — 검토관은 세션 모델을 상속시킨다.
+4. 검토·판정 서브에이전트(A4 독립 검토·GATE·eval judge·REVIEW 정확성 리뷰)는 `subagent_type: fresh-reviewer`로 띄운다
+   (`~/.claude/agents/fresh-reviewer.md`, 원본은 스킬 저장소 `_tools/agents/`). 결과 파일은 메인이 쓴다. ponytail 페르소나는
+   구현 서브에이전트에만 주입된다 (`~/.claude/settings.json`의 env `PONYTAIL_SUBAGENT_MATCHER`).
 4. 프롬프트 캐시는 모델 단위로 분리된다. 등급을 자주 바꾸면 캐시를 버린다 — 등급이 바뀌는 지점은
    위 표의 세 곳(A1 조사, A4 검토, GATE)뿐이며 단계마다 바꾸지 않는다.
 5. "가장 싼 모델"이 아니라 **완료된 작업당 비용**으로 판단한다. 재작업이 생기면 싼 게 아니다.

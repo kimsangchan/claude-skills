@@ -10,8 +10,8 @@ description: |
   ponytail·프론트 배선만 맡는다. 사용자가 이름을 부를 필요는 없다 — "구현해·리뷰해줘·커밋해" 문장에 자동으로 뜬다.
 argument-hint: "[요청 한 문장 또는 단계명]"
 metadata:
-  version: "0.4.0"
-  updated: "2026-09-07"
+  version: "0.4.1"
+  updated: "2026-09-08"
 ---
 
 # Service Prompt Workflow (서비스 프롬프트 워크플로우)
@@ -41,21 +41,15 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
   brainstorming을 건너뛴다 — 핸드오프 프롬프트를 붙여 넣은 것이 설계 승인이다.
 - (구) solution-planner는 deprecated. 그 blueprint(05/06/07)를 입력으로 쓴 기존 문서도 여전히 유효하다.
 
-## 절대 규칙 (ETHOS — 모든 단계에 주입)
+## 규칙 (ETHOS)
 
-출처가 여럿에서 수렴하는 원칙만 규칙으로 승격한다. 근거는 `references/evidence.md`.
+이 스킬만 아는 것 세 가지다. TDD·작은 증분·탐색 후 구현·단순함 같은 실행 원칙은 superpowers와 ponytail이
+실행 시점에 주입하므로 여기 다시 쓰지 않는다. 출처는 `references/evidence.md`.
 
-1. **명시적으로 지시한다.** 원하는 출력·형식·제약을 구체적으로 쓴다. "알아서 잘"은 금지.
-   에이전트는 "똑똑하지만 우리 관례를 모르는 신입"이다 — 맥락이 없으면 헤맨다. *(Anthropic·OpenAI)*
-2. **이유(why)를 준다.** 규칙엔 근거를 붙인다. 이유를 알면 에이전트가 일반화한다. *(Anthropic)*
-3. **탐색·계획과 구현을 분리한다.** 사소한 한 줄 수정이 아니면 코드부터 짜지 않는다. 먼저 읽고, 계획하고, 명세한 뒤 구현한다. *(Claude Code explore→plan→code, spec-kit, Harper Reed)*
-4. **명세와 계획을 파일로 남긴다.** SPEC.md → tasks.md는 진실원(source of truth)이다. 구현은 깨끗한 새 컨텍스트에서 명세를 보고 시작한다. *(spec-kit, gstack /spec)*
-5. **작게 쪼개 각 단계를 개별 검증한다.** 큰 덩어리 한 번에 금지. 작은 증분 + 검증. *(spec-kit /implement, prompt chaining)*
-6. **루프를 닫는다.** 에이전트에게 스스로 검증할 수단(테스트·빌드·린트·스크린샷)을 준다. "된 것 같다"가 아니라 **증거**(실행 결과)를 요구한다. 오류는 억누르지 말고 근본 원인을 고친다. *(Claude Code)*
-7. **테스트 우선.** 실패하는 테스트/수용 기준을 먼저 쓰고 통과시킨다. *(Claude Code, spec-kit Article III)*
-8. **사용자 주권.** AI는 추천하고 사용자가 결정한다. 두 모델이 동의해도 "신호일 뿐 증명이 아니다." 방향 전환은 반드시 묻는다 — **한 번에 하나씩**. *(gstack User Sovereignty)*
-9. **컨텍스트 위생.** 무관한 작업 사이엔 `/clear`. 같은 지시를 2번 고쳐도 안 되면 세션을 비우고 프롬프트를 다시 쓴다. 조사·리뷰는 서브에이전트에 위임해 메인 컨텍스트를 아낀다. *(Claude Code, Context engineering)*
-10. **단순함 우선.** 가장 단순한 해법부터. 복잡도는 효과가 증명될 때만 추가한다. BUILD에서는 ponytail 결정 사다리(필요한가→이미 있나→표준 라이브러리→네이티브→설치된 의존성→한 줄→최소 코드)로 강제한다. *(Building effective agents, spec-kit anti-abstraction, ponytail)*
+1. **사용자 주권.** AI는 추천하고 사용자가 결정한다. 범위·방향 변경은 묻되 한 번에 하나씩. 범위 안의 구현 결정은
+   기본값으로 진행하고 같은 응답에서 알린다. service-autopilot 안에서는 그 스킬의 배치 질문 규칙을 따른다. *(gstack User Sovereignty)*
+2. **명세와 계획은 파일이 진실원이다.** SPEC.md → tasks.md. 구현은 새 컨텍스트에서 그 파일을 보고 시작한다. *(spec-kit, gstack)*
+3. **완료는 증거로 선언한다.** 실행 결과(테스트·빌드·린트·스크린샷)를 붙인다. 오류는 억누르지 않고 근본 원인을 고친다. *(Claude Code)*
 
 ## 파이프라인 (9단계)
 
@@ -66,7 +60,7 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 |---|---|---|---|---|
 | 0 | **BASE** | 저장소 상시 지침 | CLAUDE.md/AGENTS.md 존재·최신 | 저장소 지침 파일 |
 | 1 | **FRAME** | 무엇을·왜 | 사용자·문제·성공기준·범위경계 확정 (모르면 solution-planner) | frame 메모 |
-| 2 | **EXPLORE** | 코드·패턴 먼저 읽기 | 관련 파일 최소 1곳을 실제로 읽고 인용 (plan mode, 수정 금지) | 탐색 노트(file:line) |
+| 2 | **EXPLORE** | 코드·패턴 먼저 읽기 | 관련 파일 최소 1곳을 실제로 읽고 인용 (plan mode, 읽기만) | 탐색 노트(file:line) |
 | 3 | **SPEC** | 자기완결 명세 | "낯선 구현자가 실행 가능" 점수 ≥ 7/10, 모호성 0 | `SPEC.md` |
 | 4 | **PLAN** | 순서 있는 작업 | 각 작업에 검증 가능한 완료기준 + 테스트 우선 표기 | `tasks.md` |
 | 5 | **BUILD** | 구현 | 작은 증분마다 테스트 통과 · 기존 패턴 모방 | 코드 + 테스트 |
@@ -86,7 +80,7 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 - "작업 쪼개줘", "할 일 목록" → **4 PLAN**
 - "구현해", "이 스펙대로 만들어" → **5 BUILD**
 - "이거 진짜 되는지 확인", "테스트 돌려" → **6 VERIFY**
-- "버그야", "테스트가 깨져", "왜 안 되지" → **6 VERIFY의 디버깅 분기** (`superpowers:systematic-debugging`, 증상 패치 금지)
+- "버그야", "테스트가 깨져", "왜 안 되지" → **6 VERIFY의 디버깅 분기** (`superpowers:systematic-debugging`, 근본 원인 수정)
 - "리뷰해줘", "버그 없나 봐줘" → **7 REVIEW**
 - "커밋/PR 만들어" → **8 SHIP**
 - "회고", "뭘 배웠지", "CLAUDE.md 갱신" → **9 REFLECT**
@@ -109,7 +103,7 @@ SEED→RECON→INTERROGATE→PRD→ARCHITECT       Frame→Explore→Spec→Plan
 
 프론트엔드가 포함된 단계(SPEC·BUILD·REVIEW)는 두 가지를 함께 적용한다:
 - **적극적 지침** — `frontend-design-taste` 스킬(있으면)의 dial·프로파일·하드룰·토큰으로 "이렇게 만들라".
-- **소극적 금지** — `references/anti-patterns.md`의 slop 체크리스트를 리뷰 루브릭으로.
+- **피할 것** — `references/anti-patterns.md`의 slop 체크리스트를 리뷰 루브릭으로.
 
 ## 참조 파일
 

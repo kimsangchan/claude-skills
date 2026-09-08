@@ -72,8 +72,8 @@ superpowers는 SessionStart 훅으로 `superpowers:using-superpowers`를 매 세
   사소한 한 줄은 테스트 없음 (양쪽 동의).
 - **리뷰 횟수**: ecc 언어별 리뷰어의 "MUST BE USED" + `/code-review` + `ponytail:ponytail-review` = 변경당 3회.
   → 정확성 1회 (`/code-review` 또는 언어별 리뷰어 중 하나) + 복잡도 1회 (`ponytail:ponytail-review`). santa-method는 고위험만.
-- **질문 방식**: ponytail "기본값으로 진행하고 같은 응답에서 묻는다" vs ETHOS 8 "방향 전환은 한 번에 하나".
-  → 범위 안의 구현 결정은 ponytail 방식, **범위·방향 변경은 ETHOS 8**.
+- **질문 방식**: ponytail "기본값으로 진행하고 같은 응답에서 묻는다" vs ETHOS 1 "방향 전환은 한 번에 하나".
+  → 범위 안의 구현 결정은 ponytail 방식, **범위·방향 변경은 ETHOS 1**.
 - **서브에이전트 주입**: ponytail 훅은 모든 서브에이전트에 사다리를 넣는다. REVIEW·GATE 판정자가 "짧은 쪽 선호" 편향을
   가질 수 있다. 판정 프롬프트에 "길이는 품질이 아니다"가 있어야 한다 (autopilot `judge-prompt.md`에 있음).
   코딩 에이전트로 한정하려면 `PONYTAIL_SUBAGENT_MATCHER` 환경변수.

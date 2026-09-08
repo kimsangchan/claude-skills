@@ -7,8 +7,8 @@ description: |
   AI스럽다"를 고칠 때 사용. 프로젝트별로 밀도·모션 "dial"을 정하고, 하드룰과 anti-slop을 강제한다.
   MengTo/Skills의 design-taste-frontend를 이식·일반화. service-prompt-workflow의 BUILD·REVIEW가 참조.
 metadata:
-  version: "0.1.1"
-  updated: "2026-09-03"
+  version: "0.2.0"
+  updated: "2026-09-08"
 ---
 
 # Frontend Design Taste (프론트엔드 디자인 취향)
@@ -43,47 +43,50 @@ metadata:
 
 > NEUROS/SiWeb 같은 관제 화면 = **관제/대시보드 프로파일**이 기본. 아래 "Cockpit 모드" 규칙이 걸린다.
 
-## 3. 하드룰 (위반 시 반려)
+## 3. 하드룰
+
+각 줄은 이유가 있다. 이유가 사라지면 룰도 지운다.
 
 ### 레이아웃
-- `h-screen` 금지 → `min-h-[100dvh]`.
-- flex 퍼센트 계산 금지 → **CSS Grid** (`grid grid-cols-1 md:grid-cols-3 gap-6`).
-- 폭 컨테이너로 잡기 (`max-w-7xl mx-auto`). 반응형·모바일 접힘 보장.
+- 전체 높이는 `min-h-[100dvh]` — `h-screen`은 모바일 주소창 높이를 빼지 못해 잘린다.
+- 다열 레이아웃은 CSS Grid (`grid grid-cols-1 md:grid-cols-3 gap-6`) — flex 퍼센트 계산은 gap과 합쳐지면 줄바꿈이 깨진다.
+- 폭은 컨테이너로 잡는다 (`max-w-7xl mx-auto`). 모바일에서 접히는지 확인한다.
 
 ### 타이포그래피
-- **대시보드/소프트웨어 UI에 세리프 금지.** 고급 산세리프 페어링 사용(`Geist`+`Geist Mono`, `Satoshi`+`JetBrains Mono` 등 — `references/tokens.md`).
-- **모든 숫자는 모노스페이스**(`font-mono`) — 정렬·판독성. 특히 관제.
-- 거대 H1·`Inter` 남발 금지.
+- 대시보드·소프트웨어 UI는 산세리프 페어링 (`Geist`+`Geist Mono`, `Satoshi`+`JetBrains Mono` 등 — `references/tokens.md`). 세리프는 데이터 화면에서 판독성이 떨어진다.
+- 숫자는 전부 `font-mono` — 자릿수가 정렬돼야 표와 지표를 읽을 수 있다. 관제에서 특히.
+- H1은 화면 역할에 맞는 크기로, 폰트 하나에 기대지 않는다 (기본값 `Inter` 하나로 전체를 덮으면 템플릿 티가 난다).
 
 ### Cockpit 모드 (VISUAL_DENSITY ≥ 8)
-- 작은 패딩. **카드 박스 남발 금지** — `border-t`/`divide-y`/여백으로 논리 그룹화(z-index로 띄울 실제 이유가 있을 때만 카드).
-- 데이터는 촘촘히, 1px 선으로 구분. 지표는 박스에 가두지 말고 숨 쉬게.
+- 작은 패딩, 1px 선(`border-t`/`divide-y`)과 여백으로 논리 그룹화. 카드 박스는 z-index로 띄울 실제 이유가 있을 때만 — 박스가 겹치면 밀도가 죽는다.
+- 지표는 박스에 가두지 않고 촘촘히 배치한다.
 
 ### 색 & 테마
-- 순수 `#000000` 금지 → 근접 무채색(Zinc-950 계열).
-- 네온 글로우·과한 그라디언트 금지.
-- **테마 토큰을 쓴다.** 프로젝트에 CSS 변수 테마가 있으면 하드코드 색 대신 그 토큰(예: NEUROS는 `var(--color-*)` + `data-theme` 다크/라이트).
-- 상태색(정상/경고/위험/정보)은 `references/tokens.md`의 의미쌍을 사용.
+- 무채색은 Zinc-950 계열 — 순수 `#000000`은 대비가 과해 눈이 피로하다.
+- 글로우·그라디언트는 강조 한 곳에만.
+- 프로젝트에 CSS 변수 테마가 있으면 하드코드 색 대신 그 토큰을 쓴다 (예: NEUROS는 `var(--color-*)` + `data-theme` 다크/라이트).
+- 상태색(정상/경고/위험/정보)은 `references/tokens.md`의 의미쌍.
 
 ### 상태 관리 (Zustand/React)
-- 격리된 UI 상태는 로컬 `useState`/`useReducer`. **전역 상태는 깊은 prop-drilling 회피용으로만** — 아무 데나 전역 금지.
-- Pre-Flight: "전역 상태가 임의로 쓰였나, 아니면 prop-drilling 회피 목적인가?" 확인.
+- 격리된 UI 상태는 로컬 `useState`/`useReducer`. 전역 상태는 깊은 prop-drilling을 피할 때만 — 그 외의 전역은 렌더 범위를 넓혀 성능과 추적성을 해친다.
 
-### 의존성 & Tailwind 버전 [필수]
-- 라이브러리(`framer-motion`·`lucide-react`·`zustand` 등) import 전 **`package.json`에 실제 존재하는지 확인.** 있다고 가정 금지.
-- **Tailwind 버전 잠금**: `package.json` 먼저 확인. v3 프로젝트에 v4 문법 쓰지 말 것. v4면 `postcss.config.js`에 `tailwindcss` 플러그인 말고 `@tailwindcss/postcss`(또는 Vite 플러그인) 사용.
+### 의존성 & Tailwind 버전
+- 라이브러리(`framer-motion`·`lucide-react`·`zustand` 등)는 import 전에 `package.json`에 있는지 확인한다 — 없는 패키지를 가정한 import는 빌드가 깨진다.
+- Tailwind 버전은 `package.json`에서 먼저 확인한다. v3 프로젝트에 v4 문법은 동작하지 않고, v4는 `postcss.config.js`에 `@tailwindcss/postcss`(또는 Vite 플러그인)를 쓴다.
 
 ### 모션 & 성능
-- 애니메이션은 `transform`/`opacity`만. `top/left/width/height` 애니 금지.
+- 애니메이션은 `transform`/`opacity`만 — `top/left/width/height`는 매 프레임 리플로우를 일으킨다.
 - grain/noise는 `fixed … pointer-events-none` 레이어에만.
-- `z-50` 남발 금지. 스크롤 감지는 `IntersectionObserver`(스크롤 리스너 금지). `useEffect` 정리(cleanup) 필수.
+- z-index는 소수의 단계로 관리한다 (`z-50` 남발은 겹침 버그의 원인). 스크롤 감지는 `IntersectionObserver`. `useEffect`는 cleanup을 반환한다.
 
-## 4. Avoid — AI 티(slop) 금지 목록
+## 4. AI 티가 나는 것과 대신 쓸 것
 
-- 가짜 데이터 금지: "John Doe"/"Acme"/`99.99%` → 유기적 값(`47.2%`, `18 of 43`).
-- 필러 카피 금지: "Elevate/Seamless/Unleash", "직관적인", "간편한".
-- **동적 클래스명 금지**: `"text-" + color` (퍼지 시 사라짐) → **룩업맵**(`references/tokens.md`).
-- 상태 누락 금지: **빈 / 로딩 / 에러 / (실시간이면) stale** 상태를 모두 구현. 관제 데이터는 끊긴다.
+| AI 티 | 대신 |
+|---|---|
+| "John Doe" / "Acme" / `99.99%` 같은 가짜 데이터 | 도메인에 맞는 유기적 값 (`47.2%`, `18 of 43`) |
+| "Elevate/Seamless/Unleash", "직관적인", "간편한" 같은 필러 카피 | 구체적 동사와 대상 |
+| `"text-" + color` 동적 클래스명 (Tailwind 퍼지 시 사라진다) | 룩업맵 (`references/tokens.md`) |
+| 정상 상태만 있는 화면 | 빈 / 로딩 / 에러 / (실시간이면) stale 상태까지 구현 — 관제 데이터는 끊긴다 |
 
 > 정성 표현("토스처럼", "고급스럽게")이 요구사항에 있으면 **측정 가능 기준으로 변환**한 뒤 진행.
 

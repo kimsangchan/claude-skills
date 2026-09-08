@@ -26,7 +26,9 @@
 
 ## 13개 공통분모 원칙 → ETHOS 매핑
 
-수렴 출처가 3개 이상인 것만 절대 규칙으로. (SKILL.md의 규칙 번호와 대응)
+수렴 출처가 3개 이상인 것만 규칙으로 승격했다. 0.4.1(2026-09-08)부터 SKILL.md에는 8·4·6만 ETHOS 1·2·3으로 남는다.
+나머지는 Fable 5.1에서 학습된 기본값이거나(1·2·3·5·9) superpowers·ponytail이 실행 시점에 주입한다(7·10).
+Anthropic 번들 `claude-api` 스킬의 prompt-audit 기준("모델이 이미 아는 것은 지시가 아니라 비용")에 따라 뺐다. 아래 번호는 원래 번호다.
 
 1. 명시·구체 — Anthropic, OpenAI, Claude Code, Brex
 2. 이유(why) — Anthropic, OpenAI, Claude Code

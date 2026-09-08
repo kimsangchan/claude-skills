@@ -185,3 +185,10 @@ git clone https://github.com/kimsangchan/claude-skills "$env:USERPROFILE\.claude
 - **다른 PC에서** 세션 시작 전: `git pull`
 - 원칙: 원본은 GitHub 하나. 두 PC에서 동시에 같은 스킬을 고치지 않는다.
 - 스킬을 고치면 회귀 평가: autopilot은 `eval/PROTOCOL.md` 스모크(시드 3개), prompt-workflow는 `eval/` 대리 A/B.
+
+## 모델 세대 맞춤 (2026-09-08)
+
+Fable 5.1 기준으로 Anthropic prompt-audit(번들 `claude-api` 스킬)를 적용했다. 압력 어조·사건 서술·교육 문장·중복 절차를 뺐고,
+택소노미·라우팅·검사 스크립트·형식 계약·GATE는 그대로다. 검토·판정 서브에이전트는 `_tools/agents/fresh-reviewer.md`
+(`~/.claude/agents/`에 복사)로 띄우며, ponytail 페르소나는 구현 서브에이전트에만 주입된다(`~/.claude/settings.json` env
+`PONYTAIL_SUBAGENT_MATCHER`). 상세와 미완 A/B는 `service-autopilot/references/evidence.md`.

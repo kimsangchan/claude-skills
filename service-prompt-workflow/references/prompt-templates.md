@@ -23,7 +23,7 @@
 </include_only>
 <exclude>자명한 것, 일반 언어 상식, 장황한 배경 설명.</exclude>
 <test_each_line>"이 줄을 지우면 에이전트가 실수하는가?" 아니오면 삭제.</test_each_line>
-<format>짧고 사람이 읽기 좋게. 꼭 지켜야 할 항목은 "반드시/YOU MUST" 표기. git에 커밋.</format>
+<format>짧고 사람이 읽기 좋게. 꼭 지켜야 할 항목은 이유를 붙인 평서문으로. git에 커밋.</format>
 ```
 
 ---
@@ -33,7 +33,7 @@
 도메인을 알면 이 블록, 모르면 **service-autopilot을 먼저**.
 
 ```
-<role>제품을 함께 정의하는 냉정한 시니어 PM. 아첨 금지, 근거 없는 낙관 금지.</role>
+<role>제품을 함께 정의하는 냉정한 시니어 PM. 근거 있는 판단만 말한다.</role>
 <idea>{{한두 문장 아이디어}}</idea>
 <interview>
 아래를 한 번에 하나씩 물어 확정해라. 답을 못 채우면 업계 기본값으로 가정하고 "가정"이라 표시.
@@ -43,7 +43,7 @@
 4. 성공 기준: 무엇이 측정되면 성공인가(정성 표현은 측정 가능 지표로 변환)?
 5. 범위 경계: 이번에 만들 것 / 명시적으로 안 만들 것.
 </interview>
-<hard_gate>코드 금지. 산출은 frame 메모(위 5항목)뿐.</hard_gate>
+<hard_gate>산출은 frame 메모(위 5항목)뿐이다. 코드는 쓰지 않는다.</hard_gate>
 <output>frame 메모를 파일로 저장. 완료상태: DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT.</output>
 ```
 
@@ -56,7 +56,7 @@
 <task>{{목표}}를 구현하기 전에, 관련 코드와 기존 패턴을 먼저 조사만 해라.</task>
 <rules>
 - plan mode: 어떤 파일도 수정하지 마라.
-- 관련 파일을 실제로 읽고 `파일:줄` 로 인용해라(추측 금지).
+- 관련 파일을 실제로 읽고 `파일:줄` 로 인용해라.
 - 이 목표와 닮은 기존 구현을 최소 1곳 찾아 "이 패턴을 따르면 된다"를 지목해라.
 - 재사용할 유틸/컴포넌트/서비스, 건드리면 안 되는 영역, 함정을 목록화해라.
 </rules>
@@ -78,7 +78,7 @@
 ## 현재 상태(Current State) — 관련 코드 file:line 감사표
 ## 제안 변경(Proposed Change) — 무엇을 바꾸나
 ### 구현 세부(Implementation Details) — 파일·인터페이스·데이터 흐름을 이름까지 명시
-## 수용 기준(Acceptance Criteria) — pass/fail로 판정 가능하게(정성 표현 금지, "테스트 통과" 포함)
+## 수용 기준(Acceptance Criteria) — pass/fail로 판정 가능하게(정성 표현은 측정 기준으로 변환, "테스트 통과" 포함)
 ## 테스트 계획(Testing Plan) — 단위/통합/E2E 표 (+N건)
 ## 검증 방법(Verification) — 끝나면 무엇을 실행해 어떻게 "됐다"를 확인하나
 ## 롤백 계획(Rollback)
@@ -131,8 +131,8 @@ tasks.md 작성:
 </ladder>
 <how>
 - 테스트 우선: 실패 테스트 → 최소 구현 → 리팩터. 한 작업씩, 작은 증분으로.
-- 반드시 기존 패턴을 모방해라(참조: {{탐색 노트에서 지목한 file:line}}).
-- 라이브러리 import 전 package.json/의존성에 실제 존재하는지 확인. 없는 걸 가정하지 마라.
+- 기존 패턴을 따른다(참조: {{탐색 노트에서 지목한 file:line}}).
+- 라이브러리 import 전 package.json/의존성에 실제 존재하는지 확인한다.
 - 오류는 억누르지 말고 근본 원인을 고쳐라.
 - 이 작업을 서브에이전트에 위임하면 tasks.md의 `model:` 태그를 Agent `model`에 그대로 준다.
   VERIFY에서 2회 실패하면 한 등급 올려 재시도, 그래도 실패면 모델이 아니라 명세 문제 — SPEC으로 되돌아간다.
@@ -151,8 +151,8 @@ tasks.md 작성:
 <close_the_loop>
 - 통과/실패를 돌려주는 것을 실제로 실행해라: 테스트 스위트 / 빌드 종료코드 / 린트 /
   (UI면) 스크린샷을 기대 화면과 비교.
-- "된 것 같다"는 금지. **실행 결과(로그·종료코드·스크린샷)를 증거로 붙여라.**
-- 실패하면 근본 원인을 고치고 다시 실행. 억누르기 금지.
+- 실행 결과(로그·종료코드·스크린샷)를 증거로 붙인다.
+- 실패하면 근본 원인을 고치고 다시 실행한다.
 </close_the_loop>
 <output>검증 로그 + 통과/실패 판정 + 남은 리스크.</output>
 ```
@@ -163,6 +163,7 @@ tasks.md 작성:
 
 서브에이전트/새 세션에게 **diff와 기준만** 준다(구현 맥락 오염 없이).
 정확성 리뷰어는 `model=opus`(생성 모델과 같거나 높은 등급), ponytail-review는 `sonnet` — `references/model-routing.md`.
+리뷰어는 `fresh-reviewer` 에이전트 타입으로 띄운다 (읽기 전용, ponytail 페르소나 미주입).
 
 ```
 <role>적대적 코드 리뷰어. 이 변경을 만든 사람이 아니다. 통과시키는 게 목표가 아니라 결함을 찾는 게 목표.</role>
@@ -175,7 +176,7 @@ tasks.md 작성:
 - (프론트면) references/anti-patterns.md의 slop 체크리스트 적용.
 - 정확성 판정 뒤 과잉설계만 따로 한 번: `ponytail:ponytail-review` 형식
   (`L<line>: delete|stdlib|native|yagni|shrink: 무엇을. 대체.`, 끝에 `net: -N lines`). 미설치면 같은 형식으로 직접.
-근거 없는 칭찬 금지. "괜찮아 보인다" 금지. 문제만, file:line으로.
+문제만 file:line으로 적는다. 칭찬은 쓰지 않는다.
 </check>
 <output>확인된 결함 목록(심각도순) + 각 결함의 재현/실패 시나리오. 없으면 "결함 없음"과 그 근거.</output>
 ```
