@@ -30,15 +30,3 @@
   1. 웹 프론트엔드(React+Tailwind+Zustand PWA)·Caddy를 01 fit 표에 근거와 기각 대안을 붙여 추가 (CRITICAL #1 — 근거 없는 추천 해소)
   2. 04 시퀀스 1의 명령 토픽을 `devices/{device_id}/cmd/…`로 정정 — R1 #15 전파 마감 (HIGH #2) → 04 v1.2
 - 영향: 01(표 1행), 04(v1.2). 03·05·06·07 영향 없음(기준 03 v1.2 유지).
-
-## R4 — GATE 검토 패치 라운드(재실행 없음) · 적용 2026-09-09
-- 사용자 원문: 없음 (GATE 검토관 30건 중 R3 미반영 28건을 타당성 필터링 — 27건 반영, #28은 가드 상수의 의도된 여유라 정보로 유지. 정책 결정 6건은 단순한 쪽으로 자율 결정 → decision-log DL-020~028)
-- 결정:
-  1. Docker data-root·log2ram 동기화 대상을 USB SSD로 — firstrun이 설정 후 Overlay FS (#3, DL-020)
-  2. 릴레이 판정: 모든 세션 sub 시작, 클라 `ice_state`·`first_frame` WS 보고, main = 직결 세션을 참조하는 신규 세션(`direct_session_id`), relay-cap·main 릴레이는 `ice_state` 시점 종료, `stream_effective` 제거, go2rtc 8555 LAN 바인딩 (#4·#10·#19, DL-021)
-  3. 상수 추가 PI_BOOT_MAX_SEC · AGENT_RECOVER_MAX_SEC · FRAME_DROP_MAX_PCT · ALARM_EVAL_WINDOW_MIN · OFFLINE_ESCALATE_MIN · VPS_DISK_MIN_GB, EVENTS_PER_CAM_DAY_MAX 500→120, 03·04·06·07의 직접 기입 숫자 제거 (#5·#6·#7·#20, DL-022·023)
-  4. Pi 재설치 = SSD 인증서 재사용 (#14, DL-024) · 백업: pg_dump event 제외 + thumbs rsync --delete 미러 (#15, DL-025) · 이벤트 capability 없는 카메라 = 등록 + 경고 + 엣지 19 (#18, DL-026)
-  5. YAGNI: Event 파티션·CAMERA.password_enc·E44 제거, INV-7 유지 (#22, DL-027)
-  6. 계약 공백: E51 POST /releases(CI 토큰), `.env` 키 8개, FR-018 요약 규칙(07), 용어 "운영 담당", 권한 문구 FR-008·028, E11 mTLS 예외 (#11·#12·#17·#21·#26·#27, DL-028)
-  7. 전파·정정: 캐시 TTL(#8), D01 경로·slug(#9), D03 목록(#13), `events` status 필드·purge.report 응답(#16), 02 집계(#23), 06 제목(#24), 목표 표 SC-005·015(#25), 큐 길이 알람 + caddy 노드(#29), DL-014 26건(#30) (DL-029)
-- 영향: 02(집계 2줄), 03 v1.2→v1.3, 04 v1.2→v1.3, 05 v1.1→v1.2, 06 v1.0→v1.1, 07 v1.0→v1.1. 전부 같은 턴에 반영 완료 — 적용 대기 문서 없음. 판정은 CONCERNS 유지(재검토 없음).

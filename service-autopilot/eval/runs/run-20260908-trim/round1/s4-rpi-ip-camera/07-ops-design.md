@@ -1,25 +1,24 @@
 # 배포·운영 설계 — PiCam Watch
-버전: v1.1 · 기준 03 v1.3
-개정: R4 GATE 패치(Docker data-root·log2ram→USB SSD, E51 릴리스 등록, `.env` 키 추가, RB Pi 재설치 = 인증서 재사용, 백업 미러·event 제외, FR-018 요약 규칙, 큐 길이 알람, 용어 '운영 담당', 숫자 상수화)
+버전: v1.0 · 기준 03 v1.2
 스킬: `ecc:deployment-patterns`(CI/CD 단계·헬스체크·롤백·준비도 체크리스트) · `ecc:docker-patterns`(compose 보안 옵션·비밀·볼륨). 충돌: docker-patterns "compose를 프로덕션에 쓰지 말라"는 규모(SITES_MAX·VPS 1대·팀 1~2명) 근거로 채택하지 않는다(ADR-7).
 
 **근거 (진입 사전조사, 검색 1회)**
 - 정량 — log2ram 기본값: RAM 로그 폴더 `128M`, 디스크 동기화는 `log2ram-daily.timer`(일 1회), 설치 전 journald `SystemMaxUse=20M` 권고 (github.com/azlux/log2ram README, 2026-09-08). → PI_LOG_RAM_MB·JOURNAL_MAX_MB의 출처.
 - 정성 — 같은 README: "/var/log이 RAM보다 크면 log2ram이 시작에 실패할 수 있다" — 로그 상한을 정하지 않으면 마모 대책 자체가 죽는다. 상한을 이미지에 굽는다.
-- 사용자 영향 — 운영 담당은 SD 카드 교체 출동을 하지 않는다(P1 SD 마모, SC-013). 문제가 생기면 화면의 기기 상태와 푸시로 먼저 알고, 런북의 첫 단계는 "원격 재시작" 버튼이다(L-06 막다른 에러 0).
+- 사용자 영향 — 운영자는 SD 카드 교체 출동을 하지 않는다(P1 SD 마모, SC-013). 문제가 생기면 화면의 기기 상태와 푸시로 먼저 알고, 런북의 첫 단계는 "원격 재시작" 버튼이다(L-06 막다른 에러 0).
 
 ## 배포
 
 ### 런타임·형상
 | 계층 | 형상 | 구성 |
 |---|---|---|
-| **엣지 (Pi 5)** | Raspberry Pi OS Lite 64-bit 골든 이미지 + Docker compose | 컨테이너 3개: `agent`(Python 3.12), `go2rtc`(공식 바이너리 이미지), `updater`(Python). OS 계층: Overlay FS(raspi-config P3, 부팅 파티션 쓰기 보호), log2ram(PI_LOG_RAM_MB), journald SystemMaxUse=JOURNAL_MAX_MB, HW watchdog(WATCHDOG_TIMEOUT_SEC), chrony + chrony-wait, unattended-upgrades(security만, 자동 재부팅 없음). 쓰기 구역: USB SSD `/mnt/data`(clips, agent.db, certs, **docker/** = Docker data-root, **log/** = log2ram 동기화 대상), tmpfs 링버퍼(RINGBUF_TMPFS_MB). rootfs(SD)는 Overlay FS로 읽기전용 — `/var/lib/docker`·`/var/log`가 RAM 상위 레이어에 떨어지지 않도록 둘 다 SSD로 옮긴다(R4 #3, DL-020) |
-| **서버 (VPS 1대, 디스크 ≥ VPS_DISK_MIN_GB)** | Docker compose | `caddy`(TLS 자동, 443 → api; `/api/device/*`는 클라이언트 인증서 요구, `/api/device/claim`만 예외 — E11), `api`(FastAPI + mqtt-bridge + ws-hub + ca), `purge-job`(cron 컨테이너), `mosquitto`(8883 mTLS), `coturn`(3478 + UDP 릴레이 범위), `postgres:16`. 이메일은 외부 SMTP 릴레이(SMTP_URL) — 컨테이너 없음. 볼륨: pgdata, thumbs, clipcache, secrets(read-only) |
+| **엣지 (Pi 5)** | Raspberry Pi OS Lite 64-bit 골든 이미지 + Docker compose | 컨테이너 3개: `agent`(Python 3.12), `go2rtc`(공식 바이너리 이미지), `updater`(Python). OS 계층: Overlay FS(raspi-config P3, 부팅 파티션 쓰기 보호), log2ram(PI_LOG_RAM_MB), journald SystemMaxUse=JOURNAL_MAX_MB, HW watchdog(WATCHDOG_TIMEOUT_SEC), chrony + chrony-wait, unattended-upgrades(security만, 자동 재부팅 없음). 쓰기 구역: USB SSD `/mnt/data`(clips, agent.db, certs), tmpfs 링버퍼(RINGBUF_TMPFS_MB) |
+| **서버 (VPS 1대)** | Docker compose | `caddy`(TLS 자동, 443 → api), `api`(FastAPI + mqtt-bridge + ws-hub + ca), `purge-job`(cron 컨테이너), `mosquitto`(8883 mTLS), `coturn`(3478 + UDP 릴레이 범위), `postgres:16`. 볼륨: pgdata, thumbs, clipcache, secrets(read-only) |
 | **웹** | 정적 번들 | caddy가 서빙, PWA(service worker + 웹 푸시) |
 
 ### 엣지 골든 이미지 (A/B는 앱 계층 — ADR-4)
 - 빌드: CI에서 `pi-gen` 스테이지로 굽는다 — 공식 Lite 이미지 + Docker + log2ram + 설정(overlay·watchdog·chrony·journald) + updater 서비스 + cosign 공개키. 산출물 `picam-os-<ver>.img.xz` + SHA-256 게시.
-- 첫 부팅(`firstrun`): USB SSD 마운트(미포맷이면 포맷) → `/etc/docker/daemon.json` `data-root=/mnt/data/docker`·log2ram `HDD_LOG=/mnt/data/log` 설정 → `/mnt/data/certs/device.crt`가 **있으면 클레임 생략**(같은 device_id로 재접속 — Pi 재설치, DL-024), 없으면 클레임 토큰(이미지 굽기 시 Raspberry Pi Imager 커스터마이즈로 주입, `PICAM_CLAIM_TOKEN`) → E11 claim → 인증서 저장 → compose pull(digest 고정, SSD의 data-root) → Overlay FS 활성 후 재부팅. 이후 `cmd/deploy`의 pull·롤백 상태는 SSD에 남아 재부팅에도 보존된다(FR-023·SC-010).
+- 첫 부팅(`firstrun`): USB SSD 포맷·마운트 → 클레임 토큰(이미지 굽기 시 Raspberry Pi Imager 커스터마이즈로 주입) → E11 claim → 인증서 저장 → compose pull(digest 고정) → Overlay FS 활성 후 재부팅.
 - 앱 업데이트: Admin이 E17 → `cmd/deploy` → updater가 GHCR에서 digest pull → cosign 검증 → `docker compose up -d` → 헬스체크(HEALTHCHECK_INTERVAL_SEC × HEALTHCHECK_FAIL_MAX) 실패 시 previous_digest로 복귀(OTA_ROLLBACK_MAX_MIN 안), 재시도 OTA_RETRY_MAX.
 - OS 업데이트: security만 자동. 커널 등 대형 변경은 새 골든 이미지 + 현장 SD 교체(유인 현장, Q5) — 런북 RB-4.
 
@@ -35,7 +34,7 @@ services:
     tmpfs: [/tmp]
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
-    healthcheck: { test: ["CMD","python","-c","import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"], interval: ${HEALTHCHECK_INTERVAL_SEC}s, timeout: 3s, retries: ${HEALTHCHECK_FAIL_MAX} }   # 값은 03 상수 표 — .env로 주입
+    healthcheck: { test: ["CMD","python","-c","import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"], interval: 30s, timeout: 3s, retries: 3 }
     depends_on: { postgres: { condition: service_healthy }, mosquitto: { condition: service_started } }
   purge-job: { image: ghcr.io/<org>/picam-api@sha256:<digest>, command: ["python","-m","picam.jobs.purge","--daily"], env_file: [/etc/picam/api.env], volumes: [thumbs:/data/thumbs, clipcache:/data/clipcache] }
   mosquitto: { image: eclipse-mosquitto:2, ports: ["8883:8883"], volumes: [./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro, /etc/picam/secrets/mqtt:/mosquitto/certs:ro] }
@@ -43,15 +42,15 @@ services:
   postgres:  { image: postgres:16-alpine, volumes: [pgdata:/var/lib/postgresql/data], env_file: [/etc/picam/db.env], healthcheck: { test: ["CMD-SHELL","pg_isready -U picam"], interval: 5s, retries: 5 } }
 volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ```
-엣지 compose는 `agent`(devices: USB SSD 마운트만, `cap_drop: ALL`, read_only + tmpfs), `go2rtc`(1984 API는 localhost 바인딩; 8555 ICE는 LAN 바인딩 — srflx 후보 수집에 필요, 포트포워딩 없음, R-1 ⑥), `updater`(Docker 소켓 접근이 필요한 유일한 컨테이너 — 그래서 agent와 분리). Dockerfile은 python:3.12-slim 멀티스테이지 + non-root(deployment-patterns 패턴).
+엣지 compose는 `agent`(devices: USB SSD 마운트만, `cap_drop: ALL`, read_only + tmpfs), `go2rtc`(1984/8555는 localhost 바인딩), `updater`(Docker 소켓 접근이 필요한 유일한 컨테이너 — 그래서 agent와 분리). Dockerfile은 python:3.12-slim 멀티스테이지 + non-root(deployment-patterns 패턴).
 
 ### CI/CD 단계
-`lint(ruff·eslint) → typecheck(mypy·tsc) → unit → integration(compose test 프로파일: ONVIF 시뮬레이터·MediaMTX·mosquitto·coturn·postgres) → contract(schemathesis) → build(멀티아치 arm64/amd64, digest 고정) → cosign sign → push GHCR → deploy staging(VPS staging compose pull+up) → smoke(E01·E27 가짜 agent·E39) → deploy prod(compose pull+up, 헬스체크 실패 시 이전 digest로 `compose up`) → 릴리스 등록(E51 POST /releases, CI_RELEASE_TOKEN — E19가 나열하는 RELEASE 행)`
+`lint(ruff·eslint) → typecheck(mypy·tsc) → unit → integration(compose test 프로파일: ONVIF 시뮬레이터·MediaMTX·mosquitto·coturn·postgres) → contract(schemathesis) → build(멀티아치 arm64/amd64, digest 고정) → cosign sign → push GHCR → deploy staging(VPS staging compose pull+up) → smoke(E01·E27 가짜 agent·E39) → deploy prod(compose pull+up, 헬스체크 실패 시 이전 digest로 `compose up`) → 릴리스 등록(E19 RELEASE 행)`
 기기 배포는 CI가 아니라 Admin의 E17이 트리거한다(단계적: 사이트 1곳 → 나머지). 실기 계층(06)은 릴리스 게이트로 수동 실행.
 
 ### 설정·비밀
 - 전부 환경변수(pydantic-settings로 시작 시 검증, 누락 시 기동 실패). 값은 어떤 산출물에도 쓰지 않는다.
-- 서버 비밀: `/etc/picam/secrets/`(600, root) — DB 비밀번호, VAPID 키쌍, TURN 공유 비밀, 세션 서명 키, SMTP 자격증명(SMTP_URL), CI 릴리스 토큰(CI_RELEASE_TOKEN), **내부 CA 키**(가장 민감 — 오프라인 백업 1부). 백업은 age 암호화.
+- 서버 비밀: `/etc/picam/secrets/`(600, root) — DB 비밀번호, VAPID 키쌍, TURN 공유 비밀, 세션 서명 키, **내부 CA 키**(가장 민감 — 오프라인 백업 1부). 백업은 age 암호화.
 - 기기 비밀: USB SSD `/mnt/data/certs/`(600) — 기기 인증서·키, 카메라 비밀번호(기기 키 파생 암호화). SD 카드에는 비밀 없음.
 - 폐쇄망 아님 — 오프라인 설치 경로 없음.
 
@@ -60,7 +59,7 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ### SLI·SLO-lite (사용자 대면 = 가용성·지연 / 엣지 파이프라인 = E2E 지연 / 공통 = 정확성)
 | SLI | SLO (창 SLO_WINDOW_DAYS) | 측정 |
 |---|---|---|
-| 라이브 성공률 = E27 201 후 LIVE_FIRST_FRAME_P95 안에 첫 프레임 도달한 세션 비율 | ≥ SLO_LIVE_SUCCESS_PCT | 브라우저가 E29 WS `first_frame` 메시지(first_frame_ms)로 보고 → api 지표; 보고 없이 종료된 세션은 실패로 집계 |
+| 라이브 성공률 = E27 201 후 LIVE_FIRST_FRAME_P95 안에 첫 프레임 도달한 세션 비율 | ≥ SLO_LIVE_SUCCESS_PCT | 브라우저가 WS로 `first_frame_ms` 보고 → api 지표 |
 | 라이브 첫 프레임 지연 p95 | ≤ LIVE_FIRST_FRAME_P95 | 같은 보고 |
 | 기기 온라인 비율 (사이트별) | ≥ SLO_DEVICE_ONLINE_PCT | DEVICE.status 전이 로그 |
 | 이벤트→푸시 지연 p95 | ≤ ALERT_DELIVERY_P95 | EVENT.started_at vs 푸시 발송 시각 |
@@ -82,18 +81,15 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ## 알림 (조치 가능한 알람만, 알람:런북 = 1:1, 증상 기반)
 | 조건 | 심각도 | 수신자 | 연결 런북 |
 |---|---|---|---|
-| 사이트 기기 offline > DEVICE_OFFLINE_DETECT_SEC (사용자 알림과 별개로 운영 담당에게도) | P2 | 운영 담당 푸시 | RB-1 기기 오프라인 |
-| `/health` 실패 HEALTHCHECK_FAIL_MAX회 연속 또는 라이브 성공률(ALARM_EVAL_WINDOW_MIN 창) < SLO_LIVE_SUCCESS_PCT | P1 | 운영 담당 푸시+이메일 | RB-2 서버 장애 |
-| `turn_relay_mbps` > TURN_RELAY_MAX_MBPS × ALARM_WARN_PCT/100 | P2 | 운영 담당 | RB-3 릴레이 포화 |
-| `disk_used_pct` > ALARM_WARN_PCT (서버 볼륨 또는 기기 SSD) | P2 | 운영 담당 | RB-5 디스크 |
-| `offline_queue_len` > OFFLINE_QUEUE_MAX × ALARM_WARN_PCT/100 (기기가 서버에 못 보내고 있음) | P2 | 운영 담당 | RB-1 기기 오프라인(연결 진단 동일) |
-| purge-job 실패 또는 `purge_mismatch_total` > 0 | P1 (법) | 운영 담당 이메일 | RB-6 파기 실패 |
-| 백업 실패 또는 BACKUP_INTERVAL_HOURS × 2 동안 백업 없음 | P1 | 운영 담당 이메일 | RB-7 백업 |
-| 인증서 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 안인데 미갱신 | P2 | 운영 담당 | RB-8 인증서 |
+| 사이트 기기 offline > DEVICE_OFFLINE_DETECT_SEC (사용자 알림과 별개로 운영자에게도) | P2 | 운영자 푸시 | RB-1 기기 오프라인 |
+| `/health` 실패 HEALTHCHECK_FAIL_MAX회 연속 또는 라이브 성공률(1시간 창) < SLO_LIVE_SUCCESS_PCT | P1 | 운영자 푸시+이메일 | RB-2 서버 장애 |
+| `turn_relay_mbps` > TURN_RELAY_MAX_MBPS × ALARM_WARN_PCT/100 | P2 | 운영자 | RB-3 릴레이 포화 |
+| `disk_used_pct` > ALARM_WARN_PCT (서버 볼륨 또는 기기 SSD) | P2 | 운영자 | RB-5 디스크 |
+| purge-job 실패 또는 `purge_mismatch_total` > 0 | P1 (법) | 운영자 이메일 | RB-6 파기 실패 |
+| 백업 실패 또는 BACKUP_INTERVAL_HOURS × 2 동안 백업 없음 | P1 | 운영자 이메일 | RB-7 백업 |
+| 인증서 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 안인데 미갱신 | P2 | 운영자 | RB-8 인증서 |
 | 배포 `rolled_back`/`failed` | P2 | Admin 푸시 | RB-9 배포 롤백 |
-같은 알람은 ALERT_OPS_DEDUP_MIN 동안 중복 억제. 원인 지표(CPU·명령 실패율)는 대시보드로만.
-
-**FR-018 요약 규칙 (사용자 알림, ALERT_DAILY_MAX)**: 푸시 워커는 사이트별 일 카운터(사이트 timezone 자정 리셋)를 두고, ALERT_DAILY_MAX 도달 후의 이벤트·경고는 개별 발송 대신 요약 1건("오늘 알림 N건 더 — 클립 목록에서 확인")으로 묶는다. 요약은 카운트에 넣지 않고 하루 1회만 보낸다. 기기 offline 알림(FR-020)은 요약 대상에서 제외한다. 이메일(FR-019)도 같은 카운터를 쓴다.
+같은 알람은 ALERT_OPS_DEDUP_MIN 동안 중복 억제. 원인 지표(CPU·큐 길이·명령 실패율)는 대시보드로만.
 
 ## 장애·복구
 
@@ -101,8 +97,8 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 | 장애 | 감지 | 영향 | 복구 절차 (복붙 수준) | RTO/RPO |
 |---|---|---|---|---|
 | **서버 VPS 다운** | `/health` 실패, 모든 기기 offline 동시 | 라이브·알림 불가. 엣지는 녹화·큐잉 계속(FR-022) | ① 공급자 콘솔 재부팅 ② `docker compose ps` → 미기동 서비스 `docker compose up -d` ③ 복구 불가 시 새 VPS: 이미지 pull → `/etc/picam` 복원(age) → `pg_restore` 최신 백업 → thumbs rsync 복원 → DNS 전환 | RTO_SERVER_MIN / RPO_SERVER_HOURS |
-| **PostgreSQL 손상** | api 500 급증, healthcheck 실패 | 전체 | `docker compose stop api purge-job` → `pg_restore --clean` 최신 백업 → 이벤트 메타는 덤프에 없으므로(INV-1, DL-025) 복원 후 새 이벤트부터 쌓인다(클립 원본은 Pi SSD에 그대로) → `up -d` | RTO_SERVER_MIN / RPO_SERVER_HOURS (이벤트 메타는 복원 대상 아님) |
-| **Pi 부팅 불능·SD 손상** | 기기 offline 지속, 원격 재시작 무응답 | 해당 사이트 전체 | 현장(유인): ① 전원 재투입 ② 실패 시 새 SD에 골든 이미지 굽기(Imager) ③ 기존 USB SSD 그대로 연결(클립·인증서·카메라 설정·Docker data-root 보존) ④ 부팅 → firstrun이 SSD 인증서를 발견해 클레임 생략, 같은 device_id로 online(Admin 승인 불필요, DL-024). SSD 손상·인증서 만료 시에만: E15 retire → 새 클레임 토큰으로 굽기 → E11 → E14 승인 | RTO_DEVICE_MIN / 클립 RPO 0(SSD 보존) |
+| **PostgreSQL 손상** | api 500 급증, healthcheck 실패 | 전체 | `docker compose stop api purge-job` → `pg_restore --clean` 최신 백업 → 이벤트는 기기 outbox 재전송으로 RPO 이후분 회복(ULID 멱등) → `up -d` | RTO_SERVER_MIN / RPO_SERVER_HOURS (이벤트는 0에 근접) |
+| **Pi 부팅 불능·SD 손상** | 기기 offline 지속, 원격 재시작 무응답 | 해당 사이트 전체 | 현장(유인): ① 전원 재투입 ② 실패 시 새 SD에 골든 이미지 굽기(Imager, 클레임 토큰 재발급 E11용) ③ 기존 USB SSD 그대로 연결(클립·인증서·카메라 설정 보존) ④ 부팅 → 자동 재클레임 → Admin 승인(E14) | RTO_DEVICE_MIN / 클립 RPO 0(SSD 보존) |
 | **카메라 교체·IP 변경** | `camera_disconnected` 지속 | 카메라 1대 | E20 재탐색 → E22 재등록(같은 ONVIF hardware_id면 갱신) → 프리셋 재저장 | 즉시 / — |
 | **coturn 장애** | STUN 차단 환경 세션 실패율 급증, `turn_relay_mbps` 0 | 릴레이 필요한 시청자만 | `docker compose restart coturn` → 자격증명 공유 비밀 확인 → 방화벽 UDP 범위 확인 | RTO_SERVER_MIN / — |
 | **GHCR 장애** | E17 배포 pending 지속 | 배포만 불가, 운영 무영향 | 대기. 긴급 시 `docker save` 이미지를 scp → `docker load` (updater 수동 경로) | — |
@@ -110,18 +106,18 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ### 백업
 | 무엇 | 주기 | 보관처 | 보존 | 복원 리허설 |
 |---|---|---|---|---|
-| PostgreSQL `pg_dump -Fc --exclude-table-data=event --exclude-table-data=idempotency_key` (이벤트 메타 제외 — 백업에 CLIP_RETENTION_DAYS를 넘긴 이벤트가 남지 않게, INV-1·DL-025) | BACKUP_INTERVAL_HOURS | 오프사이트 오브젝트 스토리지, age 암호화 | BACKUP_RETENTION_DAYS | RESTORE_DRILL_INTERVAL_DAYS마다 staging에 복원 → E39 조회 스모크 |
+| PostgreSQL `pg_dump -Fc` | BACKUP_INTERVAL_HOURS | 오프사이트 오브젝트 스토리지, age 암호화 | BACKUP_RETENTION_DAYS | RESTORE_DRILL_INTERVAL_DAYS마다 staging에 복원 → E39 조회 스모크 |
 | `/etc/picam` (비밀·CA 키·설정) | 변경 시 + BACKUP_INTERVAL_HOURS | 같은 곳 + CA 키는 오프라인 1부 | 최근 BACKUP_RETENTION_DAYS | 같은 리허설에서 복원 |
-| thumbs | purge-job 직후 같은 크론에서 `rsync --delete` **미러**(스냅샷 아님) | 같은 곳 | 원본과 동일 — purge-job 파기가 바로 다음 동기화에 반영되어 INV-1 유지 (DL-025) | — |
-| 클립(Pi USB SSD) | **백업 없음** — 설계(Q3): CLIP_RETENTION_DAYS 순환·개인정보 최소 보관. SSD 보존이 복구 수단 | — | — | — |
-| 기기 SQLite | 백업 없음 — SSD에 있어 SD 재설치에도 보존; SSD 손상 시 재클레임으로 재구성 | — | — | — |
+| thumbs | BACKUP_INTERVAL_HOURS rsync | 같은 곳 | CLIP_RETENTION_DAYS(법 초과 보존 금지 — 백업도 파기 잡 대상) | — |
+| 클립(Pi USB SSD) | **백업 없음** — 설계(Q3): 30일 순환·개인정보 최소 보관. SSD 보존이 복구 수단 | — | — | — |
+| 기기 SQLite | 백업 없음 — 재클레임으로 재구성 | — | — | — |
 
 ### 런북 골격 (전 런북 공통 구조) + RB-1 예시
 `메타(알람 연결·심각도) → 트리거·영향 → 진단(명령) → 해결 → 에스컬레이션 → 검증 → 롤백`
 **RB-1 기기 오프라인** — 메타: 알람 "기기 offline > DEVICE_OFFLINE_DETECT_SEC", P2. 트리거: LWT. 영향: 사이트 라이브·알림 불가, 녹화는 계속.
 진단: ① Admin 화면 E13 `last_seen_at`·마지막 metrics(uplink_mbps, temp_c) ② 같은 사이트 다른 기기 없음 → 사이트 인터넷 의심 ③ `mosquitto_sub -t 'devices/<id>/state'` 최근 retained 값.
-해결: ① 사이트 인터넷 확인 요청(전화) ② 복귀 후 자동 재접속·큐 전송 확인(`offline_queue_len` → 0) ③ OFFLINE_ESCALATE_MIN 넘게 인터넷 정상인데 offline → 현장 전원 재투입 안내 → 그래도 안 되면 RB-4(SD 재굽기).
-에스컬레이션: 팀 1~2명 — 없음(운영 담당 본인). 검증: E13 online + 라이브 첫 프레임. 롤백: 해당 없음.
+해결: ① 사이트 인터넷 확인 요청(전화) ② 복귀 후 자동 재접속·큐 전송 확인(`offline_queue_len` → 0) ③ 30분 넘게 인터넷 정상인데 offline → 현장 전원 재투입 안내 → 그래도 안 되면 RB-4(SD 재굽기).
+에스컬레이션: 팀 1~2명 — 없음(운영자 본인). 검증: E13 online + 라이브 첫 프레임. 롤백: 해당 없음.
 
 ## 착수 자산
 
@@ -158,17 +154,11 @@ CA_CERT_PATH=            # 내부 CA 인증서
 CA_KEY_PATH=             # 내부 CA 키 (600)
 TURN_SHARED_SECRET=      # coturn use-auth-secret와 동일
 TURN_URLS=               # turn:host:3478?transport=udp, ...
-SMTP_URL=                # smtp://user:pass@host:587 — 외부 릴레이 (FR-019 사용자 이메일 + P1 운영 알람)
-SMTP_FROM=               # 발신 주소
-CI_RELEASE_TOKEN=        # E51 릴리스 등록 Bearer 토큰 (CI 시크릿과 동일)
 THUMBS_DIR=              # /data/thumbs
 CLIPCACHE_DIR=           # /data/clipcache
 PUBLIC_BASE_URL=         # https://...
 CONSTANTS_PATH=          # config/constants.yaml
 LOG_LEVEL=
-# coturn (turn.env)
-TURN_REALM=              # coturn realm
-TURN_EXTERNAL_IP=        # VPS 공인 IP (external-ip)
 # agent (Pi)
 PICAM_API_URL=
 PICAM_MQTT_URL=
@@ -178,14 +168,10 @@ DATA_DIR=                # /mnt/data
 RINGBUF_DIR=             # /run/picam/ringbuf (tmpfs)
 GO2RTC_API_URL=          # http://127.0.0.1:1984
 COSIGN_PUBKEY_PATH=
-# image/firstrun
-PICAM_CLAIM_TOKEN=       # 1회용 클레임 토큰 (Imager 커스터마이즈로 주입; SSD에 인증서가 있으면 무시)
-DOCKER_DATA_ROOT=        # /mnt/data/docker
-LOG2RAM_HDD_PATH=        # /mnt/data/log
 ```
 
 ### 첫 작업 3개 = 워킹 스켈레톤 (Impact×Uncertainty 큰 것부터)
-1. **R-1 실증: NAT 뒤 Pi → 브라우저 첫 프레임** — Pi 5 + go2rtc(테스트 RTSP 소스) + coturn + mosquitto + 최소 api(E27·E29 `offer/ice/ice_state/first_frame`·`cmd/webrtc.offer/ice/close`) + 최소 UI(`<video>` 1개 + getStats relay 판정). 성공 = STUN 차단 LTE 폰에서 첫 프레임 ≤ LIVE_FIRST_FRAME_P95, `ice_state` relayed 판정이 coturn 지표와 일치, 기기 TURN 자격증명 회전 중 세션 유지, go2rtc 8555 LAN 바인딩에서 직결 성립(R-1 ⑤⑥). 실패 시 04 R-1 대안으로 분기하고 03 개정(R#).
+1. **R-1 실증: NAT 뒤 Pi → 브라우저 첫 프레임** — Pi 5 + go2rtc(테스트 RTSP 소스) + coturn + mosquitto + 최소 api(E27·E29·`cmd/webrtc.offer/ice/close`) + 최소 UI(`<video>` 1개). 성공 = STUN 차단 LTE 폰에서 첫 프레임 ≤ LIVE_FIRST_FRAME_P95, 기기 TURN 자격증명 회전 중 세션 유지. 실패 시 04 R-1 대안으로 분기하고 03 개정(R#).
 2. **이벤트 파이프라인 얇게 끝까지** — ONVIF 시뮬레이터 MotionAlarm → agent(쿨다운·클립 copy·썸네일) → MQTT `events` → api(EVENT INSERT, 푸시) → E39 목록 → E42/E43 재생. 성공 = SC-005 통합 버전 + FR-012 클립 길이 검증 + outbox 재전송(SC-009 통합).
 3. **프로비저닝 + 감사 fail-closed** — E11 클레임 → ca 발급 → E14 승인 → mosquitto ACL `%u` 접속 → E27 발급이 AuditLog INSERT와 한 트랜잭션(INV-2 장애 주입 테스트) → E49 조회. 성공 = FR-001·FR-025·FR-026 통합 시나리오 GREEN.
 실기 장비(06 실기 계층): Pi 5 4GB + 고내구 microSD + USB SSD, ONVIF PTZ 카메라 1대(H.264 sub 프로파일), 시험용 NAT 공유기, LTE 스마트폰, 밀리초 LED 시계.

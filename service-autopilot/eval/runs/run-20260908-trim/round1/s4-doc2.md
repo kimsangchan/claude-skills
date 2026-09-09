@@ -1,4 +1,4 @@
-<!-- ===== 00-seed.md ===== -->
+
 # Seed — PiCam Watch (라즈베리파이 엣지 기반 IP 카메라 제어·실시간 모니터링)
 
 - 원문: 라즈베리파이로 IP 카메라를 제어하고 실시간 모니터링하는 서비스를 만들고 싶다.
@@ -10,7 +10,7 @@
   - "실시간" → 지연 상한을 측정 가능한 숫자로 정의해야 함
   - "제어" → 무엇을 제어하는지(PTZ·프리셋·설정·전원)가 원문에 없음
 - 로드할 블라인드스팟 프로파일: **P1 IoT·엣지** (전부) + **P3 관제** (실시간성·알람 폭주·이력 증가·무중단) + STRIDE 6범주
-- 강도: **full** — 사유: 사용자가 `full`을 지정했고, 신호 표에서도 "하드웨어/엣지" · "민감정보(영상 = 개인정보)" · "외부 시스템 연동 2개 이상(카메라 ONVIF/RTSP + 푸시 알림)"이 동시에 걸린다. 플랫폼(Pi)·범위(제어+모니터링)·핵심 루프(카메라 스트림 → Pi 중계 → 원격 시청, 제어 명령 역방향)가 모두 확정돼 있어 spike는 불필요.
+
 - 해석한 것 (사용자가 말하지 않았는데 내가 정한 것 — 틀리면 비싼 순, 전부 Assumed):
   1. **Pi의 역할 = 엣지 게이트웨이.** 카메라와 같은 LAN에 놓여 카메라 스트림을 받아 중계·녹화하고 제어 명령을 프록시한다. Pi 자체가 카메라(Pi Camera Module)인 구성이 아니다. — 틀리면 아키텍처 전체 재작업
   2. **원격 시청 경로 = 중앙 서버(클라우드/온프렘) 경유.** Pi는 NAT/방화벽 뒤에 있고 포트포워딩은 금지 전제 → Pi→서버 아웃바운드 상시 연결. LAN 전용(서버 없음) 구성이 아니다. — 틀리면 서버 컴포넌트 전체가 불필요/필요
@@ -22,7 +22,7 @@
   8. **시장 = 한국.** 개인정보보호법의 영상정보처리기기 규정(안내판·보존기간)을 적용. — 되돌리기 비용 저
 - 기존 시스템: 없음 (신규)
 
-<!-- ===== 01-recon.md ===== -->
+
 # RECON — PiCam Watch
 초안: sonnet 서브에이전트 · 조사일 2026-09-08 · 검색 36회 (WebSearch 24 + WebFetch 12)
 
@@ -45,7 +45,7 @@
 
 - **시설 운영자(관리자, 비용 지불자)** — 매장·사무실·창고·농장의 소상공인 1~수 명. seed 파일 가정 7과 일치.
 - **시청자** — 관리자 본인 또는 위임 직원(별도 확인 소스 없음, seed 가정 유지).
-- **설치자** — 자가설치(DIY 패키지, 예: Hikvision 자가설치 스토어) 또는 통신사 결합상품/전문 설치업체. 자가설치는 비용 절감이나 "어렵고 복잡, A/S 애매, 야간 촬영 실패 등 오설치 리스크"가 지적됨. (출처: [CCTV 자가설치 하지 마세요](https://xn--hz2b19j9ogo9h.com/55/?bmode=view&idx=167084034), [Hikvision 자가설치 패키지](https://hikvisionmall.co.kr/category/%EC%9E%90%EA%B0%80%EC%84%A4%EC%B9%98-%ED%8C%A8%ED%82%A4%EC%A7%80/43/), 2026-09-08)
+- **설치자** — 자가설치(DIY 패키지, 예: Hikvision 자가설치 스토어) 또는 통신사 결합상품/전문 설치업체. 자가설치는 비용 절감이나 "어렵고 복잡, A/S 애매, 야간 촬영 실패 등 오설치 리스크"가 지적됨. (출처: [CCTV 자가설치 하지 마세요](https://xn--hz2b19j9ogo9h.com/55/?bmode=view&idx=167084034), [Hikvision 자가설치 패키지](https://hikvisionmall.co.kr/category/%EC%9E%90%EA%B0%80%EC%84%단계%EC%B9%98-%ED%8C%A8%ED%82%단계%EC%단계%80/43/), 2026-09-08)
 - **구매 형태(시장 규모 맥락)** — "영상보안 시장의 35%가 소상공인 시장"이며 통신업체가 인터넷·전화와 결합한 CCTV 패키지를 판매. (출처: [보안뉴스](https://m.boannews.com/html/detail.html?idx=67718), 2026-09-08, 단일 소스 — 교차확인 소스 못 찾음, **가능성**으로 표기)
 
 ## 규제·표준 — 반드시 준수해야 하는 것 (출처; 해당 없음도 확인 근거)
@@ -60,7 +60,7 @@
 
 **보존기간 30일 권고 — 가능성(원문 조문 직접 인출 실패, 검색 스니펫 기반).** 표준 개인정보 보호지침 제41조제2항에 따라 보유 목적 달성을 위한 최소 기간 산정이 곤란한 경우 영상정보 수집 후 30일 이내로 보관기간을 정할 수 있으며, 30일 초과 시 운영·관리 방침에 반영해야 한다는 설명이 검색 결과에서 반복 확인됨. law.go.kr 행정규칙 페이지(admRulSeq=2100000234592)는 존재를 확인했으나 WebFetch로는 JS 렌더링 때문에 조문 원문 텍스트를 직접 인출하지 못했다 — **미확인: 제41조 정확한 원문, 재확인 필요**. 개인정보보호위원회는 2024-12 "고정형 영상정보처리기기 설치·운영 안내서"를 발간해 제25조 준수사항을 상세 설명한다(발간일 확인됨). (출처: [privacy.go.kr 안내서 게시글](https://www.privacy.go.kr/front/bbs/bbsView.do?bbsNo=BBSMSTR_000000000049&bbscttNo=20779) — 발간일 2024-12-31 확인, [easylaw.go.kr](https://www.easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=1257&ccfNo=2&cciNo=3&cnpClsNo=3), [catchsecu.com](https://www.catchsecu.com/archives/16550), 2026-09-08)
 
-**개인정보의 안전성 확보조치 기준 — 접속기록 — 가능성(원문 미인출, 요약 소스 기반).** 개인정보처리시스템 접속기록은 원칙 1년 이상 보관, 5만 명 이상 정보주체 처리 또는 고유식별정보·민감정보 처리시스템은 2년 이상 보관. 접속기록은 월 1회 이상 점검 의무. CCTV 영상정보는 보관기간 만료 시 지체없이(=만료일로부터 5일 이내) 파기. law.go.kr 원문(admRulSeq=2100000229672)은 존재 확인했으나 조문 텍스트 직접 인출 실패 — **미확인: 정확한 조번호, 재확인 필요**. 본 서비스는 소규모 시설(정보주체 5만명 미만 추정)이라 1년 기준이 적용될 가능성이 높으나 **확정 아님**. (출처: [itwiki.kr](https://itwiki.kr/w/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EC%8B%9C%EC%8A%A4%ED%85%9C_%EC%A0%91%EC%86%8D%EA%B8%B0%EB%A1%9D), [catchsecu.com](https://www.catchsecu.com/archives/16550), 2026-09-08)
+**개인정보의 안전성 확보조치 기준 — 접속기록 — 가능성(원문 미인출, 요약 소스 기반).** 개인정보처리시스템 접속기록은 원칙 1년 이상 보관, 5만 명 이상 정보주체 처리 또는 고유식별정보·민감정보 처리시스템은 2년 이상 보관. 접속기록은 월 1회 이상 점검 의무. CCTV 영상정보는 보관기간 만료 시 지체없이(=만료일로부터 5일 이내) 파기. law.go.kr 원문(admRulSeq=2100000229672)은 존재 확인했으나 조문 텍스트 직접 인출 실패 — **미확인: 정확한 조번호, 재확인 필요**. 본 서비스는 소규모 시설(정보주체 5만명 미만 추정)이라 1년 기준이 적용될 가능성이 높으나 **확정 아님**. (출처: [itwiki.kr](https://itwiki.kr/w/%EA%B0%9C%EC%9D%B8%EC%단계%95%EB%B3%B4%EC%B2%98%EB%단계%AC%EC%8B%9C%EC%8A%단계%ED%85%9C_%EC%단계%91%EC%86%8D%EA%B8%B0%EB%단계%9D), [catchsecu.com](https://www.catchsecu.com/archives/16550), 2026-09-08)
 
 **GDPR — 해당 없음(확정, 사유 명시).** 한국 내 소규모 시설 대상 서비스로 EU 거주자에게 재화·서비스를 제공하거나 EU 내 행동을 모니터링하지 않는 한 GDPR 제3조(역외적용) 요건(설립 기준 또는 타겟팅 기준)을 충족하지 않는다. 단순히 웹에서 접근 가능하다는 사실만으로는 역외적용이 발동하지 않는다. (출처: [GDPR Article 3 해설](https://gdpr.eu/companies-outside-of-europe/), [gdpr-text.com](https://gdpr-text.com/read/article-3/), 2026-09-08)
 
@@ -123,7 +123,7 @@ Frigate/Scrypted/ZoneMinder/MotionEye의 최근 커밋 정확한 날짜, 정확�
 
 ## 참조 제품 규칙 상세 — 해당 없음
 
-사유: 본 서비스는 의료기기(SaMD)·금융 라이선스 상품처럼 정부·업계 "참조 제품 규칙"이 지정된 규제 산업 유형이 아니라 일반 소상공인 대상 CCTV 보조 도구이며, seed 파일(00-seed.md)에도 참조 제품이 지정돼 있지 않다. 규제·표준 절의 개인정보보호법은 일반 데이터보호 규범이지 참조 제품 규칙이 아니다.
+사유: 본 서비스는 의료기기(SaMD)·금융 라이선스 상품처럼 정부·업계 "참조 제품 규칙"이 지정된 규제 산업 유형이 아니라 일반 소상공인 대상 CCTV 보조 도구이며, seed 파일((문서))에도 참조 제품이 지정돼 있지 않다. 규제·표준 절의 개인정보보호법은 일반 데이터보호 규범이지 참조 제품 규칙이 아니다.
 
 ## 데이터 공급 실측 — 설계 상수의 근거 숫자
 
@@ -193,7 +193,7 @@ fit은 `evidence-map.md` 5요소(요구충족·팀·운영환경·생태계·총
 | 서버 DB | **PostgreSQL 16** | 높음 | 요구충족 — 접속기록 1년 보관·다중 사이트 동시 쓰기·pg_dump/PITR 성숙 | SQLite 서버(중간 — 규모상 가능하나 온라인 백업·동시 쓰기 운영 부담) |
 | 엣지 로컬 저장 | **SQLite(WAL)** 이벤트 인덱스·명령 큐 + 클립은 **USB SSD** 파일 | 높음 | 운영환경 — 무서버·전원 차단 내성(WAL). SD 마모 — DB·클립을 SD가 아닌 USB SSD에 둔다 | SD 카드 저장(기각 — P1 SD 마모) |
 | 엣지 OS 안정화 | **Raspberry Pi OS Lite 64-bit** + raspi-config **Overlay File System**(공식 메뉴 "P3 Overlay File System — Enable/disable read-only file system", raspi-config 소스 2026-09-08 확인) + log2ram + HW watchdog | 높음 | 운영환경 — 공식 도구로 read-only rootfs 구성 → 커스텀 이미지 빌드 불필요 | Yocto/Buildroot(낮음 — 팀 1~2명에 과잉) |
-| OTA | **앱 계층 A/B**: 컨테이너 이미지 digest 고정 + 헬스체크 실패 시 이전 digest 자동 롤백 + 이미지 서명 검증. OS는 unattended-upgrades security만 | 중간 | 총비용 — 사이트 ≤10·유인 현장 전제에서 OS A/B 파티션 도구 도입 비용 > 기대 이득. **OS 계층 벽돌은 잔여 리스크**(A4 Accept 사유 기재, Q5) | RAUC(중간 — 가장 가볍지만 Pi OS 부트로더(tryboot) 통합 검증 필요) · Mender(낮음 — 델타 등 유료) · balena(미확인 — 무료 티어 미확인) |
+| OTA | **앱 계층 A/B**: 컨테이너 이미지 digest 고정 + 헬스체크 실패 시 이전 digest 자동 롤백 + 이미지 서명 검증. OS는 unattended-upgrades security만 | 중간 | 총비용 — 사이트 ≤10·유인 현장 전제에서 OS A/B 파티션 도구 도입 비용 > 기대 이득. **OS 계층 벽돌은 잔여 리스크**(단계 Accept 사유 기재, Q5) | RAUC(중간 — 가장 가볍지만 Pi OS 부트로더(tryboot) 통합 검증 필요) · Mender(낮음 — 델타 등 유료) · balena(미확인 — 무료 티어 미확인) |
 | 알림 | **웹 푸시(VAPID)** + 이메일 | 중간 | 총비용 — 네이티브 앱 없이 브라우저 푸시로 충분, 외부 SaaS 의존 최소 | 카카오 알림톡/SMS(P2 — 발신 사업자 인증·건당 비용) |
 | 웹 프론트엔드·TLS 종단 | **React + Tailwind + Zustand (PWA)** + **Caddy** | 높음 | 팀 — 1~2인 팀이 이미 쓰는 프론트 스택(dial·토큰 규약 보유)이라 학습 비용 0. 요구충족 — PWA로 네이티브 앱 없이 웹 푸시(FR-017)·홈 화면 설치. 운영환경 — Caddy 자동 TLS로 인증서 갱신 무인화 | Vue/Svelte(중간 — 기능 동등하나 팀 스택 밖) · Nginx(중간 — TLS 갱신 자동화를 별도로 얹어야 함) · 네이티브 앱(낮음 — 2개 스토어 배포 비용, seed 범위 밖) |
 
@@ -202,10 +202,10 @@ fit은 `evidence-map.md` 5요소(요구충족·팀·운영환경·생태계·총
 - Pi에서 **재인코딩 금지** — 모든 경로가 패스스루. 해상도 변환은 카메라의 서브스트림으로 해결한다.
 - 서버 1대(VPS) + coturn 1대. 고가용성은 non-goal.
 
-<!-- ===== 02-blindspot-register.md ===== -->
+
 # 블라인드스팟 레지스터 — PiCam Watch
-스캔: 공통 11축 + STRIDE 6범주 + 프로파일 P1(10항목) + P3(4항목 적용) = 31항목(표 33행 — 축 세부 행 포함) · 2026-09-08
-스킬: `ecc:product-lens` Mode 1(제품 진단 7문) — 아래 "제품 진단" 절에 흡수. 질문 형식·1회 배치 규칙은 service-autopilot이 우선.
+스캔: 공통 11축 + STRIDE 6범주 + 프로파일 P1(10항목) + P3(4항목 적용) = 31항목 · 2026-09-08
+참고자료: `(참고자료)` Mode 1(제품 진단 7문) — 아래 "제품 진단" 절에 흡수. 질문 형식·1회 배치 규칙은 service-autopilot이 우선.
 평가 런 규칙: 사용자 질문 불가 → 배치는 표로만 제시, 전 문항 추천안을 `Assumed(무응답)`로 채택.
 
 ## 제품 진단 (product-lens Mode 1)
@@ -225,20 +225,20 @@ fit은 `evidence-map.md` 5요소(요구충족·팀·운영환경·생태계·총
 | 1. 기능 범위·행동 | Partial → Asked | **Asked → Q3** (녹화 범위·저장). 나머지 유스케이스·non-goal은 Assumed: 라이브·PTZ·프리셋·스냅샷·이벤트 클립·푸시·기기 상태 / non-goal = 진단 6번 | 00-seed 해석 3·6, 01-recon 유사 솔루션 기능 범위 |
 | 2. 도메인·데이터 모델 | Missing → Assumed | Assumed: 엔티티 Workspace·User·Site·Device·Camera·Preset·Event·Clip·Command·AuditLog. 식별자 ULID, 시각 UTC ISO8601, 볼륨 = 상수 표(EVENTS_PER_CAM_DAY_MAX) | 01-recon 유사 솔루션(Frigate 이벤트/클립 모델) · Zalando 가이드 |
 | 3. 상호작용·UX 플로우 | Missing → Asked | **Asked → Q1** (사용 맥락이 레이아웃·스트림 기본값을 결정). 권한별 화면: Admin(설정·사용자·감사로그)/Viewer(라이브·클립). 에러 시 복구 경로 제시 100%(L-06) | ux-principles-kr B표 |
-| 4. 비기능 품질 | Missing → Assumed | Assumed: 실시간 = LIVE_LATENCY_P95(WebRTC 근거), PTZ_CMD_LATENCY_P95, DEVICE_OFFLINE_DETECT_SEC, ALERT_DELIVERY_P95 — 값은 03 상수 표에만. 관측성·보안은 A7·A4 | 01-recon 정량 근거(WebRTC 200~500ms) |
+| 4. 비기능 품질 | Missing → Assumed | Assumed: 실시간 = LIVE_LATENCY_P95(WebRTC 근거), PTZ_CMD_LATENCY_P95, DEVICE_OFFLINE_DETECT_SEC, ALERT_DELIVERY_P95 — 값은 03 상수 표에만. 관측성·보안은 단계·단계 | 01-recon 정량 근거(WebRTC 200~500ms) |
 | 5. 통합·외부 의존성 | Partial → Asked | **Asked → Q4** (기존 카메라의 ONVIF/PTZ/H.264 현황). 그 외 Assumed: NTP(chrony), 웹 푸시(VAPID), coturn. 외부 장애 시: 카메라 끊김 → 지수 백오프 재접속(CAM_RECONNECT_BACKOFF), 서버 끊김 → 로컬 큐 | 01-recon fit 표, P1 연결 끊김 |
 | 6. 엣지케이스·실패 처리 | Missing → Assumed | Assumed: 동시 PTZ 명령은 카메라당 잠금(PTZ_LOCK_SEC) + 마지막 승리, 명령 중복은 Idempotency-Key, 시청자 상한 초과는 429 거절, 클립 디스크 만료 순환(오래된 것부터), 빈 사이트/카메라 0대 상태 화면 | 03 엣지케이스 표로 전파 |
 | 7. 제약·트레이드오프 | Partial → Assumed | Assumed: 팀 1~2명, 서버 VPS 1대 + coturn, 기한 미상 → P1만 MVP, Pi 5 4GB 고정, 폐쇄망 아님(인터넷 필수) | 00-seed 해석 4·7 |
 | 8. 용어·일관성 | Missing → Assumed | Assumed: 용어집을 03에 둔다 — Site(사이트)·Device(Pi 게이트웨이)·Camera·Stream(main/sub)·Preset·Event·Clip·Command·Admin/Viewer. "기기"=Device, "카메라"=Camera로 고정 | — |
-| 9. 완료 신호 | Missing → Assumed | Assumed: 03 SC 표 전부 pass/fail, 06이 시나리오로 변환 | stage-templates A3 |
+| 9. 완료 신호 | Missing → Assumed | Assumed: 03 SC 표 전부 pass/fail, 06이 시나리오로 변환 | stage-templates 단계 |
 | 10. 비용·라이선스 | Partial → Assumed | Assumed: 채택 스택 전부 MIT/BSD/EPL(go2rtc MIT·coturn BSD-3·mosquitto EPL/EDL·FastAPI MIT·PostgreSQL). GPL 계열(ZoneMinder·MotionEye) 미채택. 런타임 비용 = VPS 1대 + TURN 대역(**미확인** → SC 목표로 쓰지 않음) | 01-recon 유사 솔루션·스택 표 |
 | 11. 사용 맥락 | Missing → Asked | **Asked → Q1** | 질문 프로토콜 3 (환경 질문 전에 맥락 먼저) |
-| S. Spoofing | Missing → Assumed | Assumed: 기기 = 기기별 X.509 mTLS(내부 CA), 사용자 = 비밀번호 argon2id + 세션 쿠키(HttpOnly), 스트림 = 단기 서명 토큰. A4 경계별 전수 검토 | P1 디바이스 신원(IoT Lens IOTSEC 1·2) |
+| S. Spoofing | Missing → Assumed | Assumed: 기기 = 기기별 X.509 mTLS(내부 CA), 사용자 = 비밀번호 argon2id + 세션 쿠키(HttpOnly), 스트림 = 단기 서명 토큰. 단계 경계별 전수 검토 | P1 디바이스 신원(IoT Lens IOTSEC 1·2) |
 | T. Tampering | Missing → Assumed | Assumed: 전 구간 TLS, 컨테이너 이미지 서명 검증, 클립 파일 SHA-256 기록 | P1 OTA 서명 검증 |
 | R. Repudiation | Missing → Assumed | Assumed: AuditLog(누가·언제·어느 카메라를 봤나/움직였나/클립 조회·삭제) 보관 AUDIT_RETENTION_DAYS | 01-recon 접속기록 1년(가능성) |
 | I. Information Disclosure | Missing → Assumed | Assumed: RBAC(Admin/Viewer), 스트림 토큰 STREAM_TOKEN_TTL_SEC, 클립 URL 서명, 로그에 영상·스냅샷 미기록, 오류 응답에 스택 미노출 | 개인정보보호법 제25조 안전조치 |
 | D. Denial of Service | Missing → Assumed | Assumed: 사이트당 동시 시청 VIEWER_MAX, API 레이트리밋, Pi 컨테이너 CPU/메모리 상한, TURN 사용자별 쿼터 | P1 영상 스트림(기기 과부하) |
-| E. Elevation of Privilege | Missing → Assumed | Assumed: 권한 스코프 `<모듈>:<자원>:<행위>`, 기기 MQTT ACL은 자기 토픽만, 관리자 승격은 Admin만 | A5 규약 |
+| E. Elevation of Privilege | Missing → Assumed | Assumed: 권한 스코프 `<모듈>:<자원>:<행위>`, 기기 MQTT ACL은 자기 토픽만, 관리자 승격은 Admin만 | 단계 규약 |
 | P1. SD카드 마모 | Missing → Assumed | Assumed: Overlay FS(read-only rootfs) + log2ram + 이벤트 DB·클립은 USB SSD + 고내구 microSD | 01-recon h·데이터 공급 실측, dzombak |
 | P1. 전원 차단 | Missing → Assumed | Assumed: read-only rootfs + USB SSD ext4 저널링 + SQLite WAL. UPS 없음(Accept — 유인 현장) | Mender Pi 체크리스트 |
 | P1. 자가 복구 | Missing → Assumed | Assumed: HW watchdog 활성(WATCHDOG_TIMEOUT_SEC ≤15) + systemd Restart=always + 컨테이너 헬스체크 → 실패 시 재시작 | blindspot P1(Pi watchdog 15초 상한) |
@@ -247,7 +247,7 @@ fit은 `evidence-map.md` 5요소(요구충족·팀·운영환경·생태계·총
 | P1. 디바이스 신원 | Missing → Assumed | Assumed: 기기별 X.509(내부 CA 발급, 1년 만료·자동 갱신) + MQTT ACL 자기 토픽만 | IoT Lens IOTSEC |
 | P1. 연결 끊김 | Missing → Assumed | Assumed: 이벤트·상태를 로컬 SQLite 큐(OFFLINE_QUEUE_MAX)에 쌓고 재접속 시 순서 전송, 상한 초과 시 오래된 것부터 폐기. 라이브는 버퍼 없음(끊김 = 재접속) | P1 기본값 |
 | P1. 영상 스트림 | Partial → Assumed | Assumed: WebRTC(go2rtc) 서브스트림 기본·메인스트림 선택, 사이트당 VIEWER_MAX, 업링크는 프로비저닝 시 실측 저장(UPLINK_MIN_MBPS 미만이면 경고) | 01-recon 비트레이트·지연 근거 |
-| P1. 원격 접근 | Partial → Asked | **Asked → Q2** (A0 최상위 해석 — 서버 경유 vs LAN vs VPN) | 00-seed 해석 2 |
+| P1. 원격 접근 | Partial → Asked | **Asked → Q2** (단계 최상위 해석 — 서버 경유 vs LAN vs VPN) | 00-seed 해석 2 |
 | P1. 프로비저닝 | Missing → Assumed | Assumed: 이미지에 1회용 클레임 토큰 → 첫 접속 시 기기 인증서 발급 → Admin이 사이트에 승인. 카메라는 ONVIF WS-Discovery 자동 탐색 + 자격증명 입력 | IoT Lens IOTOPS 3 |
 | P3. 실시간성 | Missing → Assumed | Assumed: "실시간" = LIVE_LATENCY_P95 + 기기 상태 반영 STATE_REFRESH_SEC. 알람 경로 우선 처리 | 01-recon WebRTC 지연 |
 | P3. 알람 폭주 | Missing → Assumed | Assumed: 카메라별 이벤트 쿨다운 EVENT_COOLDOWN_SEC + 알림 그룹핑 + 일일 알림 상한 ALERT_DAILY_MAX 초과 시 요약 1건 | SRE "조치 가능한 알람만" |
@@ -256,7 +256,7 @@ fit은 `evidence-map.md` 5요소(요구충족·팀·운영환경·생태계·총
 | P3. 폐쇄망 | Clear(해당없음) | — 인터넷 필수 전제(축 7) | 00-seed |
 | P3. 프로토콜 | Clear(해당없음) | — ONVIF/RTSP 표준으로 확정, 축 5·Q4가 덮음 | 01-recon ONVIF |
 
-Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear 2 = 33행.
+Asked 5 · Assumed 24 · Clear 2 = 31.
 
 ## 질문 배치 (최대 5) — 2026-09-08 (평가 런: AskUserQuestion 미사용, 표로만 제시)
 
@@ -268,7 +268,7 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | C | 둘 다 동등 | 두 레이아웃 + 상수 상향. 되돌릴 때 비용: 중 |
 → 답: 무응답 → **A Assumed(무응답)**
 
-### Q2. 어디서 보나요 — 배포 형태 (A0 최상위 해석 · P1 원격 접근)
+### Q2. 어디서 보나요 — 배포 형태 (단계 최상위 해석 · P1 원격 접근)
 | 옵션 | 내용 | 근거·트레이드오프 |
 |---|---|---|
 | A (추천) | **중앙 서버(VPS 1대) 경유** — Pi는 아웃바운드 연결만, 어디서든 브라우저 | 포트포워딩 없이 원격 시청·제어. 서버 운영·TURN 대역 비용 발생. 되돌릴 때 비용: 높음(서버 컴포넌트·인증 제거) |
@@ -306,50 +306,50 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 - Q4 A → 03 FR 카메라 온보딩(ONVIF 탐색·capability) · 가정 "H.264 스트림 1개 필수" (DL-009)
 - Q5 A → 07 OTA(앱 계층 A/B) · 04 위협모델 Accept(OS 벽돌·정전) (DL-010)
 
-<!-- ===== 03-prd.md ===== -->
+
 # PRD — PiCam Watch
-버전: v1.3
-개정: R1 반영 완료 (REVISIONS.md — A4 독립 검토 16건) · R2 반영 완료 (운영 상수 17개, A7) · R4 반영 완료 (GATE 검토 패치 — 상수 6개 추가·EVENTS_PER_CAM_DAY_MAX 정합·릴레이 판정 `ice_state`·숫자 상수화·권한 문구·엣지 19)
-스킬: `ecc:product-capability`(역량 진술·불변식·상태 전이 흡수) · `frontend-design-taste`(UI dial) · 참조 `ux-principles-kr.md`
+버전: v1.2
+개정: R1 반영 완료 (REVISIONS.md — 단계 독립 검토 16건) · R2 반영 완료 (운영 상수 17개, 단계)
+참고자료: `(참고자료)`(역량 진술·불변식·상태 전이 흡수) · `frontend-design-taste`(UI dial) · 참조 `ux-principles-kr.md`
 
 **근거 (진입 사전조사, 검색 3회)**
 - 정량 — WebRTC glass-to-glass 200~500ms, LL-HLS 2~5초, HLS 15~30초 (mux.com / videosdk.live / forasoft.com, 2026-09-08). "실시간"의 유일한 1초 이내 후보는 WebRTC.
 - 정성 — 사용자 불만: "live view pauses and then 'catches up'", "the security camera lags 10–20 seconds behind" real time; 벤더 지원 문서는 원격 시청에 "switch each camera from 'Clear/Main' to 'Fluent/Sub' stream"을 권한다 (whizz-experts.com 지원 문서, 2025-12-10, 확인 2026-09-08). → 서브스트림 기본값(Q1)과 지연 상수의 근거.
-- 사용자 영향 — 운영자는 폰에서 카메라를 누르면 LIVE_LATENCY_P95 안에 움직이는 화면을 본다. 지연·정지 상태를 화면이 숨기지 않는다(stale 표시). 원칙 L-10(0.4초 피드백)·L-06(막다른 에러 0)·T-08(CTA는 다음 행동 그대로).
+- 사용자 영향 — 운영자는 폰에서 카메라를 누르면 1초 안에 움직이는 화면을 본다. 지연·정지 상태를 화면이 숨기지 않는다(stale 표시). 원칙 L-10(0.4초 피드백)·L-06(막다른 에러 0)·T-08(CTA는 다음 행동 그대로).
 
 ## 배경 (RECON 요약)
-소상공인 시설의 IP 카메라는 제조사 앱·통신사 결합상품·포트포워딩에 묶여 있고, 원격 시청은 클라우드 릴레이 지연이 크다. 2026년 시점 ONVIF는 Profile T가 표준(Profile S는 2027-03 종료), PTZ는 ONVIF PTZ Service로 표준화돼 벤더 종속 없이 제어할 수 있다. Raspberry Pi 5는 HW H.264 인코더가 없어 **재인코딩 없는 패스스루**(go2rtc)가 설계 축이며, 온보드 RTC로 시계 문제를 HW로 푼다. 국내 개인정보보호법 제25조(안내판·안전조치)와 보존기간 30일 권고(가능성, 원문 재확인 필요)·접속기록 1년 보관(가능성)이 기본 요구사항이다. 상세와 출처: `01-recon.md`.
+소상공인 시설의 IP 카메라는 제조사 앱·통신사 결합상품·포트포워딩에 묶여 있고, 원격 시청은 클라우드 릴레이 지연이 크다. 2026년 시점 ONVIF는 Profile T가 표준(Profile S는 2027-03 종료), PTZ는 ONVIF PTZ Service로 표준화돼 벤더 종속 없이 제어할 수 있다. Raspberry Pi 5는 HW H.264 인코더가 없어 **재인코딩 없는 패스스루**(go2rtc)가 설계 축이며, 온보드 RTC로 시계 문제를 HW로 푼다. 국내 개인정보보호법 제25조(안내판·안전조치)와 보존기간 30일 권고(가능성, 원문 재확인 필요)·접속기록 1년 보관(가능성)이 기본 요구사항이다. 상세와 출처: `(문서)`.
 
 ## 역량 진술 (product-capability CAPABILITY)
-소규모 시설 운영자가, 이미 설치된 ONVIF IP 카메라를 라즈베리파이 게이트웨이 1대에 연결하면, 어디서든 스마트폰 브라우저로 **LIVE_LATENCY_P95 안에 라이브를 보고 PTZ_CMD_LATENCY_P95 안에 PTZ를 움직이고**, 움직임 이벤트 클립을 푸시로 받아 확인하며, **보존기간 파기·접근 기록·안내판 정보가 기본값으로 처리**되어 법 준수를 따로 챙기지 않아도 되는 상태가 된다.
+소규모 시설 운영자가, 이미 설치된 ONVIF IP 카메라를 라즈베리파이 게이트웨이 1대에 연결하면, 어디서든 스마트폰 브라우저로 **1초 이내 라이브를 보고 PTZ를 움직이고**, 움직임 이벤트 클립을 푸시로 받아 확인하며, **보존기간 파기·접근 기록·안내판 정보가 기본값으로 처리**되어 법 준수를 따로 챙기지 않아도 되는 상태가 된다.
 
 ## 제품 목표 — 3개, 직교
 | ID | 목표 | 측정 (SC) |
 |---|---|---|
-| G1 | **원격 실시간 확인·제어** — 브라우저에서 LIVE_LATENCY_P95 안에 보고 PTZ_CMD_LATENCY_P95 안에 움직인다 | SC-001·002·003·011·014·015 |
-| G2 | **무인 운영 신뢰성** — Pi가 사람 손 없이 돌고, 끊기면 알리고, 스스로 복구하고, 업데이트에 실패해도 되돌아온다 | SC-004·005·008·009·010·013 |
+| G1 | **원격 실시간 확인·제어** — 브라우저에서 LIVE_LATENCY_P95 안에 보고 PTZ_CMD_LATENCY_P95 안에 움직인다 | SC-001·002·003·011·014 |
+| G2 | **무인 운영 신뢰성** — Pi가 사람 손 없이 돌고, 끊기면 알리고, 스스로 복구하고, 업데이트에 실패해도 되돌아온다 | SC-004·008·009·010·013 |
 | G3 | **법 준수 내장** — 보존기간 자동 파기·접근 기록·안내판 정보가 기본값 | SC-006·007·012 |
 
 ## 유저 스토리 — P1만으로 MVP 성립
 | ID | 우선순위 | 스토리 | 독립 테스트 |
 |---|---|---|---|
-| US-1 | P1 | As a 운영자, I want 폰 브라우저에서 카메라를 눌러 LIVE_LATENCY_P95 안에 라이브를 보고 싶다, so that 외출 중에도 매장 상황을 확인한다 | SC-001·002 |
+| US-1 | P1 | As a 운영자, I want 폰 브라우저에서 카메라를 눌러 1초 안에 라이브를 보고 싶다, so that 외출 중에도 매장 상황을 확인한다 | SC-001·002 |
 | US-2 | P1 | As a 운영자, I want 화면에서 PTZ 카메라를 움직이고 프리셋으로 이동하고 싶다, so that 보고 싶은 곳을 본다 | SC-003 |
 | US-3 | P1 | As a 운영자, I want 움직임이 감지되면 푸시를 받고 클립을 바로 보고 싶다, so that 계속 지켜보지 않아도 된다 | SC-005·006 |
 | US-4 | P1 | As a 운영자, I want Pi나 카메라가 끊기면 알고 싶다, so that 녹화 공백을 인지하고 조치한다 | SC-004 |
-| US-5 | P2 | As a 운영자, I want 직원에게 Viewer 권한만 주고 누가 언제 봤는지 기록을 보고 싶다, so that 책임을 추적한다 | SC-007 |
+| US-5 | P2 | As a 운영자, I want 직원에게 시청 권한만 주고 누가 언제 봤는지 기록을 보고 싶다, so that 책임을 추적한다 | SC-007 |
 
 ## 요구사항 풀
 | ID | 요구사항 (EARS) | 우선순위 | 출처 |
 |---|---|---|---|
 | FR-001 | 기기가 처음 켜질 때, 시스템은 이미지의 1회용 클레임 토큰으로 기기 인증서(X.509)를 발급하고 Admin 승인 전까지 `claimed` 상태로 둔다 | P0 | P1 프로비저닝, DL-004 |
-| FR-002 | Admin이 카메라 탐색을 요청할 때, 기기는 WS-Discovery로 LAN의 ONVIF 카메라를 나열하고, 자격증명 입력 후 capability(PTZ·프리셋·이벤트·스트림 프로파일)를 저장한다. H.264 스트림이 없으면 등록을 거부하고 카메라 설정 안내를 표시한다. 이벤트(MotionAlarm) capability가 없으면 등록은 허용하되 `no-motion-events` 경고를 표시하고 이벤트 UI를 비노출한다(엣지케이스 19) | P0 | US-1, Q4, INV-6, R4 |
-| FR-003 | Viewer가 카메라를 선택할 때, 시스템은 WebRTC로 서브스트림 세션을 시작하고(모든 세션은 sub로 시작), 클라이언트의 `ice_state` 보고가 직결(비릴레이)이면 메인스트림 전환을 제공한다 — 전환은 직결 세션을 참조하는 신규 세션이다 (LIVE_LATENCY_P95, LIVE_FIRST_FRAME_P95). 세션은 LIVE_SESSION_MAX_MIN에 자동 종료되고 "다시 보기" CTA를 보인다 | P0 | US-1, Q1 |
-| FR-004 | 라이브·클립 재생을 시작할 때, 시스템은 STREAM_TOKEN_TTL_SEC 유효 서명 토큰을 발급하고 토큰 없는 요청은 거부한다. 서명 토큰 TTL(STREAM_TOKEN_TTL_SEC)과 클립 서버 캐시 수명(CLIP_CACHE_TTL_MIN)은 별개다 | P0 | STRIDE I |
+| FR-002 | Admin이 카메라 탐색을 요청할 때, 기기는 WS-Discovery로 LAN의 ONVIF 카메라를 나열하고, 자격증명 입력 후 capability(PTZ·프리셋·이벤트·스트림 프로파일)를 저장한다. H.264 스트림이 없으면 등록을 거부하고 카메라 설정 안내를 표시한다 | P0 | US-1, Q4, INV-6 |
+| FR-003 | Viewer가 카메라를 선택할 때, 시스템은 WebRTC로 서브스트림을 재생하고 메인스트림 전환을 제공한다 (LIVE_LATENCY_P95, LIVE_FIRST_FRAME_P95). 세션은 LIVE_SESSION_MAX_MIN에 자동 종료되고 "다시 보기" CTA를 보인다 | P0 | US-1, Q1 |
+| FR-004 | 라이브·클립 재생을 시작할 때, 시스템은 STREAM_TOKEN_TTL_SEC 유효 서명 토큰을 발급하고 토큰 없는 요청은 거부한다 | P0 | STRIDE I |
 | FR-005 | 사이트의 동시 시청 세션이 VIEWER_MAX에 도달했을 때, 시스템은 추가 요청을 429로 거절하고 "다른 시청자가 보는 중"을 안내한다 | P1 | STRIDE D |
-| FR-006 | P2P ICE 연결이 실패할 때, 시스템은 TURN 릴레이로 폴백한다. 클라이언트는 ICE 완료 시 `ice_state`(relayed 여부)를 보고하고, 릴레이 세션은 서브스트림만 허용한다(메인 전환 비활성 + "릴레이 연결" 배지; 메인 세션이 릴레이로 보고되면 `main-requires-direct`로 종료). 릴레이 합계가 TURN_RELAY_MAX_MBPS를 넘기게 하는 릴레이 보고 세션은 `viewer-limit`(relay-cap)로 종료한다 | P1 | P1 영상 스트림, R1·R4 |
+| FR-006 | P2P ICE 연결이 실패할 때, 시스템은 TURN 릴레이로 폴백한다. 릴레이 경로에서는 서브스트림으로 고정하고(메인 요청은 강등 + "릴레이 연결" 배지), 릴레이 합계가 TURN_RELAY_MAX_MBPS에 도달하면 새 릴레이 세션을 `viewer-limit`로 거절한다 | P1 | P1 영상 스트림, R1 |
 | FR-007 | Viewer가 PTZ 방향 버튼을 누르고 있을 때, 시스템은 ONVIF ContinuousMove를 보내고 떼면 Stop을 보낸다 (PTZ_CMD_LATENCY_P95). 다른 사용자가 PTZ_LOCK_SEC 안에 조작 중이면 잠금 안내를 표시한다 | P0 | US-2, INV-5 |
-| FR-008 | Admin이 프리셋을 저장·삭제하고 Viewer 이상이 프리셋으로 이동할 때, 시스템은 ONVIF 프리셋 서비스에 반영하고 목록을 갱신한다 | P1 | US-2 |
+| FR-008 | Admin이 프리셋을 저장·이동·삭제할 때, 시스템은 ONVIF 프리셋 서비스에 반영하고 목록을 갱신한다 | P1 | US-2 |
 | FR-009 | Viewer가 스냅샷을 요청할 때, 시스템은 카메라 스냅샷(JPEG)을 저장하고 다운로드를 제공한다 | P1 | US-2 |
 | FR-010 | 클라이언트가 제어 명령을 보낼 때, 시스템은 Idempotency-Key로 중복을 제거하고, 기기가 오프라인이면 큐잉하지 않고 즉시 실패로 응답한다 | P0 | 축 6 |
 | FR-011 | 카메라가 ONVIF 모션 이벤트를 보낼 때, 기기는 이벤트를 생성하되 같은 카메라의 EVENT_COOLDOWN_SEC 안 중복은 하나로 합친다 | P0 | US-3 |
@@ -369,7 +369,7 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | FR-025 | 사용자가 로그인할 때, 시스템은 이메일+비밀번호(argon2id)를 검증하고 세션 쿠키(HttpOnly, SESSION_TTL_HOURS)를 발급한다. 역할은 Admin/Viewer, 권한은 스코프 `<모듈>:<자원>:<행위>` | P0 | STRIDE S·E |
 | FR-026 | 로그인·라이브 시청 시작/종료·PTZ·스냅샷·클립 조회/다운로드/삭제·설정 변경이 일어날 때, 시스템은 감사 로그를 남기고 AUDIT_RETENTION_DAYS 보관하며 Admin이 조회한다 | P0 | G3, INV-2 |
 | FR-027 | Admin이 사이트를 설정할 때, 시스템은 안내판 정보(설치 목적·장소·촬영 범위·시간·관리책임자 연락처)와 운영·관리 방침 텍스트를 저장하고 인쇄용으로 출력한다 | P1 | 개인정보보호법 제25조 |
-| FR-028 | Admin이 Viewer를 초대할 때, 시스템은 초대 링크를 보내고 사이트 단위 Viewer 권한(05 Viewer 스코프 — 라이브·PTZ·프리셋 이동·스냅샷·녹화·클립 조회)만 부여한다 | P2 | US-5 |
+| FR-028 | Admin이 Viewer를 초대할 때, 시스템은 초대 링크를 보내고 사이트 단위 시청 권한만 부여한다 | P2 | US-5 |
 | FR-029 | AUDIT_REVIEW_INTERVAL_DAYS가 지날 때, 시스템은 Admin에게 감사 로그 점검 리마인더를 보내고 점검 완료를 기록한다 | P1 | 안전성 확보조치(가능성) |
 | FR-030 | 기기 인증서 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 전이 될 때, 기기는 현재 인증서로 갱신을 요청하고 서버 ca 모듈은 DEVICE_CERT_VALID_DAYS 유효 인증서를 재발급한다. 갱신 실패는 Admin 알림이다 | P1 | P1 디바이스 신원, R1 |
 
@@ -400,11 +400,11 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 **PTZ**
 5. Given Viewer A가 조작 중 / When Viewer B가 PTZ_LOCK_SEC 안에 조작 / Then B에게 "A가 조작 중 (N초)" 표시, 명령 거절
 6. Given 카메라가 PTZ capability 없음 / When 라이브 화면 / Then PTZ 컨트롤 비노출 (빈 컨트롤 표시 금지)
-7. Given 기기 오프라인 / When PTZ 명령 / Then 즉시 `failed`(`device-offline`), 큐잉 없음
+7. Given 기기 오프라인 / When PTZ 명령 / Then 즉시 `failed`(device_offline), 큐잉 없음
 8. Given 같은 Idempotency-Key로 재요청 / When 처리 / Then 최초 응답 재생, 카메라에 명령 중복 전송 없음
 
 **이벤트·클립**
-9. Given EVENT_COOLDOWN_SEC 안에 모션 5회 / When 이벤트 생성 / Then 이벤트 1건, 클립은 마지막 모션 + CLIP_POST_SEC까지 연장
+9. Given 30초 안에 모션 5회 / When 이벤트 생성 / Then 이벤트 1건, 클립은 마지막 모션 + CLIP_POST_SEC까지 연장
 10. Given USB SSD 미장착 또는 마운트 실패 / When 이벤트 / Then 클립 `clip_failed`, 썸네일만 저장, Admin에게 디스크 경고 1회(반복 억제)
 11. Given 보존 만료 클립이 재생 중 / When 파기 잡 실행 / Then 파기는 진행, 재생 세션은 EOF로 종료
 12. Given 기기 시계가 NTP 동기 전 / When 이벤트 발생 / Then 이벤트에 `clock_synced=false`, 서버 수신 시각으로 보정 표시
@@ -416,11 +416,8 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 16. Given 클레임 토큰 재사용 / When 두 번째 기기가 접속 / Then 거부 + Admin 알림 (STRIDE S)
 
 **라이브 (R1 추가)**
-17. Given ICE가 TURN 릴레이로 붙음(`ice_state` relayed=true) / When 라이브 화면 / Then 메인 전환 토글 비활성 + "릴레이 연결 — 기본 화질" 배지, 오류 아님; 직결 세션에서 메인 전환 중 네트워크가 바뀌어 메인 세션이 릴레이로 보고되면 그 세션은 `main-requires-direct`로 종료되고 UI는 서브 세션으로 되돌아간다
-18. Given 라이브 세션이 LIVE_SESSION_MAX_MIN 도달 / When 만료 / Then 스트림 종료 + "다시 보기" CTA, 감사 로그 종료 기록; 릴레이 합계가 TURN_RELAY_MAX_MBPS에 도달한 상태에서 새 세션이 `ice_state` relayed=true를 보고하면 서버가 그 세션을 종료하고 WS `error` `viewer-limit`(reason=relay-cap)을 보낸다(직결 세션은 영향 없음)
-
-**카메라 (R4 추가)**
-19. Given 카메라 capability에 이벤트(MotionAlarm)가 없음 / When 등록(FR-002) / Then 등록 성공 + 경고 "이 카메라는 움직임 알림을 지원하지 않아요 — 라이브·PTZ·수동 녹화만 돼요", 최근 이벤트 영역·모션 설정 비노출(엣지 6 패턴), US-3은 이 카메라에 적용되지 않음
+17. Given ICE가 TURN 릴레이로 붙음 / When Viewer가 메인스트림 요청 / Then 서브스트림으로 강등 + "릴레이 연결 — 기본 화질" 배지, 오류 아님
+18. Given 라이브 세션이 LIVE_SESSION_MAX_MIN 도달 / When 만료 / Then 스트림 종료 + "다시 보기" CTA, 감사 로그 종료 기록; 릴레이 합계가 TURN_RELAY_MAX_MBPS면 새 릴레이 세션은 429 `viewer-limit`(직결 세션은 허용)
 
 ## 성공 기준
 | ID | 기준 (pass/fail) | 측정 방법 |
@@ -432,14 +429,14 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | SC-005 | 모션 발생 → 푸시 도착 p95 ≤ ALERT_DELIVERY_P95 | 사람이 카메라 앞 이동 30회, 푸시 수신 시각 기록 |
 | SC-006 | 만료 클립·썸네일·이벤트가 PURGE_MAX_DELAY_HOURS 안에 삭제되고 파기 로그 존재 100% | 시계 앞당김 테스트, 파일·DB 대조 |
 | SC-007 | 라이브·PTZ·스냅샷·클립 행위 100%가 감사 로그에 존재 | E2E 스크립트 50행위 → 로그 대조 |
-| SC-008 | 에이전트 프로세스 kill 후 AGENT_RECOVER_MAX_SEC 안에 라이브 복귀; 커널 hang 시뮬 후 WATCHDOG_TIMEOUT_SEC + PI_BOOT_MAX_SEC 안에 `online` 복귀 | kill -9 10회, `echo c > /proc/sysrq-trigger` 3회 |
+| SC-008 | 에이전트 프로세스 kill 후 60초 안에 라이브 복귀; 커널 hang 시뮬 후 WATCHDOG_TIMEOUT_SEC + 부팅 시간 안에 복귀 | kill -9 10회, `echo c > /proc/sysrq-trigger` 3회 |
 | SC-009 | 네트워크 차단 1시간 동안 이벤트 100건 → 복구 후 100건 순서대로 도착, 유실 0 | 방화벽 차단 테스트 3회 |
 | SC-010 | 고의 결함 이미지 배포 → 이전 digest 복귀 ≤ OTA_ROLLBACK_MAX_MIN, 라이브 복귀 | 결함 이미지 배포 3회 |
-| SC-011 | VIEWER_MAX+1번째 요청 429, 기존 세션 프레임 드롭률 ≤ FRAME_DROP_MAX_PCT | 동시 접속 스크립트 |
+| SC-011 | VIEWER_MAX+1번째 요청 429, 기존 세션 프레임 드롭 0 | 동시 접속 스크립트 |
 | SC-012 | 토큰 없는 스트림·클립 URL 401/403 100%; 기기 A 인증서로 기기 B 토픽 발행 거부 100% | 보안 테스트 스위트 |
 | SC-013 | 24시간 운영 중 SD 카드 쓰기 ≤ SD_WRITE_MAX_MB_DAY | `/proc/diskstats` 섹터 차분 |
 | SC-014 | 카메라 선택 → 라이브까지 사용자 결정 지점 ≤ 2, 모든 액션 시각 피드백 ≤ UI_FEEDBACK_MS | 플로우 다이어그램 카운트, 브라우저 성능 로그 |
-| SC-015 | 릴레이 세션(`ice_state` relayed=true)은 전부 서브스트림(main 세션 0); 릴레이 합계가 TURN_RELAY_MAX_MBPS에 도달한 뒤 릴레이로 보고된 새 세션은 종료 + `viewer-limit`(relay-cap), 기존 세션 프레임 드롭률 ≤ FRAME_DROP_MAX_PCT | coturn 릴레이 지표 + 릴레이 강제(STUN 차단) 동시 접속 스크립트 |
+| SC-015 | 릴레이 세션은 전부 서브스트림; 릴레이 합계가 TURN_RELAY_MAX_MBPS에 도달하면 새 릴레이 세션 429, 기존 세션 프레임 드롭 0 | coturn 릴레이 지표 + 릴레이 강제(STUN 차단) 동시 접속 스크립트 |
 
 ## UI 방향
 - **dial (frontend-design-taste)**: 제품/앱 UI 프로파일을 모바일 우선으로 — VISUAL_DENSITY 5 · MOTION_INTENSITY 3 · DESIGN_VARIANCE 3. 라이브 화면만 DENSITY 7(영상이 화면을 차지, 컨트롤은 오버레이).
@@ -471,12 +468,12 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 ## 범위 밖 (non-goals)
 24/7 연속 녹화 · AI 객체 탐지(사람/차량 분류) · 다중 테넌트 판매·과금 · 네이티브 앱 · Raspberry Pi 4 지원 · 서버 고가용성 · 카카오 알림톡/SMS · 카메라 전원(릴레이) 제어 · Pi Camera Module(CSI) 입력 · 폐쇄망 운영 · 양방향 오디오.
 
-## 가정 목록 (register Assumed 요약 — `02-blindspot-register.md`)
+## 가정 목록 (register Assumed 요약 — `(문서)`)
 - 사용 맥락: 스마트폰 단시간 확인 + 푸시 (Q1) · 배포: 중앙 서버 경유 (Q2) · 녹화: 이벤트 클립, Pi USB SSD (Q3) · 카메라: ONVIF S/T + H.264 (Q4) · 현장: 유인, OS A/B 없음 (Q5)
 - 규모: SITES_MAX·CAMERAS_PER_SITE_MAX·VIEWER_MAX (해석 4) · 팀 1~2명, 언어 Python 1개 · 인터넷 필수
 - 법: 보존 30일 권고와 접속기록 1년은 **가능성**(원문 재확인 필요) — 값을 상수로 두어 확인 후 한 곳만 바꾼다
-- 엣지: Pi 5 4GB · Overlay FS · log2ram · HW watchdog · 기기별 X.509(DEVICE_CERT_VALID_DAYS, 자동 갱신) · 클립·Docker data-root·로그 동기화는 USB SSD(rootfs는 읽기전용, R4)
-- 서버: VPS 1대 회선 VPS_LINE_MBPS·디스크 VPS_DISK_MIN_GB 가정, 릴레이는 서브스트림 고정 + TURN_RELAY_MAX_MBPS 상한 (R1) · 컨테이너 레지스트리는 외부(GHCR) + cosign
+- 엣지: Pi 5 4GB · Overlay FS · log2ram · HW watchdog · 기기별 X.509(DEVICE_CERT_VALID_DAYS, 자동 갱신) · 클립은 USB SSD
+- 서버: VPS 1대 회선 VPS_LINE_MBPS 가정, 릴레이는 서브스트림 고정 + TURN_RELAY_MAX_MBPS 상한 (R1) · 컨테이너 레지스트리는 외부(GHCR) + cosign
 
 ## 용어집
 | 용어 | 정의 |
@@ -490,7 +487,6 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | Clip | Event에 붙는 영상 파일 (Device의 USB SSD) |
 | Command | 서버→Device 제어 요청 (PTZ·스냅샷·재시작·배포) |
 | Admin / Viewer | 설정·사용자·감사 로그 권한 / 라이브·클립·PTZ 권한 |
-| 운영 담당(Operator) | 서비스를 운영하는 팀원(팀 1~2명) — 07 알람 수신·런북 실행 주체. 사용자 페르소나 "운영자"(시설 운영자 = Admin/Viewer)와 다른 역할 (R4 #21) |
 | Workspace | 계정 단위(테넌트). MVP는 1개 |
 
 ## 상수 표 (단일 출처 — 04~07은 이름으로만 참조)
@@ -513,7 +509,7 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | CLIP_RETENTION_DAYS | 30 | 일 | 출처 URL https://www.privacy.go.kr/front/bbs/bbsView.do?bbsNo=BBSMSTR_000000000049&bbscttNo=20779 (표준 개인정보 보호지침 30일 권고 — 원문 재확인 필요, 가능성) |
 | PURGE_MAX_DELAY_HOURS | 24 | 시간 | 설계 결정 DL-011 (법의 "지체없이(5일)"보다 엄격) |
 | CLIP_DISK_RESERVE_PCT | 10 | % | 설계 결정 DL-011 |
-| CLIP_STORAGE_MIN_GB | 256 | GB | 설계 결정 DL-011·DL-023 (EVENTS_PER_CAM_DAY_MAX 최악치 ≈ 180GB + CLIP_DISK_RESERVE_PCT 예비가 들어가는 최소 SSD) |
+| CLIP_STORAGE_MIN_GB | 256 | GB | 설계 결정 DL-011 (4카메라 × 50이벤트/일 × 20초 × 5Mbps × 30일 ≈ 75GB의 3배) |
 | AUDIT_RETENTION_DAYS | 365 | 일 | 출처 URL https://itwiki.kr/w/개인정보처리시스템_접속기록 (안전성 확보조치 기준 1년 — 원문 재확인 필요, 가능성) |
 | AUDIT_REVIEW_INTERVAL_DAYS | 30 | 일 | 출처 URL https://itwiki.kr/w/개인정보처리시스템_접속기록 (월 1회 점검 — 가능성) |
 | VIEWER_MAX | 5 | 세션/사이트 | 설계 결정 DL-006 (Q1) |
@@ -523,7 +519,7 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | SUB_STREAM_BITRATE_KBPS | 512 | kbps | 출처 URL https://www.unifore.net/ip-video-surveillance/simple-guide-of-ip-camera-bitrate-setting.html (단일 벤더 블로그, 가능성) |
 | UPLINK_MIN_MBPS | 30 | Mbps | 설계 결정 DL-011 (VIEWER_MAX × MAIN_STREAM_BITRATE_MBPS = 25 + 여유) |
 | OFFLINE_QUEUE_MAX | 10000 | 건 | 설계 결정 DL-011 |
-| EVENTS_PER_CAM_DAY_MAX | 120 | 건/카메라/일 | 설계 결정 DL-023 (R4 — CLIP_STORAGE_MIN_GB와 정합: CAMERAS_PER_SITE_MAX × EVENTS_PER_CAM_DAY_MAX × (CLIP_PRE_SEC + CLIP_POST_SEC) × MAIN_STREAM_BITRATE_MBPS × CLIP_RETENTION_DAYS ≈ 180GB ≤ CLIP_STORAGE_MIN_GB × (1 − CLIP_DISK_RESERVE_PCT/100)) |
+| EVENTS_PER_CAM_DAY_MAX | 500 | 건 | 설계 결정 DL-011 (볼륨 상한 가정) |
 | STREAM_TOKEN_TTL_SEC | 300 | 초 | 설계 결정 DL-011 |
 | SESSION_TTL_HOURS | 24 | 시간 | 설계 결정 DL-011 |
 | PASSWORD_MIN_LEN | 12 | 자 | 설계 결정 DL-011 |
@@ -557,29 +553,23 @@ Asked 6행(질문 5 — Q1이 축 3·11을 함께 덮음) · Assumed 25 · Clear
 | JOURNAL_MAX_MB | 20 | MB | 출처 URL https://github.com/azlux/log2ram (README 권고 SystemMaxUse=20M) |
 | LOG_RETENTION_DAYS | 14 | 일 | 설계 결정 DL-018 (서버 앱 로그; 감사 로그는 AUDIT_RETENTION_DAYS) |
 | BACKUP_INTERVAL_HOURS | 24 | 시간 | 설계 결정 DL-018 |
-| BACKUP_RETENTION_DAYS | 30 | 일 | 설계 결정 DL-018 (pg_dump 보존; 썸네일 백업은 rsync --delete 미러라 원본 파기가 그대로 반영 — DL-025) |
+| BACKUP_RETENTION_DAYS | 30 | 일 | 설계 결정 DL-018 (썸네일 백업은 CLIP_RETENTION_DAYS 파기 대상) |
 | RESTORE_DRILL_INTERVAL_DAYS | 90 | 일 | 출처 blindspot-checklists P2 백업·DR (복원 리허설 분기 1회) |
 | RTO_SERVER_MIN | 120 | 분 | 설계 결정 DL-018 (팀 1~2명, 새 VPS 재설치 + 복원) |
-| RPO_SERVER_HOURS | 24 | 시간 | 설계 결정 DL-018 (= BACKUP_INTERVAL_HOURS; 이벤트 메타는 백업에서 제외 — DL-025, 복원 후 새 이벤트부터) |
-| RTO_DEVICE_MIN | 60 | 분 | 설계 결정 DL-018 (유인 현장 SD 재굽기 + USB SSD 재연결 — 인증서 재사용, DL-024) |
+| RPO_SERVER_HOURS | 24 | 시간 | 설계 결정 DL-018 (= BACKUP_INTERVAL_HOURS; 이벤트는 기기 outbox 재전송으로 0에 근접) |
+| RTO_DEVICE_MIN | 60 | 분 | 설계 결정 DL-018 (유인 현장 SD 재굽기 + 재클레임) |
 | ALERT_OPS_DEDUP_MIN | 30 | 분 | 설계 결정 DL-018 (운영 알람 중복 억제) |
-| PI_BOOT_MAX_SEC | 120 | 초 | 설계 결정 DL-022 (R4 — 전원 인가 → agent online 상한; Pi 5 + Docker compose 기동 여유, SC-008 pass/fail 상한) |
-| AGENT_RECOVER_MAX_SEC | 60 | 초 | 설계 결정 DL-022 (R4 — agent 프로세스 종료 → 라이브 복귀 상한, SC-008) |
-| FRAME_DROP_MAX_PCT | 1 | % | 설계 결정 DL-022 (R4 — WebRTC stats framesDropped ÷ framesReceived 허용치; 정상 상태에서도 0이 아니라 flaky 방지) |
-| ALARM_EVAL_WINDOW_MIN | 60 | 분 | 설계 결정 DL-022 (R4 — 07 라이브 성공률 알람 평가 창) |
-| OFFLINE_ESCALATE_MIN | 30 | 분 | 설계 결정 DL-022 (R4 — RB-1: 인터넷 정상인데 offline 지속 시 현장 조치로 넘기는 대기) |
-| VPS_DISK_MIN_GB | 80 | GB | 설계 결정 DL-023 (R4 — thumbs 최악치(EVENTS_PER_CAM_DAY_MAX × CAMERAS_PER_SITE_MAX × SITES_MAX × CLIP_RETENTION_DAYS × THUMB_MAX_KB ≈ 29GB) + clipcache(VIEWER_MAX × SITES_MAX 동시 클립) + pgdata·로그 + 여유) |
 | TURN_RELAY_COST | — | 원/GB | 미확인 (01-recon 미확인 6) — SC에 쓰지 않는다 |
 | KR_UPLOAD_AVG_MBPS | 211 | Mbps | 미확인 (검색 스니펫, 1차 통계 미열람) — SC에 쓰지 않는다 |
 
 ## 미결정
 0건.
 
-<!-- ===== 04-architecture.md ===== -->
+
 # 아키텍처 — PiCam Watch
-버전: v1.3 · 기준 03 v1.3
-개정: R1 반영 완료 (REVISIONS.md — 독립 검토 CONCERNS 16건 전부 채택) · R2(운영 상수 추가)는 이 문서에 영향 없음 · R3 GATE 반영(시퀀스 1 토픽 프리픽스를 05 규약으로 정정) · R4 GATE 패치(릴레이 판정 `ice_state`·`first_frame`, D01 경로·slug 표기, 캐시 TTL, caddy 노드, Docker data-root SSD, Event 파티션 제거, R-1 실증 ⑤⑥)
-스킬: `ecc:architecture-decision-records`(검토한 대안을 ADR 형식으로, 별도 파일 대신 이 문서·decision-log에 흡수) · `ecc:security-review`(체크리스트를 위협모델 ③에 적용)
+버전: v1.2
+개정: R1 반영 완료 (REVISIONS.md — 독립 검토 CONCERNS 16건 전부 채택) · R2(운영 상수 추가)는 이 문서에 영향 없음 · R3 최종 검토 반영(시퀀스 1 토픽 프리픽스를 05 규약으로 정정)
+참고자료: `(참고자료)`(검토한 대안을 ADR 형식으로, 별도 파일 대신 이 문서·decision-log에 흡수) · `(참고자료)`(체크리스트를 위협모델 ③에 적용)
 
 **근거 (진입 사전조사, 검색 1회)**
 - 정량 — go2rtc README: "for stable external WebRTC access, you need to open the 8555 port on your router for both TCP and UDP", UDP 홀펀칭은 "sometimes" 동작. ONVIF 입력(`onvif://`)·ONVIF 서버 출력·"on-the-fly transcoding only if necessary" 명시 (github.com/AlexxIT/go2rtc README, 2026-09-08).
@@ -630,7 +620,7 @@ flowchart LR
 | 난점 | 선택 | 왜 |
 |---|---|---|
 | Pi 5에 HW 인코더 없음 | **무재인코딩 패스스루** (INV-4): 카메라 H.264 → go2rtc → WebRTC. 해상도는 카메라 sub/main 프로파일로 | 재인코딩은 CPU 포화 → 지연·프레임 드롭 |
-| Pi가 NAT 뒤, 포트포워딩 금지 | **시그널링은 MQTT 5 요청/응답으로 서버 경유**(trickle ICE는 WS↔MQTT `ice` 메시지로 중계), 미디어는 ICE(STUN 직결 시도 → coturn 릴레이 폴백). Pi 측 go2rtc `ice_servers`는 설정 파일 항목이라 세션별 주입이 어렵다 → **기기 단위 TURN 자격증명**(DEVICE_TURN_CRED_TTL_HOURS 회전, agent가 설정 재생성·go2rtc reload). 브라우저는 세션별 TURN_CRED_TTL_MIN 자격증명. 릴레이 판정은 offer 뒤에 결정되므로 **모든 세션은 sub로 시작**하고, 브라우저가 ICE 완료 시 `ice_state`(selected pair가 relay인지)·첫 프레임 시 `first_frame`을 WS로 보고한다. 메인은 직결로 보고된 세션을 참조하는 신규 세션(E27 `direct_session_id`; 승격 중 sub·main이 잠시 공존 — VIEWER_MAX에 포함, main 첫 프레임 후 클라가 sub를 E28로 종료)이며, 릴레이로 보고된 main 세션·상한 초과 릴레이 세션은 서버가 종료한다(FR-006) | 서버는 제어면만 지나가고 미디어는 P2P/릴레이로 서버 대역을 아낀다. 릴레이 최악 = SITES_MAX × VIEWER_MAX × SUB_STREAM_BITRATE_KBPS × 2(수신+송신) < TURN_RELAY_MAX_MBPS — 메인 허용 시 SITES_MAX × VIEWER_MAX × MAIN_STREAM_BITRATE_MBPS × 2로 VPS_LINE_MBPS 포화(검토 #2). 세션 중 스트림 재협상이 없어 go2rtc 설정이 단순하다. go2rtc의 TURN 클라이언트 동작은 **가능성**(pion 기반) → 스켈레톤 첫 작업에서 실증 |
+| Pi가 NAT 뒤, 포트포워딩 금지 | **시그널링은 MQTT 5 요청/응답으로 서버 경유**(trickle ICE는 WS↔MQTT `ice` 메시지로 중계), 미디어는 ICE(STUN 직결 시도 → coturn 릴레이 폴백). Pi 측 go2rtc `ice_servers`는 설정 파일 항목이라 세션별 주입이 어렵다 → **기기 단위 TURN 자격증명**(DEVICE_TURN_CRED_TTL_HOURS 회전, agent가 설정 재생성·go2rtc reload). 브라우저는 세션별 TURN_CRED_TTL_MIN 자격증명. 릴레이 경로는 서브스트림 고정 + 전역 TURN_RELAY_MAX_MBPS 상한 (FR-006) | 서버는 제어면만 지나가고 미디어는 P2P/릴레이로 서버 대역을 아낀다. 릴레이 최악 = SITES_MAX × VIEWER_MAX × SUB_STREAM_BITRATE_KBPS × 2(수신+송신) ≈ VPS_LINE_MBPS의 5% — 메인 허용 시 250Mbps × 2로 회선 포화(검토 #2). go2rtc의 TURN 클라이언트 동작은 **가능성**(pion 기반) → 스켈레톤 첫 작업에서 실증 |
 | 명령 왕복의 실패 모드 | 명령 응답 대기 CMD_TIMEOUT_SEC → `command-timeout`. `webrtc.offer`는 session_id로 멱등(QoS1 중복 전달 시 같은 answer 재생). 세션 종료(DELETE·WS 끊김·LIVE_SESSION_MAX_MIN)마다 `webrtc.close`로 go2rtc PeerConnection 정리 | ICE 타임아웃에 의존하면 Pi 자원이 샌다(검토 #6) |
 | "실시간"의 정의 | 03 상수 LIVE_LATENCY_P95·LIVE_FIRST_FRAME_P95, stale 배지 STALE_AFTER_SEC | 측정 가능 |
 | 클립이 Pi에 있음 | **온디맨드 업로드**: 재생 요청 → 서버가 Pi에 `clip.upload` 명령 → Pi가 서명된 PUT URL로 업로드 → 서버가 Range 지원 서명 URL로 브라우저에 스트리밍. 이벤트당 업로드는 **singleflight**(EVENT.cache_status uploading/ready), 임시파일 → 원자적 rename 후에만 서빙, 클라는 `202 clip-uploading`을 WS `event.clip_cached`/폴링으로 대기. 캐시는 CLIP_CACHE_TTL_MIN 뒤 삭제(활성 서명 토큰이 있으면 연장) | 리버스 HTTP 터널보다 단순, 개인정보가 서버에 상주하지 않음. 첫 재생까지 업로드 지연 ≈ 클립 크기 ÷ 업링크 (검토 #5) |
@@ -646,7 +636,7 @@ flowchart TB
     G2["go2rtc (바이너리)<br/>rtsp→webrtc 패스스루, /api"]
     UPD["updater (Python)<br/>digest pull · 서명 검증 · 헬스체크 · 롤백"]
     WD["OS: HW watchdog · chrony · Overlay FS · log2ram"]
-    SSD[("USB SSD: /clips, agent.db, docker data-root, log 동기화")]
+    SSD[("USB SSD: /clips, agent.db")]
     AG --> G2
     AG --> SSD
     UPD --> AG
@@ -655,7 +645,6 @@ flowchart TB
   PUSH["웹 푸시 서비스"]:::ext
   REG["외부 레지스트리 (GHCR)"]:::ext
   subgraph Server["Server (VPS) — Docker compose"]
-    CDY["caddy<br/>TLS 종단 · 정적 웹(PWA) · /api/device/* 클라이언트 인증서(E11 예외)"]
     API["api (FastAPI)<br/>auth · sites · cameras · commands · events · audit<br/>ca 모듈: 클레임→인증서 발급·갱신(FR-030)"]
     WSH["ws-hub (api 내부)<br/>브라우저 WebSocket 팬아웃"]
     MQ["mqtt-bridge (api 내부 워커)<br/>브로커↔DB, LWT 처리, 명령 상관·CMD_TIMEOUT_SEC"]
@@ -676,9 +665,8 @@ flowchart TB
     UI["React + Tailwind · Zustand<br/>WebRTC player · PTZ · 클립 · 푸시 구독"]
   end
   AG -- "MQTT 8883" --> BRK
-  AG -- "HTTPS PUT / 인증서 갱신 (mTLS)" --> CDY
-  UI -- "HTTPS / WS" --> CDY
-  CDY --> API
+  AG -- "HTTPS PUT / 인증서 갱신" --> API
+  UI -- "HTTPS / WS" --> API
   UI -. "WebRTC" .- TURN
   G2 -. "WebRTC" .- TURN
   CAM --- AG
@@ -690,10 +678,9 @@ flowchart TB
 
 컴포넌트 책임 (한 줄씩)
 - **agent**: 카메라 탐색·capability·RTSP URL을 go2rtc에 등록, ONVIF PullPoint 이벤트 구독 → Event 생성·클립 저장(ffmpeg copy, 재인코딩 없음)·썸네일 업로드, 명령 실행(PTZ/프리셋/스냅샷/녹화/재시작/클립 업로드/webrtc.close), 상태 보고, 로컬 큐, 파기 잡(클립). **카메라 연결 감시(FR-021)**: go2rtc `/api/streams` 상태 폴링 + PullPoint 구독 갱신 실패를 같은 경로로 감지 → Camera `connected ⇄ disconnected` 전이는 agent가 소유, CAM_RECONNECT_BACKOFF로 ONVIF 세션 재수립(go2rtc의 RTSP 재접속과 별개), `camera_disconnected`/`camera_reconnected` 이벤트 발행. **TURN 자격증명 회전**: DEVICE_TURN_CRED_TTL_HOURS마다 go2rtc 설정 재생성·reload. **인증서 갱신(FR-030)**: 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 전 현재 인증서로 갱신 요청.
-- **go2rtc**: RTSP 수신·WebRTC 송출. agent가 `/api/webrtc`로 SDP를 중계한다. API(1984)는 localhost 바인딩, ICE 포트(8555)는 LAN 바인딩(srflx 후보 수집에 필요 — 포트포워딩 없음, R-1 ⑥).
+- **go2rtc**: RTSP 수신·WebRTC 송출. agent가 `/api/webrtc`로 SDP를 중계한다. 외부 노출 없음(localhost).
 - **updater**: agent·go2rtc 컨테이너 이미지의 digest 교체와 롤백. agent와 분리해 agent가 죽어도 복구 가능.
 - **api**: REST·WebSocket·토큰 발급·감사 로그·푸시. **ca 모듈**(api 내부): 클레임 토큰 검증 → CSR 서명(DEVICE_CERT_VALID_DAYS), 갱신 재발급, 만료 임박 미갱신 기기 알림, 인증서 지문 ↔ device_id 매핑(mosquitto는 CN=device_id로 ACL). **mqtt-bridge**: 브로커 구독, LWT→offline, 명령 응답 상관·CMD_TIMEOUT_SEC. **purge-job**: 서버 측 파기(행 DELETE + 파일 삭제, 일 1회)와 Pi 파기 대사(INV-1).
-- **caddy**: TLS 종단·정적 웹(PWA) 서빙·`/api/device/*` 클라이언트 인증서 검증(E11 `/device/claim`만 예외) → api 프록시.
 - **UI**: 03 UI 방향. 상태 4종.
 
 ### 데이터 흐름
@@ -707,24 +694,21 @@ sequenceDiagram
   participant AG as agent
   participant G2 as go2rtc
   participant TURN as coturn
-  UI->>API: POST /live-sessions {camera_id, stream: sub} (main은 direct_session_id 필요)
-  API->>API: 권한·VIEWER_MAX 확인(main이면 direct_session_id의 ice_state 직결 확인), AuditLog INSERT + 토큰 발급 (한 트랜잭션, INV-2)
+  UI->>API: POST /live-sessions {camera_id, stream: sub}
+  API->>API: 권한·VIEWER_MAX·릴레이 상한 확인, AuditLog INSERT + 토큰 발급 (한 트랜잭션, INV-2)
   API-->>UI: 201 {session_id, ice_servers(TURN_CRED_TTL_MIN 자격증명), signaling_url, max LIVE_SESSION_MAX_MIN}
   UI->>UI: RTCPeerConnection, ICE 수집
   UI->>API: WS signaling: offer(SDP)
   API->>BRK: cmd req devices/{device_id}/cmd/webrtc.offer {session_id, sdp} (QoS1, response-topic)
   BRK->>AG: 전달
-  AG->>G2: POST /api/webrtc?src=cam_{id}_{stream} (SDP offer — 세션 중 스트림 고정)
+  AG->>G2: POST /api/webrtc?src=cam_{id}_sub (SDP offer)
   G2-->>AG: SDP answer
   AG-->>BRK: resp {sdp}
   BRK-->>API: 전달 (correlation-data)
   API-->>UI: WS: answer(SDP)
   UI->>API: WS: ice(candidate) — trickle, MQTT cmd/webrtc.ice로 중계 (양방향)
-  UI-)TURN: ICE (STUN 직결 시도 → 실패 시 TURN 릴레이)
+  UI-)TURN: ICE (STUN 직결 시도 → 실패 시 TURN 릴레이, 릴레이면 서브스트림 고정)
   G2-)TURN: ICE
-  UI->>API: WS: ice_state {state: connected, relayed, candidate_pair} (getStats selected pair)
-  API->>API: LIVE_SESSION.relayed 기록, relayed면 릴레이 합계 갱신 — TURN_RELAY_MAX_MBPS 초과 또는 main 세션이면 종료 (WS error viewer-limit relay-cap / main-requires-direct → webrtc.close)
-  UI->>API: WS: first_frame {first_frame_ms} (07 SLO 지표)
   Note over UI,G2: 미디어: 카메라 H.264 → go2rtc → (TURN) → 브라우저, 재인코딩 없음. 명령 응답은 CMD_TIMEOUT_SEC 안에
   UI->>API: DELETE /live-sessions/{id} (또는 WS 끊김·LIVE_SESSION_MAX_MIN 만료 시 서버가 종료)
   API->>BRK: cmd webrtc.close {session_id}
@@ -744,9 +728,9 @@ sequenceDiagram
   UI->>API: POST /cameras/{id}/ptz/move {pan,tilt,zoom} Idempotency-Key
   API->>API: 권한, 기기 online?, PTZ 잠금(PTZ_LOCK_SEC) 획득/거절, AuditLog
   alt 기기 offline
-    API-->>UI: 409 device-offline (큐잉 없음)
+    API-->>UI: 409 device_offline (큐잉 없음)
   else 다른 사용자 잠금
-    API-->>UI: 423 ptz-locked {holder, remaining_sec}
+    API-->>UI: 423 ptz_locked {holder, remaining_sec}
   else
     API->>BRK: cmd ptz.move (QoS1, response-topic)
     BRK->>AG: 전달
@@ -775,13 +759,13 @@ sequenceDiagram
   CAM->>AG: PullPoint: MotionAlarm true
   AG->>AG: EVENT_COOLDOWN_SEC 병합, Event(ULID) 생성
   AG->>SSD: ffmpeg -c copy (링버퍼에서 CLIP_PRE_SEC 전부터) → clip.mp4 기록 시작
-  AG->>BRK: events {event_id, type: motion, status: detected, camera_id, started_at, clock_synced} (QoS1; 오프라인이면 로컬 큐)
+  AG->>BRK: event.created {event_id, camera_id, ts, clock_synced} (QoS1; 오프라인이면 로컬 큐)
   BRK->>API: 전달 → Event INSERT (ULID 멱등)
   API->>PUSH: VAPID push (ALERT_DAILY_MAX 초과면 요약)
   PUSH-->>UI: 알림
   AG->>SSD: CLIP_POST_SEC 후 기록 종료, SHA-256
-  AG->>API: PUT /device/events/{event_id}/thumbnail — D01 (HTTPS, 기기 인증서)
-  AG->>BRK: events {event_id, status: clip_ready, clip{duration_sec, bytes, sha256}} (같은 event_id 갱신)
+  AG->>API: PUT /devices/{d}/events/{e}/thumbnail (HTTPS, 기기 인증서)
+  AG->>BRK: event.clip_ready {event_id, duration, sha256, bytes}
   BRK->>API: 전달 → Event 상태 clip_ready
   UI->>API: POST /events/{e}/clip-access → cache_status none이면 cmd clip.upload(singleflight) → 202 clip-uploading
   AG->>API: PUT clipcache 임시파일 → 원자적 rename → cache_status ready (WS event.clip_cached)
@@ -789,7 +773,7 @@ sequenceDiagram
 ```
 
 ### 데이터 저장 (설계 결정에 관련된 부분만 — 전체 스키마는 05)
-- **서버 PostgreSQL**: Workspace·User·Site·Device·Camera·Preset·Event(메타)·Command·AuditLog·PushSubscription·Deployment. 전 테이블 `workspace_id` (INV-7). **Event 파기는 purge-job의 행 DELETE + 썸네일 파일 삭제(일 1회, `purged_at`)로 INV-1(CLIP_RETENTION_DAYS + PURGE_MAX_DELAY_HOURS)을 지킨다** — Event는 파티션하지 않는다(R4 #22: 일 1회 DELETE와 중복). AuditLog는 월 파티션 DROP으로 AUDIT_RETENTION_DAYS 보관(초과 보존은 법 위반이 아님).
+- **서버 PostgreSQL**: Workspace·User·Site·Device·Camera·Preset·Event(메타)·Command·AuditLog·PushSubscription·Deployment. 전 테이블 `workspace_id` (INV-7). **Event 파기는 purge-job의 행 DELETE + 썸네일 파일 삭제(일 1회, `purged_at`)로 INV-1(CLIP_RETENTION_DAYS + PURGE_MAX_DELAY_HOURS)을 지킨다** — 월 파티션은 저장 지역성용이며 DROP은 전 행 파기 후 정리에만 쓴다. AuditLog는 월 파티션 DROP으로 AUDIT_RETENTION_DAYS 보관(초과 보존은 법 위반이 아님).
 - **서버 디스크**: `thumbs/{event_id}.jpg` (≤ THUMB_MAX_KB, CLIP_RETENTION_DAYS; 최악 용량 = EVENTS_PER_CAM_DAY_MAX × CAMERAS_PER_SITE_MAX × SITES_MAX × CLIP_RETENTION_DAYS × THUMB_MAX_KB — 디스크 사용률 알람은 07), `clipcache/{event_id}.mp4` (CLIP_CACHE_TTL_MIN 후 삭제, 활성 토큰 시 연장).
 - **Pi SQLite(WAL, USB SSD)**: cameras(캐시), events(로컬 원본), outbox(큐, OFFLINE_QUEUE_MAX), commands(멱등 캐시). 클립 파일 `/clips/{camera_id}/{event_id}.mp4`.
 - **Pi 링버퍼**: go2rtc 스트림에서 ffmpeg가 세그먼트(RINGBUF_SEGMENT_SEC)를 tmpfs(`size=RINGBUF_TMPFS_MB`, 초과 시 오래된 세그먼트 삭제)에 CLIP_PRE_SEC + 여유만큼 유지 — SD/SSD 쓰기 없이 프리롤 확보, RAM 상한 명시로 OOM 차단.
@@ -801,7 +785,7 @@ sequenceDiagram
 | ADR-2 | MQTT 5 단일 제어 채널 (시그널링 포함) | MQTT + 별도 WebSocket 시그널링 터널 | 컴포넌트 1개 절약, LWT·QoS·요청/응답 내장 | SDP(수 KB)가 브로커를 지남 — 브로커 메시지 상한 MQTT_MSG_MAX_KB. 응답 대기 CMD_TIMEOUT_SEC, 세션 정리는 `webrtc.close`로 명시 |
 | ADR-3 | 클립 온디맨드 업로드 + 서버 캐시 | 상시 업로드 / 리버스 HTTP 터널 / go2rtc 파일 스트림 | 개인정보 서버 비상주, 업링크 절약, 구현 단순 | 첫 재생까지 업로드 지연 ≈ (CLIP_PRE_SEC + CLIP_POST_SEC) × MAIN_STREAM_BITRATE_MBPS ÷ UPLINK_MIN_MBPS (수동 녹화는 MANUAL_REC_MAX_MIN 비례) → 202 폴링 필요. Pi 오프라인이면 클립 열람 불가(Q3에서 수용) |
 | ADR-4 | 앱 계층 A/B OTA (컨테이너 digest, 외부 레지스트리 GHCR + cosign) | RAUC OS A/B / Mender / balena / 자체 레지스트리 | 유인 현장(Q5)·SITES_MAX 규모에서 비용 대비 충분, 레지스트리 운영 부담 0 | OS 계층 벽돌은 잔여 리스크 R-3 (Accept). 외부 레지스트리 장애 시 배포 불가(운영에는 무영향) |
-| ADR-5 | coturn 자체 호스팅 (VPS 동거), 릴레이는 서브스트림 고정 + TURN_RELAY_MAX_MBPS 상한 | 관리형 TURN(Twilio 등) / 릴레이 무제한 | 규모 작고 비용 예측 가능, 자격증명 발급 통제. 최악 릴레이(전 세션 sub) < TURN_RELAY_MAX_MBPS | 릴레이 경로는 고화질 불가(엣지케이스 17). 상한 도달 시 새 릴레이 세션 거절(SC-015). TURN_RELAY_COST 미확인 |
+| ADR-5 | coturn 자체 호스팅 (VPS 동거), 릴레이는 서브스트림 고정 + TURN_RELAY_MAX_MBPS 상한 | 관리형 TURN(Twilio 등) / 릴레이 무제한 | 규모 작고 비용 예측 가능, 자격증명 발급 통제. 최악 릴레이(전 세션 sub) = VPS_LINE_MBPS의 약 5% | 릴레이 경로는 고화질 불가(엣지케이스 17). 상한 도달 시 새 릴레이 세션 거절(SC-015). TURN_RELAY_COST 미확인 |
 | ADR-6 | 웹 푸시(VAPID) PWA | 네이티브 앱 / SMS·알림톡 | 앱 없이 알림, 비용 0 | iOS는 홈 화면 추가한 PWA만 푸시 수신 — 온보딩에서 안내 |
 | ADR-7 | 서버 단일 인스턴스 | HA 이중화 | 규모·팀에 맞음 | 서버 다운 중 라이브·알림 불가(엣지는 자율 녹화 계속). 07 복구 RTO로 관리 |
 
@@ -862,7 +846,7 @@ flowchart LR
 | B3 | 카메라 비밀번호 노출 | Pi 디스크에 암호화 저장(기기 인증서 키로 파생), 로그 마스킹, 서버로 전송하지 않음 | Mitigate |
 | B3 | RTSP 세션 폭주 | go2rtc가 카메라당 RTSP 1세션만 열고 시청자에게 팬아웃 | Eliminate |
 | B3 | 카메라 관리자 탈취 | 등록 시 기본 비밀번호 감지·변경 권고, 카메라 펌웨어는 범위 밖 | Transfer(카메라 벤더·운영자) |
-| B4 | TURN 자격증명 도용·대역 고갈 | coturn `use-auth-secret`: 브라우저 = 세션당 TURN_CRED_TTL_MIN, Pi = 기기당 DEVICE_TURN_CRED_TTL_HOURS 회전. 릴레이 세션은 서브스트림만(`ice_state` 보고 기반), 합계 TURN_RELAY_MAX_MBPS 초과 시 초과 릴레이 세션 종료 + 알람 (FR-006, SC-015) | Mitigate |
+| B4 | TURN 자격증명 도용·대역 고갈 | coturn `use-auth-secret`: 브라우저 = 세션당 TURN_CRED_TTL_MIN, Pi = 기기당 DEVICE_TURN_CRED_TTL_HOURS 회전. 릴레이는 서브스트림 고정, 합계 TURN_RELAY_MAX_MBPS 초과 시 새 릴레이 세션 거절 + 알람 (FR-006, SC-015) | Mitigate |
 | B4 | SDP 유출 | 시그널링은 인증된 WS·MQTT 경로만, DTLS 지문 SDP 포함(표준) | Mitigate |
 | B5 | 가짜/변조 이미지 | digest 고정 + cosign 서명 검증(공개키는 기기 이미지에 내장), 외부 레지스트리(GHCR) TLS, 비밀은 이미지에 넣지 않음(런타임 env·파일) | Mitigate |
 | B5 | 배포 부인 | Deployment 테이블(누가·언제·digest) + AuditLog | Mitigate |
@@ -871,7 +855,7 @@ flowchart LR
 | B5 | 컨테이너 탈출 | 컨테이너 non-root, `--cap-drop ALL`, USB 장치·/clips만 마운트, host network 미사용(go2rtc는 필요한 포트만) | Mitigate |
 | B6 | DB·백업 유출 | 백업 암호화(age)·오프사이트, 디스크 권한 600, 썸네일 URL 서명 | Mitigate |
 | B6 | 디스크 포화 | clipcache CLIP_CACHE_TTL_MIN, 썸네일 파기, 디스크 사용률 알람 | Mitigate |
-| B6 | Admin 설정 변경·삭제 부인 (R) | 설정 변경·사용자 초대·배포는 AuditLog `settings.change`/`deploy` 행(actor·target·이전값 요약), AUDIT_RETENTION_DAYS | Mitigate |
+| B6 | Admin 설정 변경·삭제 부인 (R) | 설정 변경·이벤트 삭제·사용자 초대·배포는 AuditLog `settings.change`/`event.delete`/`deploy` 행(actor·target·이전값 요약), AUDIT_RETENTION_DAYS | Mitigate |
 | B6 | 서버 컨테이너 탈출 (E) | api·purge-job·mosquitto·coturn 컨테이너 non-root, `--cap-drop ALL`, read-only rootfs + 필요한 볼륨만, Docker 소켓 미마운트 | Mitigate |
 | B6 | 호스트 침해 | VPS SSH 키·방화벽(443/8883/3478·49152-65535 UDP만), 자동 보안 업데이트, `npm/pip audit` CI | Mitigate |
 
@@ -880,7 +864,7 @@ security-review 체크리스트 적용: 비밀은 env·파일 마운트(하드�
 ### ④ 충분한가 — 상위 리스크 3개 재검토 + 잔여 리스크
 | # | 리스크 | 재검토 | 잔여 |
 |---|---|---|---|
-| R-1 | **NAT 뒤 Pi의 WebRTC가 TURN으로 안정 동작하는가** (go2rtc README는 포트 개방을 안내) — 실증 항목: ① go2rtc `ice_servers`에 TURN 자격증명(기기 단위) 설정 시 릴레이 경로 성립, ② DEVICE_TURN_CRED_TTL_HOURS 회전 시 진행 중 세션 유지 여부, ③ 브라우저 TURN_CRED_TTL_MIN 안에 LIVE_SESSION_MAX_MIN 세션이 끊기지 않는지, ④ trickle ICE 중계 시 LIVE_FIRST_FRAME_P95, ⑤ 브라우저 getStats selected candidate pair로 relay 판정이 안정적인지(`ice_state` 보고의 신뢰성), ⑥ go2rtc ICE 포트(8555)를 LAN에 바인딩했을 때 srflx 후보가 수집되어 직결이 성립하는지(localhost 바인딩이면 전 세션 릴레이) | 실증 전까지 설계는 가능성. 실패 시 대안: agent가 pion으로 직접 WebRTC 송출(go2rtc RTSP 재배포를 소스로) 또는 LL-HLS 폴백(SC-001 미달) | 워킹 스켈레톤 첫 작업 = 이 실증. 미달 시 03 상수 개정(R#) |
+| R-1 | **NAT 뒤 Pi의 WebRTC가 TURN으로 안정 동작하는가** (go2rtc README는 포트 개방을 안내) — 실증 항목: ① go2rtc `ice_servers`에 TURN 자격증명(기기 단위) 설정 시 릴레이 경로 성립, ② DEVICE_TURN_CRED_TTL_HOURS 회전 시 진행 중 세션 유지 여부, ③ 브라우저 TURN_CRED_TTL_MIN 안에 LIVE_SESSION_MAX_MIN 세션이 끊기지 않는지, ④ trickle ICE 중계 시 LIVE_FIRST_FRAME_P95 | 실증 전까지 설계는 가능성. 실패 시 대안: agent가 pion으로 직접 WebRTC 송출(go2rtc RTSP 재배포를 소스로) 또는 LL-HLS 폴백(SC-001 미달) | 워킹 스켈레톤 첫 작업 = 이 실증. 미달 시 03 상수 개정(R#) |
 | R-2 | **법 상수 미확정** (CLIP_RETENTION_DAYS·AUDIT_RETENTION_DAYS·AUDIT_REVIEW_INTERVAL_DAYS — 조문 원문 미인출) | 값은 상수 표 한 곳, 코드 상수 아님(설정) | 착수 전 law.go.kr 원문 확인 1회 — 핸드오프 선행 조건 |
 | R-3 | **OS 계층 벽돌** (앱 A/B만) | 유인 현장 전제(Q5), OS 업데이트는 security만·재부팅 없음, SD 이미지 복원 절차를 07 런북에 | Accept. 무인 현장이 생기면 ADR-4 재검토 |
 | R-4 | LAN 물리 보안(B3 Accept) | 카메라 비밀번호 암호화·로그 마스킹으로 노출면 축소 | Accept, 안내서 명시 |
@@ -889,13 +873,13 @@ security-review 체크리스트 적용: 비밀은 env·파일 마운트(하드�
 Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `state`(STATE_REFRESH_SEC)와 `log.error`(오류만) 토픽으로 서버에 올린다. 서버는 api·mqtt-bridge·coturn·mosquitto 로그를 journald → 로컬 파일(로테이션)로 두고, 4 골든 시그널 — Latency(라이브 첫 프레임·명령 왕복), Traffic(활성 세션·릴레이 세션), Errors(명령 실패율·command-timeout), Saturation(TURN 릴레이 대역 대비 TURN_RELAY_MAX_MBPS·디스크·Pi CPU) — 을 Prometheus 지표로 낸다. 알람·SLO·런북은 07.
 
 ## Cross-cutting: 프라이버시
-영상·썸네일은 개인정보다. 서버에 상주하는 것은 썸네일(CLIP_RETENTION_DAYS)과 온디맨드 클립 캐시(CLIP_CACHE_TTL_MIN)뿐이며, 모든 접근은 AuditLog에 남는다(INV-2). 로그·오류·푸시 본문에 영상·썸네일·카메라 비밀번호를 넣지 않는다(푸시는 "움직임 감지 — 매장 앞"까지만). 안내판 정보·운영 방침(FR-027)은 사이트 설정의 일부다. 파기는 Pi(클립)와 서버(썸네일·이벤트)가 각각 수행하고 purge-job이 대사한다(INV-1).
+영상·썸네일은 개인정보다. 서버에 상주하는 것은 썸네일(CLIP_RETENTION_DAYS)과 온디맨드 클립 캐시(STREAM_TOKEN_TTL_SEC)뿐이며, 모든 접근은 AuditLog에 남는다(INV-2). 로그·오류·푸시 본문에 영상·썸네일·카메라 비밀번호를 넣지 않는다(푸시는 "움직임 감지 — 매장 앞"까지만). 안내판 정보·운영 방침(FR-027)은 사이트 설정의 일부다. 파기는 Pi(클립)와 서버(썸네일·이벤트)가 각각 수행하고 purge-job이 대사한다(INV-1).
 
-<!-- ===== 05-api-contract.md ===== -->
+
 # API 계약 & 데이터 스키마 — PiCam Watch
-버전: v1.2 · 기준 03 v1.3
-개정: R1 반영 완료 (REVISIONS.md — 토픽 프리픽스·D04 인증서 갱신·클립 캐시·FR-030) · R2(운영 상수 추가)는 이 문서에 영향 없음 · R4 GATE 패치(WS `ice_state`·`first_frame`, `main-requires-direct`, E27 `direct_session_id`, E51 릴리스 등록, E44 제거, `events` status 필드, D03 상수 목록, E11 mTLS 예외, Event 파티션·password_enc 제거)
-스킬: `ecc:api-design`(자원 명명·상태코드·페이지네이션·레이트리밋 헤더) · `ecc:postgres-patterns`(인덱스·타입·파티션). 충돌 시 템플릿 규약 우선: URL 버저닝 대신 미디어타입, 자체 에러 봉투 대신 RFC 9457, offset 대신 커서.
+버전: v1.1
+개정: R1 반영 완료 (REVISIONS.md — 토픽 프리픽스·D04 인증서 갱신·클립 캐시·FR-030) · R2(운영 상수 추가)는 이 문서에 영향 없음 — 기준 버전만 갱신
+참고자료: `(참고자료)`(자원 명명·상태코드·페이지네이션·레이트리밋 헤더) · `(참고자료)`(인덱스·타입·파티션). 충돌 시 템플릿 규약 우선: URL 버저닝 대신 미디어타입, 자체 에러 봉투 대신 RFC 9457, offset 대신 커서.
 
 **근거 (진입 사전조사, 검색 1회)**
 - 정량 — `Idempotency-Key` 헤더는 IETF draft-ietf-httpapi-idempotency-key-header-07 (2025-10-15, 상태 expired). RFC가 아니므로 "사실상 표준"(Stripe 구현)으로 채택하고 의미는 이 문서가 정의한다 (datatracker.ietf.org, 2026-09-08).
@@ -907,7 +891,7 @@ Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `
 - **에러**: RFC 9457 `application/problem+json` — `type`(`https://picam.dev/problems/{slug}`)·`title`·`status`·`detail`(해요체)·`instance`·확장 `errors[]`(필드 검증). 스택트레이스 미노출. slug 목록은 아래 표.
 - **페이지네이션**: 커서 — `?cursor=&limit=`(기본 20, 최대 100) → `meta.next_cursor`(불투명, ULID 기반).
 - **멱등성**: 부작용 있는 POST(명령·세션 생성·배포)는 `Idempotency-Key`(클라 생성 ULID) 필수. 서버는 SESSION_TTL_HOURS 동안 보관하고 같은 키 재시도에 최초 응답을 그대로 재생. 같은 키·다른 본문은 `422 idempotency-key-mismatch`.
-- **인증**: 브라우저 = 세션 쿠키 `picam_session`(HttpOnly·Secure·SameSite=Strict). 기기 = mTLS 클라이언트 인증서(CN=device_id), `/api/device/*` 전용 — **예외 E11 `/device/claim`**: 인증서 발급 전이므로 mTLS 없이 클레임 토큰만(프록시는 이 경로에 클라이언트 인증서를 요구하지 않는다). CI = `Authorization: Bearer` CI_RELEASE_TOKEN(E51 전용). 서명 URL(클립·썸네일) = 세션 없이 토큰만.
+- **인증**: 브라우저 = 세션 쿠키 `picam_session`(HttpOnly·Secure·SameSite=Strict). 기기 = mTLS 클라이언트 인증서(CN=device_id), `/api/device/*` 전용. 서명 URL(클립·썸네일) = 세션 없이 토큰만.
 - **권한 스코프**: `<모듈>:<자원>:<행위>` — Admin = 전부, Viewer = `live:session:create` `ptz:camera:move` `ptz:preset:goto` `clips:event:read` `clips:clip:read` `snapshot:camera:create` `record:camera:create` `push:subscription:write`. 사이트 범위는 `user_sites`로 제한(INV-7 workspace 필터 + 사이트 필터).
 - **네이밍**: 경로 kebab-case 복수, JSON snake_case, 시각 UTC ISO 8601(`2026-09-08T05:31:30Z`), 식별자 ULID(26자).
 - **레이트리밋**: `RateLimit-Limit/Remaining/Reset` 헤더, 초과 시 `429` + `Retry-After`. 로그인·라이브 세션 생성·PTZ는 별도 상한(07 설정).
@@ -925,10 +909,9 @@ Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `
 | `ptz-locked` | 423 | 다른 사용자가 PTZ_LOCK_SEC 안 조작 중 (`holder`, `remaining_sec`) |
 | `ptz-unsupported` | 422 | 카메라 capability에 PTZ 없음 |
 | `stream-unsupported` | 422 | 요청 스트림이 브라우저 재생 불가(H.265) — 엣지케이스 1 |
-| `main-requires-direct` | 422 | E27 stream=main에 직결로 보고된 `direct_session_id`가 없음, 또는 main 세션의 `ice_state`가 relayed=true(WS error 후 세션 종료) — FR-006 |
 | `no-h264-stream` | 422 | 카메라 등록 거부 (INV-6) |
 | `camera-auth-failed` | 422 | ONVIF 자격증명 오류 |
-| `viewer-limit` | 429 | 사이트 VIEWER_MAX 도달 (`current_viewers`, E27) · 릴레이 합계가 TURN_RELAY_MAX_MBPS를 넘김 (`reason: relay-cap` — `ice_state` relayed=true 보고 시점에 WS error로 세션 종료, 직결 가능하면 재시도 안내) |
+| `viewer-limit` | 429 | 사이트 VIEWER_MAX 도달 (`current_viewers`) 또는 릴레이 합계 TURN_RELAY_MAX_MBPS 도달 (`reason: relay-cap`, 직결 가능하면 재시도 안내) |
 | `rate-limited` | 429 | 레이트리밋 |
 | `claim-token-used` | 409 | 클레임 토큰 재사용 (엣지케이스 16) |
 | `clip-purged` | 410 | 보존 만료로 파기됨 |
@@ -953,7 +936,7 @@ Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `
 | E09 | PATCH /sites/{id} | name, signage{purpose, location, coverage, hours, manager_contact}, policy_text | 200 {site} | validation-failed | admin:site:write |
 | E10 | GET /sites/{id}/signage.pdf | — | 200 application/pdf (안내판 인쇄) | not-found | admin:site:read |
 | **기기** | | | | | |
-| E11 | POST /device/claim | claim_token, csr (PEM) | 201 {device_id, cert_pem, ca_pem, mqtt{host,port}, topics} | claim-token-used, validation-failed | 공개(클레임 토큰 — mTLS 예외) |
+| E11 | POST /device/claim | claim_token, csr (PEM) | 201 {device_id, cert_pem, ca_pem, mqtt{host,port}, topics} | claim-token-used, validation-failed | 공개(클레임 토큰) |
 | E12 | GET /devices | site_id, cursor | 200 {data[]} | — | 세션 |
 | E13 | GET /devices/{id} | — | 200 {device: status(claimed/approved/online/offline/retired), last_seen_at, metrics{cpu,temp_c,disk_free_pct,uplink_mbps}, version, clock_synced} | not-found | 세션 |
 | E14 | POST /devices/{id}/approve | site_id | 200 {device} | not-found, validation-failed | admin:device:write |
@@ -962,19 +945,18 @@ Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `
 | E17 | POST /devices/{id}/deployments | release_id · Idempotency-Key | 202 {deployment} | device-offline, not-found | admin:device:deploy |
 | E18 | GET /devices/{id}/deployments | cursor | 200 {data[]: status(pending/applying/healthy/rolled_back/failed), image_digest, actor} | — | admin:device:read |
 | E19 | GET /releases | — | 200 {data[]: version, image_digest, signed_at} | — | admin:device:read |
-| E51 | POST /releases | version, image_digest, signature(cosign) · Idempotency-Key | 201 {release} | validation-failed, unauthenticated | CI 토큰(CI_RELEASE_TOKEN — 규약 인증) |
 | **카메라** | | | | | |
 | E20 | POST /devices/{id}/camera-discoveries | Idempotency-Key | 202 {command_id} | device-offline | admin:camera:write |
 | E21 | GET /commands/{id} | — | 200 {command: status(accepted/executing/done/failed), result, error} | not-found | 세션(발행자·Admin) |
-| E22 | POST /devices/{id}/cameras | xaddr, username, password, name | 201 {camera(capabilities), warnings[]: `no-motion-events`(capabilities.events=false — 엣지케이스 19)} | no-h264-stream, camera-auth-failed, device-offline | admin:camera:write |
+| E22 | POST /devices/{id}/cameras | xaddr, username, password, name | 201 {camera(capabilities)} | no-h264-stream, camera-auth-failed, device-offline | admin:camera:write |
 | E23 | GET /cameras | site_id, cursor | 200 {data[]} | — | 세션 |
 | E24 | GET /cameras/{id} | — | 200 {camera: status(registered/connected/disconnected), capabilities{ptz, presets, events, streams[{profile, codec, width, height}]}, default_stream} | not-found | 세션 |
 | E25 | PATCH /cameras/{id} | name, default_stream | 200 {camera} | validation-failed | admin:camera:write |
 | E26 | DELETE /cameras/{id} | — | 204 (soft delete) | not-found | admin:camera:write |
 | **라이브** | | | | | |
-| E27 | POST /live-sessions | camera_id, stream=sub\|main, direct_session_id(stream=main일 때 필수 — 같은 카메라·같은 사용자의 활성 세션으로 `ice_state` relayed=false 보고됨) · Idempotency-Key | 201 {session_id, token, ice_servers[{urls, username, credential}](TURN_CRED_TTL_MIN), signaling_url, token_expires_at(STREAM_TOKEN_TTL_SEC), max_duration_min(LIVE_SESSION_MAX_MIN)}. 스트림은 세션 중 고정; 릴레이 여부는 클라 `ice_state` 보고로 확정(엣지 17) | viewer-limit(VIEWER_MAX), main-requires-direct, device-offline, stream-unsupported | live:session:create |
+| E27 | POST /live-sessions | camera_id, stream=sub\|main · Idempotency-Key | 201 {session_id, token, ice_servers[{urls, username, credential}](TURN_CRED_TTL_MIN), signaling_url, token_expires_at(STREAM_TOKEN_TTL_SEC), max_duration_min(LIVE_SESSION_MAX_MIN)}. 릴레이로 붙으면 서버가 `stream_effective: sub`를 WS로 통지(엣지 17) | viewer-limit(VIEWER_MAX 또는 relay-cap), device-offline, stream-unsupported | live:session:create |
 | E28 | DELETE /live-sessions/{id} | — | 204 | not-found | 세션(소유자) |
-| E29 | WS /live-sessions/{id}/signaling?token= | offer/ice/ice_state/first_frame 메시지 | answer/ice/error 메시지 (아래 WS 계약) | unauthenticated | 토큰 |
+| E29 | WS /live-sessions/{id}/signaling?token= | offer/ice 메시지 | answer/ice/error 메시지 (아래 WS 계약) | unauthenticated | 토큰 |
 | **PTZ** | | | | | |
 | E30 | POST /cameras/{id}/ptz/move | pan, tilt, zoom ∈ [-1,1] · Idempotency-Key | 200 {command_id, status} | device-offline, ptz-locked, ptz-unsupported | ptz:camera:move |
 | E31 | POST /cameras/{id}/ptz/stop | — | 200 {command_id} | device-offline | ptz:camera:move |
@@ -992,6 +974,7 @@ Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `
 | E41 | GET /events/{id}/thumbnail | — | 200 image/jpeg | not-found | clips:event:read |
 | E42 | POST /events/{id}/clip-access | Idempotency-Key | 200 {clip_url(서명, Range 지원), expires_at(CLIP_CACHE_TTL_MIN, 활성 토큰 시 연장)} · 202 clip-uploading(Retry-After; 이벤트당 업로드 1회 singleflight — EVENT.cache_status) | device-offline, clip-purged | clips:clip:read |
 | E43 | GET /clips/{token} | Range | 206/200 video/mp4 | not-found(만료) | 토큰 |
+| E44 | DELETE /events/{id} | — | 204 (즉시 파기, 감사) | not-found | admin:event:delete |
 | **알림** | | | | | |
 | E45 | POST /push-subscriptions | endpoint, keys{p256dh, auth} | 201 {subscription} | validation-failed | push:subscription:write |
 | E46 | DELETE /push-subscriptions/{id} | — | 204 | not-found | push:subscription:write |
@@ -1004,19 +987,19 @@ Pi는 SD 쓰기 없이(log2ram) 구조화 로그(JSON)를 tmpfs에 두고 MQTT `
 | D01 | PUT /device/events/{event_id}/thumbnail | image/jpeg (≤ THUMB_MAX_KB, MIME·확장자 화이트리스트) | 204 | forbidden(타 기기 이벤트), validation-failed | 기기 인증서 |
 | D02 | PUT /device/clip-uploads/{upload_id} | video/mp4 (upload_id는 cmd clip.upload 페이로드; 서버는 임시파일에 받고 완료 시 원자적 rename → cache_status ready) | 204 | not-found(만료), validation-failed | 기기 인증서 |
 | D04 | POST /device/certificate | csr (PEM) — 현재 인증서로 mTLS, 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 전 | 200 {cert_pem, expires_at(DEVICE_CERT_VALID_DAYS)} | unauthenticated(만료·폐기 인증서), validation-failed | 기기 인증서 |
-| D03 | GET /device/config | — | 200 {constants(EVENT_COOLDOWN_SEC, CLIP_PRE_SEC, CLIP_POST_SEC, CLIP_RETENTION_DAYS, PURGE_MAX_DELAY_HOURS, CLIP_DISK_RESERVE_PCT, OFFLINE_QUEUE_MAX, STATE_REFRESH_SEC, MQTT_KEEPALIVE_SEC, CAM_RECONNECT_BACKOFF, MANUAL_REC_MAX_MIN, RINGBUF_SEGMENT_SEC, RINGBUF_TMPFS_MB, DEVICE_CERT_RENEW_BEFORE_DAYS, DEVICE_TURN_CRED_TTL_HOURS, OTA_ROLLBACK_MAX_MIN, OTA_RETRY_MAX, HEALTHCHECK_INTERVAL_SEC, HEALTHCHECK_FAIL_MAX, THUMB_MAX_KB, MQTT_MSG_MAX_KB), mqtt} | unauthenticated | 기기 인증서 |
+| D03 | GET /device/config | — | 200 {constants(EVENT_COOLDOWN_SEC, CLIP_PRE_SEC, CLIP_POST_SEC, CLIP_RETENTION_DAYS, PURGE_MAX_DELAY_HOURS, CLIP_DISK_RESERVE_PCT, OFFLINE_QUEUE_MAX, STATE_REFRESH_SEC, MQTT_KEEPALIVE_SEC), mqtt} | unauthenticated | 기기 인증서 |
 
 ## WS 계약 (브라우저)
 - **상태 채널** `WS /ws` (세션 쿠키): 서버→클라 `device.state` `camera.state` `event.created` `event.clip_ready` `command.updated` `deployment.updated` — 페이로드는 해당 REST 표현과 동일 필드. 클라→서버 `ping`만.
-- **시그널링** E29: 클라→서버 `{type:"offer", sdp}` `{type:"ice", candidate}`(trickle) `{type:"ice_state", state: connected|failed|disconnected, relayed: bool, candidate_pair: {local_type, remote_type}}`(ICE 완료·변경 시, `RTCPeerConnection.getStats()` selected pair) `{type:"first_frame", first_frame_ms}`(첫 프레임 1회, 07 SLO 지표); 서버→클라 `{type:"answer", sdp}` `{type:"ice", candidate}` `{type:"error", problem}`. 서버는 `ice_state`로 LIVE_SESSION.relayed·릴레이 합계를 갱신하고, relayed=true인 main 세션은 `main-requires-direct`, 합계가 TURN_RELAY_MAX_MBPS를 넘기는 릴레이 세션은 `viewer-limit`(relay-cap)으로 `error` 후 종료한다(FR-006). 서버는 offer를 MQTT `cmd/webrtc.offer`(session_id 멱등)로, ice를 `cmd/webrtc.ice`로 중계하고 answer·기기 측 ice를 되돌린다. WS 끊김·LIVE_SESSION_MAX_MIN 만료 = 세션 종료(E28과 동일 처리 + `cmd/webrtc.close` + AuditLog 종료). 상태 채널에 `event.clip_cached`(E42 202 → 200 전환 통지) 추가.
+- **시그널링** E29: 클라→서버 `{type:"offer", sdp}` `{type:"ice", candidate}`(trickle); 서버→클라 `{type:"answer", sdp}` `{type:"ice", candidate}` `{type:"stream_effective", stream}` `{type:"error", problem}`. 서버는 offer를 MQTT `cmd/webrtc.offer`(session_id 멱등)로, ice를 `cmd/webrtc.ice`로 중계하고 answer·기기 측 ice를 되돌린다. WS 끊김·LIVE_SESSION_MAX_MIN 만료 = 세션 종료(E28과 동일 처리 + `cmd/webrtc.close` + AuditLog 종료). 상태 채널에 `event.clip_cached`(E42 202 → 200 전환 통지) 추가.
 
 ## MQTT 토픽 계약 (기기 ↔ 서버, MQTT 5, 메시지 ≤ MQTT_MSG_MAX_KB)
 프리픽스 `devices/{device_id}/` — mosquitto 정적 ACL `pattern readwrite devices/%u/#`(%u = 인증서 CN = device_id): 기기는 pub `state` `events` `resp/#` `log/#`, sub `cmd/#`. 서버 계정: pub `cmd/#`, sub 전부 (INV-3). 사이트 매핑은 서버 DB(DEVICE.site_id)가 안다.
 | 토픽 | 방향 | QoS/retain | 페이로드 |
 |---|---|---|---|
 | `state` | 기기→ | QoS1, retained, STATE_REFRESH_SEC | {online:true, cpu, temp_c, disk_free_pct, uplink_mbps, version, clock_synced, cameras[{camera_id, status}]} · LWT = {online:false} |
-| `events` | 기기→ | QoS1 | {event_id(ULID), type, status, camera_id, started_at, ended_at, clock_synced, clip{duration_sec, bytes, sha256}} — type: motion, manual, snapshot, camera_disconnected, camera_reconnected, disk_low, clip_failed (DDL CHECK와 동일) · status: detected → clip_ready \| clip_failed (같은 event_id를 status 갱신으로 재발행, 서버는 upsert·status 단조). 파기 보고는 `cmd/purge.report` 응답으로만 |
-| `cmd/{name}` | →기기 | QoS1, response-topic=`resp/{correlation}`, 응답 대기 CMD_TIMEOUT_SEC | {command_id, args} — name: webrtc.offer{session_id, sdp, stream}(session_id 멱등) · webrtc.ice{session_id, candidate} · webrtc.close{session_id} · ptz.move{pan,tilt,zoom} · ptz.stop · preset.list/set/goto/delete · snapshot · record.start{duration_sec}/record.stop · clip.upload{event_id, upload_url} · camera.discover · camera.add{xaddr, username, password} · camera.remove · restart{target} · deploy{image_digest, signature} · turn.credentials{username, credential, expires_at}(DEVICE_TURN_CRED_TTL_HOURS 회전, retained 아님) · purge.report(응답 result: {purged_event_ids[], purged_at} — purge-job 대사) |
+| `events` | 기기→ | QoS1 | {event_id(ULID), type, camera_id, started_at, ended_at, clock_synced, clip{duration_sec, bytes, sha256}} — type: motion, manual, snapshot, camera_disconnected, camera_reconnected, disk_low, clip_failed, clip_ready, purged |
+| `cmd/{name}` | →기기 | QoS1, response-topic=`resp/{correlation}`, 응답 대기 CMD_TIMEOUT_SEC | {command_id, args} — name: webrtc.offer{session_id, sdp, stream}(session_id 멱등) · webrtc.ice{session_id, candidate} · webrtc.close{session_id} · ptz.move{pan,tilt,zoom} · ptz.stop · preset.list/set/goto/delete · snapshot · record.start{duration_sec}/record.stop · clip.upload{event_id, upload_url} · camera.discover · camera.add{xaddr, username, password} · camera.remove · restart{target} · deploy{image_digest, signature} · turn.credentials{username, credential, expires_at}(DEVICE_TURN_CRED_TTL_HOURS 회전, retained 아님) · purge.report |
 | `resp/{correlation}` | 기기→ | QoS1 | {command_id, status: done\|failed, result, error{slug, detail}} |
 | `log/error` | 기기→ | QoS0 | {at, component, message} (비밀·영상 없음) |
 
@@ -1030,7 +1013,7 @@ paths:
       operationId: createLiveSession
       parameters: [{name: Idempotency-Key, in: header, required: true, schema: {type: string, pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'}}]
       requestBody:
-        content: {application/json: {schema: {type: object, required: [camera_id, stream], properties: {camera_id: {type: string}, stream: {enum: [sub, main]}, direct_session_id: {type: string, description: 'stream=main일 때 필수 — ice_state relayed=false로 보고된 활성 세션'}}}}}
+        content: {application/json: {schema: {type: object, required: [camera_id, stream], properties: {camera_id: {type: string}, stream: {enum: [sub, main]}}}}}
       responses:
         '201': {content: {application/vnd.picam.v1+json: {schema: {$ref: '#/components/schemas/LiveSession'}}}}
         '429': {$ref: '#/components/responses/ViewerLimit'}
@@ -1101,7 +1084,7 @@ erDiagram
   INVITE { text id PK text workspace_id FK text email text role text token_hash timestamptz expires_at timestamptz accepted_at }
   SITE { text id PK text workspace_id FK text name text timezone jsonb signage "purpose,location,coverage,hours,manager_contact" text policy_text timestamptz deleted_at "soft" }
   DEVICE { text id PK text workspace_id FK text site_id FK "nullable until approved" text status "claimed|approved|online|offline|retired" text cert_fingerprint UK text claim_token_hash UK timestamptz last_seen_at jsonb metrics text version boolean clock_synced timestamptz created_at }
-  CAMERA { text id PK text workspace_id FK text device_id FK text name text xaddr text onvif_hardware_id text username jsonb capabilities "ptz,presets,events,streams[]" text default_stream "sub|main" text status "registered|connected|disconnected" timestamptz deleted_at "soft" }
+  CAMERA { text id PK text workspace_id FK text device_id FK text name text xaddr text onvif_hardware_id text username text password_enc "기기 저장, 서버는 null" jsonb capabilities "ptz,presets,events,streams[]" text default_stream "sub|main" text status "registered|connected|disconnected" timestamptz deleted_at "soft" }
   PRESET { text id PK text workspace_id FK text camera_id FK text name text onvif_token }
   EVENT { text id PK "ULID from device" text workspace_id FK text camera_id FK text type text status "detected|clip_ready|clip_failed" timestamptz started_at timestamptz ended_at boolean clock_synced int clip_duration_sec bigint clip_bytes text clip_sha256 text thumbnail_path text cache_status "none|uploading|ready" timestamptz cache_expires_at timestamptz purged_at }
   COMMAND { text id PK text workspace_id FK text device_id FK text camera_id FK "nullable" text actor_user_id FK "nullable(system)" text name jsonb args text status "accepted|executing|done|failed" jsonb result text error_slug timestamptz created_at timestamptz finished_at }
@@ -1109,7 +1092,7 @@ erDiagram
   DEPLOYMENT { text id PK text workspace_id FK text device_id FK text release_id FK text actor_user_id FK text status "pending|applying|healthy|rolled_back|failed" text previous_digest timestamptz created_at timestamptz finished_at }
   LIVE_SESSION { text id PK text workspace_id FK text user_id FK text camera_id FK text stream "sub|main" text token_hash timestamptz started_at timestamptz ended_at boolean relayed "TURN 사용" }
   PUSH_SUBSCRIPTION { text id PK text workspace_id FK text user_id FK text endpoint UK jsonb keys timestamptz created_at }
-  AUDIT_LOG { text id PK text workspace_id FK text actor_user_id FK "nullable(device/system)" text actor_device_id text action "login|live.start|live.end|ptz|snapshot|clip.view|clip.download|settings.change|deploy|purge" text target_type text target_id inet ip timestamptz at }
+  AUDIT_LOG { text id PK text workspace_id FK text actor_user_id FK "nullable(device/system)" text actor_device_id text action "login|live.start|live.end|ptz|snapshot|clip.view|clip.download|event.delete|settings.change|deploy|purge" text target_type text target_id inet ip timestamptz at }
   AUDIT_REVIEW { text id PK text workspace_id FK text reviewer_user_id FK text period "YYYY-MM" text note timestamptz reviewed_at }
   IDEMPOTENCY_KEY { text key PK text user_id FK text request_hash int response_status jsonb response_body timestamptz created_at }
 ```
@@ -1130,7 +1113,7 @@ CREATE TABLE event (
   cache_status  text NOT NULL DEFAULT 'none' CHECK (cache_status IN ('none','uploading','ready')),
   cache_expires_at timestamptz,
   purged_at     timestamptz
-);                                             -- 파티션 없음(R4 #22). 보존 만료 파기 = purge-job 행 DELETE + 파일 삭제(일 1회, INV-1)
+) PARTITION BY RANGE (started_at);              -- 월 파티션은 지역성용. 보존 만료 파기 = purge-job 행 DELETE + 파일 삭제(일 1회, INV-1). DROP은 전 행 파기 후 정리만
 CREATE INDEX event_cam_started ON event (workspace_id, camera_id, started_at DESC);   -- 목록·커서
 CREATE INDEX event_purge ON event (started_at) WHERE purged_at IS NULL;               -- 파기 잡
 CREATE INDEX event_cache ON event (cache_expires_at) WHERE cache_status = 'ready';    -- 캐시 정리 잡
@@ -1164,7 +1147,7 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 ## 데이터 규칙
 - **시각**: `timestamptz`, API는 UTC ISO 8601. 기기 이벤트는 기기 시각 + `clock_synced`; false면 UI가 "기기 시계 미동기" 표시하고 서버 수신 시각을 병기.
 - **식별자**: ULID text(26). 이벤트 ID는 **기기가 생성**(오프라인 큐 재전송 시 멱등, 엣지케이스 13).
-- **비밀**: 카메라 비밀번호는 서버에 저장하지 않는다 — 서버 CAMERA 표에 비밀번호 컬럼은 없고, 기기 SQLite `cameras.password_enc`에만(기기 인증서 키 파생 암호화). E22 요청 본문은 MQTT `camera.add`로 기기에 전달 후 서버 메모리에서 폐기.
+- **비밀**: 카메라 비밀번호는 서버에 저장하지 않는다 — `camera.password_enc`는 기기 SQLite에만(기기 인증서 키 파생 암호화). E22 요청 본문은 MQTT `camera.add`로 기기에 전달 후 서버 메모리에서 폐기.
 - **보존**: EVENT·썸네일 CLIP_RETENTION_DAYS → 파기(`purged_at`, 파일 삭제, 행 DELETE) · COMMAND·LIVE_SESSION·AUDIT_LOG AUDIT_RETENTION_DAYS(파티션 DROP) · IDEMPOTENCY_KEY SESSION_TTL_HOURS · 클립 캐시 CLIP_CACHE_TTL_MIN(활성 서명 토큰 시 연장). 소프트삭제: USER·SITE·CAMERA(`deleted_at`). 하드 파기: EVENT 클립·썸네일(법).
 - **파일**: 썸네일 ≤ THUMB_MAX_KB JPEG, 클립 MP4(H.264 copy, faststart). 업로드는 MIME·확장자·크기 화이트리스트, 기기 인증서가 소유한 이벤트만.
 - **기기 인증서**: DEVICE_CERT_VALID_DAYS 유효, D04로 갱신, 갱신 시 `cert_fingerprint` 교체 + 구 인증서 폐기 목록(CRL) 반영.
@@ -1177,28 +1160,28 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 | FR-ID | 담당 엔드포인트/이벤트/토픽 |
 |---|---|
 | FR-001 | E11, E14, `state`(LWT), DEVICE.status |
-| FR-002 | E20, E21, E22(warnings `no-motion-events` — 엣지 19), E26(`removed` 전이, `cmd/camera.remove`), `cmd/camera.discover`, `cmd/camera.add`, INV-6 검증(`no-h264-stream`) |
-| FR-003 | E27(direct_session_id), E29(`ice_state`·`first_frame`), `cmd/webrtc.offer` |
+| FR-002 | E20, E21, E22, `cmd/camera.discover`, `cmd/camera.add`, INV-6 검증(`no-h264-stream`) |
+| FR-003 | E27, E29, `cmd/webrtc.offer` |
 | FR-004 | E27(token, expires_at), E43(서명 URL), LIVE_SESSION.token_hash |
 | FR-005 | E27 `viewer-limit`, `live_active` 인덱스 |
-| FR-006 | E27 ice_servers(TURN_CRED_TTL_MIN 자격증명), WS `ice_state` → `error` viewer-limit(relay-cap)·main-requires-direct, LIVE_SESSION.relayed, `cmd/turn.credentials` |
+| FR-006 | E27 ice_servers(TURN_CRED_TTL_MIN 자격증명)·viewer-limit(relay-cap), WS `stream_effective`, LIVE_SESSION.relayed, `cmd/turn.credentials` |
 | FR-007 | E30, E31, `cmd/ptz.move`, `cmd/ptz.stop`, `ptz-locked` |
 | FR-008 | E32~E35, `cmd/preset.*` |
 | FR-009 | E36, `cmd/snapshot`, EVENT.type=snapshot |
 | FR-010 | 규약 Idempotency-Key, IDEMPOTENCY_KEY 표, `device-offline` 409 |
 | FR-011 | `events`(type=motion), EVENT_COOLDOWN_SEC(D03 config) |
-| FR-012 | `events`(status=clip_ready), D01 썸네일, CLIP_PRE/POST(D03) |
+| FR-012 | `events`(clip_ready), D01 썸네일, CLIP_PRE/POST(D03) |
 | FR-013 | E39, E40, E42, E43, D02, `cmd/clip.upload` |
-| FR-014 | EVENT.purged_at, purge-job 행 DELETE + 파일 삭제, `cmd/purge.report`(응답의 파기 목록 대사), AUDIT_LOG action=purge |
+| FR-014 | EVENT.purged_at, `events`(purged), `cmd/purge.report`, 파티션 DROP, AUDIT_LOG action=purge |
 | FR-015 | `events`(disk_low), CLIP_DISK_RESERVE_PCT(D03) |
 | FR-016 | E37, E38, `cmd/record.start/stop`, EVENT.type=manual |
 | FR-017 | E45, E46, PUSH_SUBSCRIPTION, `events` → 푸시 워커 |
-| FR-018 | 푸시 워커 ALERT_DAILY_MAX 요약(서버 내부, 엔드포인트 없음 — 규칙은 07 알림 절 'FR-018 요약 규칙') |
+| FR-018 | 푸시 워커 ALERT_DAILY_MAX 요약(서버 내부, 엔드포인트 없음 — 07 설정) |
 | FR-019 | E47, E48, USER.email_enabled |
 | FR-020 | `state`(retained, LWT), E13, WS `device.state` |
 | FR-021 | `events`(camera_disconnected/reconnected), CAMERA.status, WS `camera.state` |
 | FR-022 | `events` QoS1 + 기기 outbox(SQLite), EVENT.id 기기 생성 멱등 |
-| FR-023 | E17, E18, E19, E51(CI 릴리스 등록), `cmd/deploy`, DEPLOYMENT, RELEASE |
+| FR-023 | E17, E18, E19, `cmd/deploy`, DEPLOYMENT, RELEASE |
 | FR-024 | E16, `cmd/restart` |
 | FR-025 | E01~E03, USER, USER_SITE, 스코프 표 |
 | FR-026 | AUDIT_LOG, E49, INV-2(E27·E42 트랜잭션) |
@@ -1207,15 +1190,15 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 | FR-029 | E50, AUDIT_REVIEW, 리마인더 푸시(서버 스케줄) |
 | FR-030 | D04, DEVICE.cert_fingerprint, 만료 임박 미갱신 알림(서버 스케줄 → 푸시) |
 
-<!-- ===== 06-test-design.md ===== -->
+
 # 테스트 설계 — PiCam Watch
-버전: v1.1 · 기준 03 v1.3
-개정: R2(운영 상수 추가)는 이 문서에 영향 없음 · R4 GATE 패치(SC-008 상한 상수, FRAME_DROP_MAX_PCT, 릴레이 판정 `ice_state`, 숫자 상수화, 계약 테스트 범위 E51·WS 메시지 6종, 엣지 19)
-스킬: `ecc:tdd-workflow`(RED→GREEN→리팩터, 피라미드) · `ecc:e2e-testing`(POM, 격리, flaky 격리). 충돌: tdd-workflow의 "80% 일률"은 채택하지 않고 **리스크 기반** 목표(말미)를 쓴다.
+버전: v1.0
+개정: R2(운영 상수 추가)는 이 문서에 영향 없음 — 기준 버전만 갱신
+참고자료: `(참고자료)`(RED→GREEN→리팩터, 피라미드) · `(참고자료)`(POM, 격리, flaky 격리). 충돌: tdd-workflow의 "80% 일률"은 채택하지 않고 **리스크 기반** 목표(말미)를 쓴다.
 
 **근거 (진입 사전조사, 검색 1회)**
 - 정량 — Playwright: "By default failing tests are not retried" (`retries` 설정), "'flaky' — tests that failed on the first run, but passed when retried" (playwright.dev/docs/test-retries, 2026-09-08). → 이 스위트는 CI에서 `retries: 1`만 허용하고 flaky로 분류된 테스트는 격리(`test.fixme` + 이슈)한다. 재시도로 통과한 테스트는 통과로 세지 않는다.
-- 정성 — WebRTC·MQTT 같은 비동기 경로는 "arbitrary timeout"이 flaky의 주범(e2e-testing 스킬) → 모든 대기는 이벤트·응답 조건(`waitForResponse`, WS 메시지, MQTT resp)으로만.
+- 정성 — WebRTC·MQTT 같은 비동기 경로는 "arbitrary timeout"이 flaky의 주범(e2e-testing 참고자료) → 모든 대기는 이벤트·응답 조건(`waitForResponse`, WS 메시지, MQTT resp)으로만.
 - 사용자 영향 — SC-001·003(지연)은 목킹으로 증명할 수 없다. **실기(Pi 5 + 실제 ONVIF 카메라 1대 + NAT 뒤)** 계층을 별도 두고, 착수 자산(07)에 그 장비 목록을 포함한다. 운영자가 보는 "1초"는 실기에서만 참이다.
 
 ## 레이어 정의
@@ -1223,47 +1206,47 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 |---|---|---|---|
 | 단위 | 순수 로직: 쿨다운 병합, 큐 상한, 잠금, 커서, 상수 로딩, Problem 직렬화 | pytest / vitest | 없음 |
 | 통합 | api ↔ PostgreSQL ↔ mosquitto ↔ 가짜 agent · agent ↔ 가짜 ONVIF 카메라 ↔ go2rtc | pytest + docker compose(test 프로파일) | **ONVIF 시뮬레이터**(Python SOAP 스텁: GetCapabilities·PullPoint·PTZ) + **MediaMTX가 테스트 MP4를 RTSP로 송출**(H.264/H.265 프로파일 전환 가능) · 웹 푸시는 VAPID 수신 스텁 |
-| 계약 | A5 엔드포인트 표·Problem slug·WS·MQTT 스키마 | schemathesis(OpenAPI) + pytest | 통합 환경 재사용 |
+| 계약 | 단계 엔드포인트 표·Problem slug·WS·MQTT 스키마 | schemathesis(OpenAPI) + pytest | 통합 환경 재사용 |
 | E2E | 브라우저 여정 (Chromium·Mobile Chrome, Playwright POM) | Playwright | 실 서버 + 가짜 agent(WebRTC는 Pi 없이 go2rtc 컨테이너가 테스트 스트림 송출) |
 | 실기 | 지연·복구·SD 쓰기·전원 차단 | 스크립트 + 사람 | Pi 5 + 카메라 1대 + 시험용 NAT 공유기 + LTE 폰 |
 
 ## 수용 기준 → 시나리오 변환표
 전부 **실패하는 테스트로 먼저 쓴다**(RED). 정상 경로 + 경계값 + 실패 경로(03 엣지케이스 표) 포함.
 
-### 성공 기준 (SC — 03 v1.3, 15건 전부)
+### 성공 기준 (SC — 03 v1.1, 15건 전부)
 | SC/FR ID | Gherkin 시나리오 (Given/When/Then) | 레이어 | 데이터/목킹 |
 |---|---|---|---|
 | SC-001 | Given Pi 5 + 카메라(sub 프로파일) + NAT 뒤, 카메라 앞 밀리초 시계 / When Wi-Fi 15회·LTE 15회 라이브 시청 중 화면 캡처 / Then 화면 시계와 실제 시계 차의 p95 ≤ LIVE_LATENCY_P95 | 실기 | 밀리초 LED 시계, 캡처 스크립트 |
-| SC-002 | Given 같은 환경 / When 카메라 선택 후 `performance.now` 첫 프레임(`loadeddata`)까지 30회(STUN 차단으로 TURN 폴백 10회 포함; 값은 WS `first_frame` first_frame_ms와 일치) / Then p95 ≤ LIVE_FIRST_FRAME_P95 | 실기 + E2E 계측 | 브라우저 성능 로그 |
+| SC-002 | Given 같은 환경 / When 카메라 선택 후 `performance.now` 첫 프레임(`loadeddata`)까지 30회(STUN 차단으로 TURN 폴백 10회 포함) / Then p95 ≤ LIVE_FIRST_FRAME_P95 | 실기 + E2E 계측 | 브라우저 성능 로그 |
 | SC-003 | Given PTZ 카메라 / When 화면 녹화 중 방향 버튼 30회 / Then 버튼 시각↔영상 변화 시작 p95 ≤ PTZ_CMD_LATENCY_P95 | 실기 | 화면 녹화 프레임 분석 |
 | SC-004 | Given 기기 online / When 전원 차단 10회 / Then 각 회 DEVICE_OFFLINE_DETECT_SEC 안에 E13 status=offline + 푸시 수신 (10/10) | 실기 + 통합(LWT는 가짜 agent 강제 종료로 재현) | 푸시 수신 스텁 타임스탬프 |
 | SC-005 | Given 카메라 앞 사람 이동 30회 / When 모션 이벤트 / Then 푸시 도착 p95 ≤ ALERT_DELIVERY_P95 | 실기 + 통합(ONVIF 시뮬레이터가 MotionAlarm 발화) | 발화 시각 vs 푸시 시각 |
 | SC-006 | Given 이벤트 3건의 started_at을 CLIP_RETENTION_DAYS + 1일 과거로 조작 / When purge-job 1회 + Pi 파기 잡 1회 / Then PURGE_MAX_DELAY_HOURS 안에 행 DELETE·썸네일·클립 파일 삭제, AUDIT_LOG action=purge 3행, `purge.report` 대사 일치 100% | 통합 | 시계 조작(freezegun), 파일 시스템 검사 |
 | SC-007 | Given Viewer 세션 / When 라이브 시작·종료, PTZ 10회, 스냅샷, 클립 조회·다운로드 = 50행위 스크립트 / Then AUDIT_LOG에 50행 존재, action·target 일치 100% | 통합 | 행위 로그 vs DB 대조 |
-| SC-008 | Given agent 실행 중 / When `kill -9` 10회 / Then AGENT_RECOVER_MAX_SEC 안에 라이브 복귀(첫 프레임). Given 커널 hang(`echo c > /proc/sysrq-trigger`) 3회 / Then WATCHDOG_TIMEOUT_SEC + PI_BOOT_MAX_SEC 안에 state online | 실기 | HW watchdog 활성 이미지 |
+| SC-008 | Given agent 실행 중 / When `kill -9` 10회 / Then 60초 안에 라이브 복귀(첫 프레임). Given 커널 hang(`echo c > /proc/sysrq-trigger`) 3회 / Then WATCHDOG_TIMEOUT_SEC + 부팅 시간 안에 state online | 실기 | HW watchdog 활성 이미지 |
 | SC-009 | Given 기기 online / When 방화벽으로 서버 차단 1시간 동안 시뮬레이터가 이벤트 100건 발화 / Then 차단 해제 후 100건이 ULID 순서로 EVENT에 존재, 중복 0, 유실 0 (3회) | 통합(가짜 agent + 실 outbox 코드) + 실기 1회 | iptables 스크립트 |
 | SC-010 | Given 헬스체크가 실패하는 결함 이미지 release / When E17 배포 3회 / Then 각 회 OTA_ROLLBACK_MAX_MIN 안에 이전 digest로 복귀, DEPLOYMENT.status=rolled_back, 라이브 복귀, 재시도는 OTA_RETRY_MAX 이하 | 실기 + 통합(updater 단위: digest 교체·롤백 상태기계) | 결함 이미지 태그 |
-| SC-011 | Given 사이트에 VIEWER_MAX 세션 활성 / When 1개 추가 요청 / Then 429 `viewer-limit`, 기존 세션 프레임 드롭률 ≤ FRAME_DROP_MAX_PCT(WebRTC stats `framesDropped`/`framesReceived` 차분) | 통합 + E2E | 동시 접속 스크립트 |
+| SC-011 | Given 사이트에 VIEWER_MAX 세션 활성 / When 1개 추가 요청 / Then 429 `viewer-limit`, 기존 세션 프레임 드롭 0(WebRTC stats `framesDropped` 차분) | 통합 + E2E | 동시 접속 스크립트 |
 | SC-012 | Given 유효 세션 없음 / When 스트림 시그널링 URL·클립 URL·썸네일 URL 접근 / Then 401/403 100%. Given 기기 A 인증서 / When `devices/B/state` 발행 / Then 브로커 거부(ACL) 100% | 통합 | 인증서 2세트 |
 | SC-013 | Given Pi 24시간 운영(이벤트 EVENTS_PER_CAM_DAY_MAX의 10% 발화) / When `/proc/diskstats` SD 섹터 차분 / Then 쓰기 ≤ SD_WRITE_MAX_MB_DAY | 실기 | 24h 스크립트 |
 | SC-014 | Given 로그인 상태 / When 카메라 선택 → 라이브 / Then 결정 지점 ≤ 2(플로우 카운트, 화면 전환 이벤트 로그), 모든 클릭 후 시각 피드백 ≤ UI_FEEDBACK_MS(Performance API mark) | E2E | Playwright 트레이스 |
-| SC-015 | Given STUN 차단으로 릴레이 강제 / When 릴레이 합계가 TURN_RELAY_MAX_MBPS에 도달한 뒤 새 세션이 `ice_state` relayed=true 보고 / Then WS `error` `viewer-limit` reason=relay-cap + `cmd/webrtc.close`, 기존 세션 프레임 드롭률 ≤ FRAME_DROP_MAX_PCT, 모든 릴레이 세션 LIVE_SESSION.stream=sub(main 0) | 통합(coturn 컨테이너 + 대역 카운터 목킹) + 실기 1회 | 대역 스텁, WebRTC stats |
+| SC-015 | Given STUN 차단으로 릴레이 강제 / When 릴레이 합계가 TURN_RELAY_MAX_MBPS에 도달한 뒤 새 릴레이 세션 요청 / Then 429 `viewer-limit` reason=relay-cap, 기존 세션 프레임 드롭 0, 모든 릴레이 세션 stream_effective=sub | 통합(coturn 컨테이너 + 대역 카운터 목킹) + 실기 1회 | 대역 스텁, WebRTC stats |
 
 ### P0·P1 요구사항 (FR — P2인 FR-019·028 제외 28건 전부)
 | SC/FR ID | Gherkin 시나리오 (Given/When/Then) | 레이어 | 데이터/목킹 |
 |---|---|---|---|
 | FR-001 | Given 이미지의 클레임 토큰 / When E11 claim + CSR / Then 201 cert_pem, DEVICE.status=claimed; Given 같은 토큰 재사용 / Then 409 `claim-token-used` + Admin 알림(엣지 16); Given Admin E14 승인 / Then approved, 이후 MQTT 접속 시 online | 통합 | 내부 CA 테스트 키 |
-| FR-002 | Given ONVIF 시뮬레이터 2대(H.264+H.265 / H.265만) / When E20 탐색 → E22 등록 / Then 1대 201(capabilities에 streams·ptz 저장), 1대 422 `no-h264-stream` + 안내 문구; Given 잘못된 자격증명 / Then 422 `camera-auth-failed`; Given MotionAlarm 토픽 없는 시뮬레이터 / Then 201 + warnings `no-motion-events`, E2E: 이벤트 영역 비노출(엣지 19) | 통합 + E2E | ONVIF 시뮬레이터 프로파일 전환 |
-| FR-003 | Given 카메라 connected / When E27 stream=sub → E29 offer / Then answer 수신, 미디어 재생(E2E: `<video>` readyState≥2); Given LIVE_SESSION_MAX_MIN 경과(시계 조작) / Then 세션 종료 + "다시 보기" CTA(엣지 18); Given 직결 세션(`ice_state` relayed=false) / When E27 stream=main direct_session_id / Then 201 main 세션; Given direct_session_id 없음 또는 relayed 세션 참조 / Then 422 `main-requires-direct` | 통합 + E2E | go2rtc 컨테이너 테스트 스트림 |
+| FR-002 | Given ONVIF 시뮬레이터 2대(H.264+H.265 / H.265만) / When E20 탐색 → E22 등록 / Then 1대 201(capabilities에 streams·ptz 저장), 1대 422 `no-h264-stream` + 안내 문구; Given 잘못된 자격증명 / Then 422 `camera-auth-failed` | 통합 | ONVIF 시뮬레이터 프로파일 전환 |
+| FR-003 | Given 카메라 connected / When E27 stream=sub → E29 offer / Then answer 수신, 미디어 재생(E2E: `<video>` readyState≥2); Given LIVE_SESSION_MAX_MIN 경과(시계 조작) / Then 세션 종료 + "다시 보기" CTA(엣지 18) | 통합 + E2E | go2rtc 컨테이너 테스트 스트림 |
 | FR-004 | Given E27 토큰 / When STREAM_TOKEN_TTL_SEC 경과 후 시그널링 / Then 401; Given 토큰 없음 / Then 401 (SC-012 공유) | 통합 | 시계 조작 |
 | FR-005 | SC-011과 동일 + 응답 본문 `current_viewers` = VIEWER_MAX | 통합 | — |
-| FR-006 | Given STUN 차단 / When 라이브 / Then 클라 `ice_state` relayed=true, LIVE_SESSION.relayed=true, "릴레이 연결" 배지 + 메인 토글 비활성(엣지 17); Given main 세션이 `ice_state` relayed=true 보고 / Then WS `error` `main-requires-direct` + 세션 종료, UI가 sub 세션으로 복귀; 상한은 SC-015 | 통합 + E2E | coturn 컨테이너, iptables |
+| FR-006 | Given STUN 차단 / When 라이브 / Then ICE 후보 relay, LIVE_SESSION.relayed=true, "릴레이 연결" 배지; Given 릴레이 중 main 요청 / Then stream_effective=sub 통지 + 배지(엣지 17); 상한은 SC-015 | 통합 + E2E | coturn 컨테이너, iptables |
 | FR-007 | Given PTZ 카메라 / When E30 move → E31 stop / Then 시뮬레이터가 ContinuousMove·Stop 수신 순서대로; Given Viewer A 조작 중 / When B가 PTZ_LOCK_SEC 안 E30 / Then 423 `ptz-locked` holder=A(엣지 5); Given PTZ 없는 카메라 / Then 422 `ptz-unsupported`, E2E: 컨트롤 비노출(엣지 6) | 통합 + E2E | 시뮬레이터 호출 기록 |
 | FR-008 | Given PTZ 카메라 / When E33 저장 → E32 목록 → E34 goto → E35 삭제 / Then 시뮬레이터 프리셋 상태 일치, 삭제 후 목록에서 제거 | 통합 | — |
 | FR-009 | When E36 / Then 202 → E21 done, result.url로 JPEG 다운로드 200, EVENT.type=snapshot, AUDIT_LOG snapshot | 통합 | 시뮬레이터 스냅샷 JPEG |
 | FR-010 | Given 같은 Idempotency-Key로 E30 2회 / Then 응답 동일, 시뮬레이터 ContinuousMove 1회(엣지 8); Given 같은 키·다른 본문 / Then 422; Given 기기 offline / When E30 / Then 409 `device-offline`, COMMAND 행 없음(큐잉 안 함, 엣지 7) | 통합 | 가짜 agent 끊기 |
-| FR-011 | Given EVENT_COOLDOWN_SEC 안 MotionAlarm 5회 / Then EVENT 1건, ended_at = 마지막 모션 + CLIP_POST_SEC(엣지 9); Given EVENT_COOLDOWN_SEC 넘어 2회 / Then 2건 | 단위(병합 로직) + 통합 | 시뮬레이터 발화 스크립트 |
-| FR-012 | Given 링버퍼에 CLIP_PRE_SEC 이상 세그먼트 / When 이벤트 / Then 클립 길이 = CLIP_PRE_SEC + CLIP_POST_SEC ± RINGBUF_SEGMENT_SEC, `ffprobe` 코덱 copy(재인코딩 없음, INV-4), D01 썸네일 ≤ THUMB_MAX_KB, `events` status=clip_ready에 sha256; Given USB SSD 미마운트 / Then clip_failed + 디스크 경고 1회(엣지 10) | 통합(agent + go2rtc + MediaMTX) | 마운트 해제 스크립트 |
+| FR-011 | Given 30초 안 MotionAlarm 5회 / Then EVENT 1건, ended_at = 마지막 모션 + CLIP_POST_SEC(엣지 9); Given EVENT_COOLDOWN_SEC 넘어 2회 / Then 2건 | 단위(병합 로직) + 통합 | 시뮬레이터 발화 스크립트 |
+| FR-012 | Given 링버퍼에 CLIP_PRE_SEC 이상 세그먼트 / When 이벤트 / Then 클립 길이 = CLIP_PRE_SEC + CLIP_POST_SEC ± RINGBUF_SEGMENT_SEC, `ffprobe` 코덱 copy(재인코딩 없음, INV-4), D01 썸네일 ≤ THUMB_MAX_KB, `events` clip_ready에 sha256; Given USB SSD 미마운트 / Then clip_failed + 디스크 경고 1회(엣지 10) | 통합(agent + go2rtc + MediaMTX) | 마운트 해제 스크립트 |
 | FR-013 | When E39 커서 2페이지 / Then 중복·누락 0; When E42 첫 요청 / Then 202 clip-uploading, 동시 요청 5개 → `clip.upload` 명령 1회(singleflight); 업로드 완료 후 E42 → 200, E43 Range 206; Given 재생 중 파기(엣지 11) / Then 재생 세션 EOF, 새 요청 410 `clip-purged` | 통합 + 계약 | 가짜 agent 업로드 지연 주입 |
 | FR-014 | SC-006과 동일 + INV-1: 어떤 시각에도 `started_at < now - CLIP_RETENTION_DAYS - PURGE_MAX_DELAY_HOURS`인 미파기 행 0 (속성 테스트, 시계 전진 100회) | 단위(속성) + 통합 | hypothesis |
 | FR-015 | Given 클립 디스크 여유 < CLIP_DISK_RESERVE_PCT / When 새 이벤트 / Then 가장 오래된 클립부터 삭제, `disk_low` 이벤트 + 경고 푸시 1회, 반복 억제 | 통합(agent, tmpfs 작은 디스크) | 작은 루프 디바이스 |
@@ -1273,7 +1256,7 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 | FR-020 | Given 가짜 agent 연결 / When 강제 종료 / Then LWT로 DEVICE_OFFLINE_DETECT_SEC 안에 offline, WS `device.state`; When STATE_REFRESH_SEC마다 state 발행 / Then E13 metrics 갱신 | 통합 | mosquitto 컨테이너 |
 | FR-021 | Given 카메라 connected / When MediaMTX 중단 / Then CAM_RECONNECT_BACKOFF 간격(1→2→4…, 상한) 재접속 시도 로그, `camera_disconnected` 이벤트 1건, WS `camera.state`; When 복구 / Then `camera_reconnected` | 통합(agent) | MediaMTX 정지/재개 |
 | FR-022 | SC-009 + 경계: OFFLINE_QUEUE_MAX + 1건 적재 시 가장 오래된 1건 폐기, 나머지 순서 유지 | 단위(outbox) + 통합 | — |
-| FR-023 | SC-010 + 정상 경로: 서명 유효 이미지 → healthy, previous_digest 기록; 서명 불일치 → failed, 교체 없음; E51 CI 토큰 없이 → 401, 같은 Idempotency-Key 재등록 → 동일 응답 | 통합(updater) | cosign 테스트 키 |
+| FR-023 | SC-010 + 정상 경로: 서명 유효 이미지 → healthy, previous_digest 기록; 서명 불일치 → failed, 교체 없음 | 통합(updater) | cosign 테스트 키 |
 | FR-024 | When E16 target=agent / Then `cmd/restart` 수신 → agent 재시작 → state online 재발행; target=os는 실기 | 통합 + 실기 | — |
 | FR-025 | When E01 올바른/틀린 비밀번호 / Then 200 Set-Cookie(HttpOnly·Secure·SameSite=Strict) / 401; Viewer가 E09·E49 호출 / Then 403; 비밀번호 < PASSWORD_MIN_LEN / Then 422 | 계약 + 통합 | — |
 | FR-026 | SC-007 + INV-2: AUDIT_LOG INSERT 실패 주입 시 E27 토큰 미발급(500, LIVE_SESSION 행 없음) | 통합(장애 주입) | DB 트리거로 실패 유도 |
@@ -1281,13 +1264,13 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 | FR-029 | Given 마지막 AUDIT_REVIEW + AUDIT_REVIEW_INTERVAL_DAYS 경과 / When 스케줄 실행 / Then Admin 리마인더 푸시 1건; E50 기록 후 재발송 없음 | 통합 | 시계 조작 |
 | FR-030 | Given 인증서 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 전 / When D04 / Then 200 새 cert(DEVICE_CERT_VALID_DAYS), cert_fingerprint 교체, 구 인증서로 MQTT 접속 거부; Given 만료 인증서 / When D04 / Then 401 + Admin 알림 | 통합 | CA 테스트 키, 시계 조작 |
 
-## 계약 테스트 (A5 엔드포인트 표 기준)
-- **스키마**: OpenAPI 스케치를 schemathesis로 퍼징 — E01~E51(E44 없음)·D01~D04 전부 응답이 스키마·`application/vnd.picam.v1+json`에 맞는지, 오류는 `application/problem+json` + slug 표의 type URI만.
+## 계약 테스트 (단계 엔드포인트 표 기준)
+- **스키마**: OpenAPI 스케치를 schemathesis로 퍼징 — E01~E50·D01~D04 전부 응답이 스키마·`application/vnd.picam.v1+json`에 맞는지, 오류는 `application/problem+json` + slug 표의 type URI만.
 - **에러 포맷**: 모든 4xx/5xx에 `type·title·status·detail·instance` 존재, `detail`에 스택·SQL·경로 없음(정규식), 500은 고정 문구.
-- **멱등성**: E16·E17·E20·E27·E30·E33·E34·E36·E37·E42·E51 — 같은 키 재시도 = 바이트 동일 응답, 키 없음 = 422, SESSION_TTL_HOURS 경과 후 같은 키 = 새 요청.
+- **멱등성**: E16·E17·E20·E27·E30·E33·E34·E36·E37·E42 — 같은 키 재시도 = 바이트 동일 응답, 키 없음 = 422, SESSION_TTL_HOURS 경과 후 같은 키 = 새 요청.
 - **페이지네이션**: E06·E12·E18·E23·E39·E49 — `limit` 경계(0·1·100·101), 커서 변조 → 422.
 - **레이트리밋**: E01·E27·E30에 `RateLimit-*` 헤더, 초과 시 429 + `Retry-After`.
-- **WS**: 시그널링 메시지 타입 6종(offer·ice·ice_state·first_frame·answer·error)·상태 채널 7종의 JSON 스키마, 미인증 연결 즉시 종료.
+- **WS**: 시그널링 메시지 타입 5종·상태 채널 7종의 JSON 스키마, 미인증 연결 즉시 종료.
 - **MQTT**: `state`·`events`·`cmd/*`·`resp/*` 페이로드 JSON 스키마, MQTT_MSG_MAX_KB 초과 발행 → 브로커 연결 종료, ACL `devices/%u/#` 밖 발행·구독 거부.
 
 ## E2E 후보 (돈·안전·법이 걸린 여정만)
@@ -1307,29 +1290,28 @@ CREATE UNIQUE INDEX device_one_per_site ON device (site_id) WHERE status <> 'ret
 | 실기 계층 | SC-001·002·003·004·008·013 + SC-009·010·015 각 1회 = 릴리스 게이트 | 목킹으로 증명 불가 |
 | flaky 허용 | 0 (격리 후 수정 전 병합 금지) | 비동기 경로가 핵심 |
 
-<!-- ===== 07-ops-design.md ===== -->
+
 # 배포·운영 설계 — PiCam Watch
-버전: v1.1 · 기준 03 v1.3
-개정: R4 GATE 패치(Docker data-root·log2ram→USB SSD, E51 릴리스 등록, `.env` 키 추가, RB Pi 재설치 = 인증서 재사용, 백업 미러·event 제외, FR-018 요약 규칙, 큐 길이 알람, 용어 '운영 담당', 숫자 상수화)
-스킬: `ecc:deployment-patterns`(CI/CD 단계·헬스체크·롤백·준비도 체크리스트) · `ecc:docker-patterns`(compose 보안 옵션·비밀·볼륨). 충돌: docker-patterns "compose를 프로덕션에 쓰지 말라"는 규모(SITES_MAX·VPS 1대·팀 1~2명) 근거로 채택하지 않는다(ADR-7).
+버전: v1.0
+참고자료: `(참고자료)`(CI/CD 단계·헬스체크·롤백·준비도 체크리스트) · `(참고자료)`(compose 보안 옵션·비밀·볼륨). 충돌: docker-patterns "compose를 프로덕션에 쓰지 말라"는 규모(SITES_MAX·VPS 1대·팀 1~2명) 근거로 채택하지 않는다(ADR-7).
 
 **근거 (진입 사전조사, 검색 1회)**
 - 정량 — log2ram 기본값: RAM 로그 폴더 `128M`, 디스크 동기화는 `log2ram-daily.timer`(일 1회), 설치 전 journald `SystemMaxUse=20M` 권고 (github.com/azlux/log2ram README, 2026-09-08). → PI_LOG_RAM_MB·JOURNAL_MAX_MB의 출처.
 - 정성 — 같은 README: "/var/log이 RAM보다 크면 log2ram이 시작에 실패할 수 있다" — 로그 상한을 정하지 않으면 마모 대책 자체가 죽는다. 상한을 이미지에 굽는다.
-- 사용자 영향 — 운영 담당은 SD 카드 교체 출동을 하지 않는다(P1 SD 마모, SC-013). 문제가 생기면 화면의 기기 상태와 푸시로 먼저 알고, 런북의 첫 단계는 "원격 재시작" 버튼이다(L-06 막다른 에러 0).
+- 사용자 영향 — 운영자는 SD 카드 교체 출동을 하지 않는다(P1 SD 마모, SC-013). 문제가 생기면 화면의 기기 상태와 푸시로 먼저 알고, 런북의 첫 단계는 "원격 재시작" 버튼이다(L-06 막다른 에러 0).
 
 ## 배포
 
 ### 런타임·형상
 | 계층 | 형상 | 구성 |
 |---|---|---|
-| **엣지 (Pi 5)** | Raspberry Pi OS Lite 64-bit 골든 이미지 + Docker compose | 컨테이너 3개: `agent`(Python 3.12), `go2rtc`(공식 바이너리 이미지), `updater`(Python). OS 계층: Overlay FS(raspi-config P3, 부팅 파티션 쓰기 보호), log2ram(PI_LOG_RAM_MB), journald SystemMaxUse=JOURNAL_MAX_MB, HW watchdog(WATCHDOG_TIMEOUT_SEC), chrony + chrony-wait, unattended-upgrades(security만, 자동 재부팅 없음). 쓰기 구역: USB SSD `/mnt/data`(clips, agent.db, certs, **docker/** = Docker data-root, **log/** = log2ram 동기화 대상), tmpfs 링버퍼(RINGBUF_TMPFS_MB). rootfs(SD)는 Overlay FS로 읽기전용 — `/var/lib/docker`·`/var/log`가 RAM 상위 레이어에 떨어지지 않도록 둘 다 SSD로 옮긴다(R4 #3, DL-020) |
-| **서버 (VPS 1대, 디스크 ≥ VPS_DISK_MIN_GB)** | Docker compose | `caddy`(TLS 자동, 443 → api; `/api/device/*`는 클라이언트 인증서 요구, `/api/device/claim`만 예외 — E11), `api`(FastAPI + mqtt-bridge + ws-hub + ca), `purge-job`(cron 컨테이너), `mosquitto`(8883 mTLS), `coturn`(3478 + UDP 릴레이 범위), `postgres:16`. 이메일은 외부 SMTP 릴레이(SMTP_URL) — 컨테이너 없음. 볼륨: pgdata, thumbs, clipcache, secrets(read-only) |
+| **엣지 (Pi 5)** | Raspberry Pi OS Lite 64-bit 골든 이미지 + Docker compose | 컨테이너 3개: `agent`(Python 3.12), `go2rtc`(공식 바이너리 이미지), `updater`(Python). OS 계층: Overlay FS(raspi-config P3, 부팅 파티션 쓰기 보호), log2ram(PI_LOG_RAM_MB), journald SystemMaxUse=JOURNAL_MAX_MB, HW watchdog(WATCHDOG_TIMEOUT_SEC), chrony + chrony-wait, unattended-upgrades(security만, 자동 재부팅 없음). 쓰기 구역: USB SSD `/mnt/data`(clips, agent.db, certs), tmpfs 링버퍼(RINGBUF_TMPFS_MB) |
+| **서버 (VPS 1대)** | Docker compose | `caddy`(TLS 자동, 443 → api), `api`(FastAPI + mqtt-bridge + ws-hub + ca), `purge-job`(cron 컨테이너), `mosquitto`(8883 mTLS), `coturn`(3478 + UDP 릴레이 범위), `postgres:16`. 볼륨: pgdata, thumbs, clipcache, secrets(read-only) |
 | **웹** | 정적 번들 | caddy가 서빙, PWA(service worker + 웹 푸시) |
 
 ### 엣지 골든 이미지 (A/B는 앱 계층 — ADR-4)
 - 빌드: CI에서 `pi-gen` 스테이지로 굽는다 — 공식 Lite 이미지 + Docker + log2ram + 설정(overlay·watchdog·chrony·journald) + updater 서비스 + cosign 공개키. 산출물 `picam-os-<ver>.img.xz` + SHA-256 게시.
-- 첫 부팅(`firstrun`): USB SSD 마운트(미포맷이면 포맷) → `/etc/docker/daemon.json` `data-root=/mnt/data/docker`·log2ram `HDD_LOG=/mnt/data/log` 설정 → `/mnt/data/certs/device.crt`가 **있으면 클레임 생략**(같은 device_id로 재접속 — Pi 재설치, DL-024), 없으면 클레임 토큰(이미지 굽기 시 Raspberry Pi Imager 커스터마이즈로 주입, `PICAM_CLAIM_TOKEN`) → E11 claim → 인증서 저장 → compose pull(digest 고정, SSD의 data-root) → Overlay FS 활성 후 재부팅. 이후 `cmd/deploy`의 pull·롤백 상태는 SSD에 남아 재부팅에도 보존된다(FR-023·SC-010).
+- 첫 부팅(`firstrun`): USB SSD 포맷·마운트 → 클레임 토큰(이미지 굽기 시 Raspberry Pi Imager 커스터마이즈로 주입) → E11 claim → 인증서 저장 → compose pull(digest 고정) → Overlay FS 활성 후 재부팅.
 - 앱 업데이트: Admin이 E17 → `cmd/deploy` → updater가 GHCR에서 digest pull → cosign 검증 → `docker compose up -d` → 헬스체크(HEALTHCHECK_INTERVAL_SEC × HEALTHCHECK_FAIL_MAX) 실패 시 previous_digest로 복귀(OTA_ROLLBACK_MAX_MIN 안), 재시도 OTA_RETRY_MAX.
 - OS 업데이트: security만 자동. 커널 등 대형 변경은 새 골든 이미지 + 현장 SD 교체(유인 현장, Q5) — 런북 RB-4.
 
@@ -1345,7 +1327,7 @@ services:
     tmpfs: [/tmp]
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
-    healthcheck: { test: ["CMD","python","-c","import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"], interval: ${HEALTHCHECK_INTERVAL_SEC}s, timeout: 3s, retries: ${HEALTHCHECK_FAIL_MAX} }   # 값은 03 상수 표 — .env로 주입
+    healthcheck: { test: ["CMD","python","-c","import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"], interval: 30s, timeout: 3s, retries: 3 }
     depends_on: { postgres: { condition: service_healthy }, mosquitto: { condition: service_started } }
   purge-job: { image: ghcr.io/<org>/picam-api@sha256:<digest>, command: ["python","-m","picam.jobs.purge","--daily"], env_file: [/etc/picam/api.env], volumes: [thumbs:/data/thumbs, clipcache:/data/clipcache] }
   mosquitto: { image: eclipse-mosquitto:2, ports: ["8883:8883"], volumes: [./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro, /etc/picam/secrets/mqtt:/mosquitto/certs:ro] }
@@ -1353,15 +1335,15 @@ services:
   postgres:  { image: postgres:16-alpine, volumes: [pgdata:/var/lib/postgresql/data], env_file: [/etc/picam/db.env], healthcheck: { test: ["CMD-SHELL","pg_isready -U picam"], interval: 5s, retries: 5 } }
 volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ```
-엣지 compose는 `agent`(devices: USB SSD 마운트만, `cap_drop: ALL`, read_only + tmpfs), `go2rtc`(1984 API는 localhost 바인딩; 8555 ICE는 LAN 바인딩 — srflx 후보 수집에 필요, 포트포워딩 없음, R-1 ⑥), `updater`(Docker 소켓 접근이 필요한 유일한 컨테이너 — 그래서 agent와 분리). Dockerfile은 python:3.12-slim 멀티스테이지 + non-root(deployment-patterns 패턴).
+엣지 compose는 `agent`(devices: USB SSD 마운트만, `cap_drop: ALL`, read_only + tmpfs), `go2rtc`(1984/8555는 localhost 바인딩), `updater`(Docker 소켓 접근이 필요한 유일한 컨테이너 — 그래서 agent와 분리). Dockerfile은 python:3.12-slim 멀티스테이지 + non-root(deployment-patterns 패턴).
 
 ### CI/CD 단계
-`lint(ruff·eslint) → typecheck(mypy·tsc) → unit → integration(compose test 프로파일: ONVIF 시뮬레이터·MediaMTX·mosquitto·coturn·postgres) → contract(schemathesis) → build(멀티아치 arm64/amd64, digest 고정) → cosign sign → push GHCR → deploy staging(VPS staging compose pull+up) → smoke(E01·E27 가짜 agent·E39) → deploy prod(compose pull+up, 헬스체크 실패 시 이전 digest로 `compose up`) → 릴리스 등록(E51 POST /releases, CI_RELEASE_TOKEN — E19가 나열하는 RELEASE 행)`
+`lint(ruff·eslint) → typecheck(mypy·tsc) → unit → integration(compose test 프로파일: ONVIF 시뮬레이터·MediaMTX·mosquitto·coturn·postgres) → contract(schemathesis) → build(멀티아치 arm64/amd64, digest 고정) → cosign sign → push GHCR → deploy staging(VPS staging compose pull+up) → smoke(E01·E27 가짜 agent·E39) → deploy prod(compose pull+up, 헬스체크 실패 시 이전 digest로 `compose up`) → 릴리스 등록(E19 RELEASE 행)`
 기기 배포는 CI가 아니라 Admin의 E17이 트리거한다(단계적: 사이트 1곳 → 나머지). 실기 계층(06)은 릴리스 게이트로 수동 실행.
 
 ### 설정·비밀
 - 전부 환경변수(pydantic-settings로 시작 시 검증, 누락 시 기동 실패). 값은 어떤 산출물에도 쓰지 않는다.
-- 서버 비밀: `/etc/picam/secrets/`(600, root) — DB 비밀번호, VAPID 키쌍, TURN 공유 비밀, 세션 서명 키, SMTP 자격증명(SMTP_URL), CI 릴리스 토큰(CI_RELEASE_TOKEN), **내부 CA 키**(가장 민감 — 오프라인 백업 1부). 백업은 age 암호화.
+- 서버 비밀: `/etc/picam/secrets/`(600, root) — DB 비밀번호, VAPID 키쌍, TURN 공유 비밀, 세션 서명 키, **내부 CA 키**(가장 민감 — 오프라인 백업 1부). 백업은 age 암호화.
 - 기기 비밀: USB SSD `/mnt/data/certs/`(600) — 기기 인증서·키, 카메라 비밀번호(기기 키 파생 암호화). SD 카드에는 비밀 없음.
 - 폐쇄망 아님 — 오프라인 설치 경로 없음.
 
@@ -1370,7 +1352,7 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ### SLI·SLO-lite (사용자 대면 = 가용성·지연 / 엣지 파이프라인 = E2E 지연 / 공통 = 정확성)
 | SLI | SLO (창 SLO_WINDOW_DAYS) | 측정 |
 |---|---|---|
-| 라이브 성공률 = E27 201 후 LIVE_FIRST_FRAME_P95 안에 첫 프레임 도달한 세션 비율 | ≥ SLO_LIVE_SUCCESS_PCT | 브라우저가 E29 WS `first_frame` 메시지(first_frame_ms)로 보고 → api 지표; 보고 없이 종료된 세션은 실패로 집계 |
+| 라이브 성공률 = E27 201 후 LIVE_FIRST_FRAME_P95 안에 첫 프레임 도달한 세션 비율 | ≥ SLO_LIVE_SUCCESS_PCT | 브라우저가 WS로 `first_frame_ms` 보고 → api 지표 |
 | 라이브 첫 프레임 지연 p95 | ≤ LIVE_FIRST_FRAME_P95 | 같은 보고 |
 | 기기 온라인 비율 (사이트별) | ≥ SLO_DEVICE_ONLINE_PCT | DEVICE.status 전이 로그 |
 | 이벤트→푸시 지연 p95 | ≤ ALERT_DELIVERY_P95 | EVENT.started_at vs 푸시 발송 시각 |
@@ -1392,18 +1374,15 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ## 알림 (조치 가능한 알람만, 알람:런북 = 1:1, 증상 기반)
 | 조건 | 심각도 | 수신자 | 연결 런북 |
 |---|---|---|---|
-| 사이트 기기 offline > DEVICE_OFFLINE_DETECT_SEC (사용자 알림과 별개로 운영 담당에게도) | P2 | 운영 담당 푸시 | RB-1 기기 오프라인 |
-| `/health` 실패 HEALTHCHECK_FAIL_MAX회 연속 또는 라이브 성공률(ALARM_EVAL_WINDOW_MIN 창) < SLO_LIVE_SUCCESS_PCT | P1 | 운영 담당 푸시+이메일 | RB-2 서버 장애 |
-| `turn_relay_mbps` > TURN_RELAY_MAX_MBPS × ALARM_WARN_PCT/100 | P2 | 운영 담당 | RB-3 릴레이 포화 |
-| `disk_used_pct` > ALARM_WARN_PCT (서버 볼륨 또는 기기 SSD) | P2 | 운영 담당 | RB-5 디스크 |
-| `offline_queue_len` > OFFLINE_QUEUE_MAX × ALARM_WARN_PCT/100 (기기가 서버에 못 보내고 있음) | P2 | 운영 담당 | RB-1 기기 오프라인(연결 진단 동일) |
-| purge-job 실패 또는 `purge_mismatch_total` > 0 | P1 (법) | 운영 담당 이메일 | RB-6 파기 실패 |
-| 백업 실패 또는 BACKUP_INTERVAL_HOURS × 2 동안 백업 없음 | P1 | 운영 담당 이메일 | RB-7 백업 |
-| 인증서 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 안인데 미갱신 | P2 | 운영 담당 | RB-8 인증서 |
+| 사이트 기기 offline > DEVICE_OFFLINE_DETECT_SEC (사용자 알림과 별개로 운영자에게도) | P2 | 운영자 푸시 | RB-1 기기 오프라인 |
+| `/health` 실패 HEALTHCHECK_FAIL_MAX회 연속 또는 라이브 성공률(1시간 창) < SLO_LIVE_SUCCESS_PCT | P1 | 운영자 푸시+이메일 | RB-2 서버 장애 |
+| `turn_relay_mbps` > TURN_RELAY_MAX_MBPS × ALARM_WARN_PCT/100 | P2 | 운영자 | RB-3 릴레이 포화 |
+| `disk_used_pct` > ALARM_WARN_PCT (서버 볼륨 또는 기기 SSD) | P2 | 운영자 | RB-5 디스크 |
+| purge-job 실패 또는 `purge_mismatch_total` > 0 | P1 (법) | 운영자 이메일 | RB-6 파기 실패 |
+| 백업 실패 또는 BACKUP_INTERVAL_HOURS × 2 동안 백업 없음 | P1 | 운영자 이메일 | RB-7 백업 |
+| 인증서 만료 DEVICE_CERT_RENEW_BEFORE_DAYS 안인데 미갱신 | P2 | 운영자 | RB-8 인증서 |
 | 배포 `rolled_back`/`failed` | P2 | Admin 푸시 | RB-9 배포 롤백 |
-같은 알람은 ALERT_OPS_DEDUP_MIN 동안 중복 억제. 원인 지표(CPU·명령 실패율)는 대시보드로만.
-
-**FR-018 요약 규칙 (사용자 알림, ALERT_DAILY_MAX)**: 푸시 워커는 사이트별 일 카운터(사이트 timezone 자정 리셋)를 두고, ALERT_DAILY_MAX 도달 후의 이벤트·경고는 개별 발송 대신 요약 1건("오늘 알림 N건 더 — 클립 목록에서 확인")으로 묶는다. 요약은 카운트에 넣지 않고 하루 1회만 보낸다. 기기 offline 알림(FR-020)은 요약 대상에서 제외한다. 이메일(FR-019)도 같은 카운터를 쓴다.
+같은 알람은 ALERT_OPS_DEDUP_MIN 동안 중복 억제. 원인 지표(CPU·큐 길이·명령 실패율)는 대시보드로만.
 
 ## 장애·복구
 
@@ -1411,8 +1390,8 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 | 장애 | 감지 | 영향 | 복구 절차 (복붙 수준) | RTO/RPO |
 |---|---|---|---|---|
 | **서버 VPS 다운** | `/health` 실패, 모든 기기 offline 동시 | 라이브·알림 불가. 엣지는 녹화·큐잉 계속(FR-022) | ① 공급자 콘솔 재부팅 ② `docker compose ps` → 미기동 서비스 `docker compose up -d` ③ 복구 불가 시 새 VPS: 이미지 pull → `/etc/picam` 복원(age) → `pg_restore` 최신 백업 → thumbs rsync 복원 → DNS 전환 | RTO_SERVER_MIN / RPO_SERVER_HOURS |
-| **PostgreSQL 손상** | api 500 급증, healthcheck 실패 | 전체 | `docker compose stop api purge-job` → `pg_restore --clean` 최신 백업 → 이벤트 메타는 덤프에 없으므로(INV-1, DL-025) 복원 후 새 이벤트부터 쌓인다(클립 원본은 Pi SSD에 그대로) → `up -d` | RTO_SERVER_MIN / RPO_SERVER_HOURS (이벤트 메타는 복원 대상 아님) |
-| **Pi 부팅 불능·SD 손상** | 기기 offline 지속, 원격 재시작 무응답 | 해당 사이트 전체 | 현장(유인): ① 전원 재투입 ② 실패 시 새 SD에 골든 이미지 굽기(Imager) ③ 기존 USB SSD 그대로 연결(클립·인증서·카메라 설정·Docker data-root 보존) ④ 부팅 → firstrun이 SSD 인증서를 발견해 클레임 생략, 같은 device_id로 online(Admin 승인 불필요, DL-024). SSD 손상·인증서 만료 시에만: E15 retire → 새 클레임 토큰으로 굽기 → E11 → E14 승인 | RTO_DEVICE_MIN / 클립 RPO 0(SSD 보존) |
+| **PostgreSQL 손상** | api 500 급증, healthcheck 실패 | 전체 | `docker compose stop api purge-job` → `pg_restore --clean` 최신 백업 → 이벤트는 기기 outbox 재전송으로 RPO 이후분 회복(ULID 멱등) → `up -d` | RTO_SERVER_MIN / RPO_SERVER_HOURS (이벤트는 0에 근접) |
+| **Pi 부팅 불능·SD 손상** | 기기 offline 지속, 원격 재시작 무응답 | 해당 사이트 전체 | 현장(유인): ① 전원 재투입 ② 실패 시 새 SD에 골든 이미지 굽기(Imager, 클레임 토큰 재발급 E11용) ③ 기존 USB SSD 그대로 연결(클립·인증서·카메라 설정 보존) ④ 부팅 → 자동 재클레임 → Admin 승인(E14) | RTO_DEVICE_MIN / 클립 RPO 0(SSD 보존) |
 | **카메라 교체·IP 변경** | `camera_disconnected` 지속 | 카메라 1대 | E20 재탐색 → E22 재등록(같은 ONVIF hardware_id면 갱신) → 프리셋 재저장 | 즉시 / — |
 | **coturn 장애** | STUN 차단 환경 세션 실패율 급증, `turn_relay_mbps` 0 | 릴레이 필요한 시청자만 | `docker compose restart coturn` → 자격증명 공유 비밀 확인 → 방화벽 UDP 범위 확인 | RTO_SERVER_MIN / — |
 | **GHCR 장애** | E17 배포 pending 지속 | 배포만 불가, 운영 무영향 | 대기. 긴급 시 `docker save` 이미지를 scp → `docker load` (updater 수동 경로) | — |
@@ -1420,18 +1399,18 @@ volumes: { pgdata: {}, thumbs: {}, clipcache: {}, caddy_data: {} }
 ### 백업
 | 무엇 | 주기 | 보관처 | 보존 | 복원 리허설 |
 |---|---|---|---|---|
-| PostgreSQL `pg_dump -Fc --exclude-table-data=event --exclude-table-data=idempotency_key` (이벤트 메타 제외 — 백업에 CLIP_RETENTION_DAYS를 넘긴 이벤트가 남지 않게, INV-1·DL-025) | BACKUP_INTERVAL_HOURS | 오프사이트 오브젝트 스토리지, age 암호화 | BACKUP_RETENTION_DAYS | RESTORE_DRILL_INTERVAL_DAYS마다 staging에 복원 → E39 조회 스모크 |
+| PostgreSQL `pg_dump -Fc` | BACKUP_INTERVAL_HOURS | 오프사이트 오브젝트 스토리지, age 암호화 | BACKUP_RETENTION_DAYS | RESTORE_DRILL_INTERVAL_DAYS마다 staging에 복원 → E39 조회 스모크 |
 | `/etc/picam` (비밀·CA 키·설정) | 변경 시 + BACKUP_INTERVAL_HOURS | 같은 곳 + CA 키는 오프라인 1부 | 최근 BACKUP_RETENTION_DAYS | 같은 리허설에서 복원 |
-| thumbs | purge-job 직후 같은 크론에서 `rsync --delete` **미러**(스냅샷 아님) | 같은 곳 | 원본과 동일 — purge-job 파기가 바로 다음 동기화에 반영되어 INV-1 유지 (DL-025) | — |
-| 클립(Pi USB SSD) | **백업 없음** — 설계(Q3): CLIP_RETENTION_DAYS 순환·개인정보 최소 보관. SSD 보존이 복구 수단 | — | — | — |
-| 기기 SQLite | 백업 없음 — SSD에 있어 SD 재설치에도 보존; SSD 손상 시 재클레임으로 재구성 | — | — | — |
+| thumbs | BACKUP_INTERVAL_HOURS rsync | 같은 곳 | CLIP_RETENTION_DAYS(법 초과 보존 금지 — 백업도 파기 잡 대상) | — |
+| 클립(Pi USB SSD) | **백업 없음** — 설계(Q3): 30일 순환·개인정보 최소 보관. SSD 보존이 복구 수단 | — | — | — |
+| 기기 SQLite | 백업 없음 — 재클레임으로 재구성 | — | — | — |
 
 ### 런북 골격 (전 런북 공통 구조) + RB-1 예시
 `메타(알람 연결·심각도) → 트리거·영향 → 진단(명령) → 해결 → 에스컬레이션 → 검증 → 롤백`
 **RB-1 기기 오프라인** — 메타: 알람 "기기 offline > DEVICE_OFFLINE_DETECT_SEC", P2. 트리거: LWT. 영향: 사이트 라이브·알림 불가, 녹화는 계속.
 진단: ① Admin 화면 E13 `last_seen_at`·마지막 metrics(uplink_mbps, temp_c) ② 같은 사이트 다른 기기 없음 → 사이트 인터넷 의심 ③ `mosquitto_sub -t 'devices/<id>/state'` 최근 retained 값.
-해결: ① 사이트 인터넷 확인 요청(전화) ② 복귀 후 자동 재접속·큐 전송 확인(`offline_queue_len` → 0) ③ OFFLINE_ESCALATE_MIN 넘게 인터넷 정상인데 offline → 현장 전원 재투입 안내 → 그래도 안 되면 RB-4(SD 재굽기).
-에스컬레이션: 팀 1~2명 — 없음(운영 담당 본인). 검증: E13 online + 라이브 첫 프레임. 롤백: 해당 없음.
+해결: ① 사이트 인터넷 확인 요청(전화) ② 복귀 후 자동 재접속·큐 전송 확인(`offline_queue_len` → 0) ③ 30분 넘게 인터넷 정상인데 offline → 현장 전원 재투입 안내 → 그래도 안 되면 RB-4(SD 재굽기).
+에스컬레이션: 팀 1~2명 — 없음(운영자 본인). 검증: E13 online + 라이브 첫 프레임. 롤백: 해당 없음.
 
 ## 착수 자산
 
@@ -1468,17 +1447,11 @@ CA_CERT_PATH=            # 내부 CA 인증서
 CA_KEY_PATH=             # 내부 CA 키 (600)
 TURN_SHARED_SECRET=      # coturn use-auth-secret와 동일
 TURN_URLS=               # turn:host:3478?transport=udp, ...
-SMTP_URL=                # smtp://user:pass@host:587 — 외부 릴레이 (FR-019 사용자 이메일 + P1 운영 알람)
-SMTP_FROM=               # 발신 주소
-CI_RELEASE_TOKEN=        # E51 릴리스 등록 Bearer 토큰 (CI 시크릿과 동일)
 THUMBS_DIR=              # /data/thumbs
 CLIPCACHE_DIR=           # /data/clipcache
 PUBLIC_BASE_URL=         # https://...
 CONSTANTS_PATH=          # config/constants.yaml
 LOG_LEVEL=
-# coturn (turn.env)
-TURN_REALM=              # coturn realm
-TURN_EXTERNAL_IP=        # VPS 공인 IP (external-ip)
 # agent (Pi)
 PICAM_API_URL=
 PICAM_MQTT_URL=
@@ -1488,24 +1461,19 @@ DATA_DIR=                # /mnt/data
 RINGBUF_DIR=             # /run/picam/ringbuf (tmpfs)
 GO2RTC_API_URL=          # http://127.0.0.1:1984
 COSIGN_PUBKEY_PATH=
-# image/firstrun
-PICAM_CLAIM_TOKEN=       # 1회용 클레임 토큰 (Imager 커스터마이즈로 주입; SSD에 인증서가 있으면 무시)
-DOCKER_DATA_ROOT=        # /mnt/data/docker
-LOG2RAM_HDD_PATH=        # /mnt/data/log
 ```
 
 ### 첫 작업 3개 = 워킹 스켈레톤 (Impact×Uncertainty 큰 것부터)
-1. **R-1 실증: NAT 뒤 Pi → 브라우저 첫 프레임** — Pi 5 + go2rtc(테스트 RTSP 소스) + coturn + mosquitto + 최소 api(E27·E29 `offer/ice/ice_state/first_frame`·`cmd/webrtc.offer/ice/close`) + 최소 UI(`<video>` 1개 + getStats relay 판정). 성공 = STUN 차단 LTE 폰에서 첫 프레임 ≤ LIVE_FIRST_FRAME_P95, `ice_state` relayed 판정이 coturn 지표와 일치, 기기 TURN 자격증명 회전 중 세션 유지, go2rtc 8555 LAN 바인딩에서 직결 성립(R-1 ⑤⑥). 실패 시 04 R-1 대안으로 분기하고 03 개정(R#).
+1. **R-1 실증: NAT 뒤 Pi → 브라우저 첫 프레임** — Pi 5 + go2rtc(테스트 RTSP 소스) + coturn + mosquitto + 최소 api(E27·E29·`cmd/webrtc.offer/ice/close`) + 최소 UI(`<video>` 1개). 성공 = STUN 차단 LTE 폰에서 첫 프레임 ≤ LIVE_FIRST_FRAME_P95, 기기 TURN 자격증명 회전 중 세션 유지. 실패 시 04 R-1 대안으로 분기하고 03 개정(R#).
 2. **이벤트 파이프라인 얇게 끝까지** — ONVIF 시뮬레이터 MotionAlarm → agent(쿨다운·클립 copy·썸네일) → MQTT `events` → api(EVENT INSERT, 푸시) → E39 목록 → E42/E43 재생. 성공 = SC-005 통합 버전 + FR-012 클립 길이 검증 + outbox 재전송(SC-009 통합).
 3. **프로비저닝 + 감사 fail-closed** — E11 클레임 → ca 발급 → E14 승인 → mosquitto ACL `%u` 접속 → E27 발급이 AuditLog INSERT와 한 트랜잭션(INV-2 장애 주입 테스트) → E49 조회. 성공 = FR-001·FR-025·FR-026 통합 시나리오 GREEN.
 실기 장비(06 실기 계층): Pi 5 4GB + 고내구 microSD + USB SSD, ONVIF PTZ 카메라 1대(H.264 sub 프로파일), 시험용 NAT 공유기, LTE 스마트폰, 밀리초 LED 시계.
 
-<!-- ===== 08-readiness-report.md ===== -->
+
 # 준비도 리포트 — PiCam Watch
-버전: v1.1 · 기준 03 v1.3 (04 v1.3 · 05 v1.2 · 06 v1.1 · 07 v1.1)
+버전: v1.0
 검토: 독립 검토관(fable, fresh context) 1회 · 2026-09-09 06:25 · 입력 = 00~07 + decision-log + REVISIONS + 검증 스크립트 출력(CRITICAL 0 · HIGH 0)
-강도: full · 재검토 없음(예산 규칙) · 돈·안전·법 도메인이지만 검토관 1명(이탈, 예산)
-R4 패치 라운드 1회 (2026-09-09, REVISIONS.md R4 · decision-log DL-020~029) — 검토관 재투입 없이 문서 반영, 검증 스크립트 재실행 CRITICAL 0 · HIGH 0
+
 
 ## 판정: CONCERNS
 
@@ -1513,25 +1481,24 @@ R4 패치 라운드 1회 (2026-09-09, REVISIONS.md R4 · decision-log DL-020~029
 읽기전용 rootfs와 OTA의 충돌, 릴레이 강등 메커니즘 공백을 "미결정 0건"으로 덮은 것, 측정 불가 SC-008, 저장 상수 모순은 이 문서만 들고
 구현을 시작하면 첫 스켈레톤에서 되돌아오게 만든다. CRITICAL #1은 규칙 위반이지만 01 fit 행 추가로 닫히므로 FAIL 사유가 아니다.
 
-R4 패치 후: 위 사유의 구 토픽·경로 잔존(#8·#9), rootfs↔OTA 충돌(#3), 릴레이 강등 공백(#4), SC-008(#5), 저장 상수 모순(#7)은 전부 문서에 반영됐다(발견 목록의 `→ 반영(R4)`). 판정은 재검토 없이 CONCERNS를 유지한다(예산 규칙) — 남은 것은 아래 선행 조건 2개뿐이다.
-
 ## 검토 결과 요약
 
 | 심각도 | 건수 | 이 턴에 반영 | 핸드오프 선행 조건으로 이관 |
 |---|---|---|---|
-| CRITICAL | 1 | 1 — #1 웹 프론트엔드·Caddy fit 근거 (01 행 추가, DL-019, R3) | 0 |
-| HIGH | 6 | 6 — #2 (R3, 04 v1.2) · #3~#7 (R4, DL-020~023) | 0 |
-| MEDIUM | 15 | 15 — #8~#22 (R4; 정책 결정 #14·#15·#18·#19·#20·#22는 DL-021·024~027로 단순한 쪽 채택) | 0 |
-| LOW | 8 | 7 — #23~#27·#29·#30 (R4, DL-028·029); #28은 정보로 유지 | 0 |
+| CRITICAL | 1 | 1 — #1 웹 프론트엔드·Caddy fit 근거 (01 행 추가, DL-019) | 0 |
+| HIGH | 6 | 1 — #2 04 토픽 프리픽스 정정 (04 v1.2, R3) | 5 — #3~#7 |
+| MEDIUM | 15 | 0 | 15 |
+| LOW | 8 | 0 | 8 |
 
-타당성 필터링: 30건 전부 타당(거짓 양성 0). #28(TURN_RELAY_MAX_MBPS 여유)은 가드 상수의 의도된 여유라 정보로 분류하고 유지. R4(2026-09-09): R3 미반영 28건 중 27건 반영 · 이관 0건 — 구 선행 조건 1~5 전부 닫힘.
+타당성 필터링: 30건 전부 타당(거짓 양성 0). #28(TURN_RELAY_MAX_MBPS 여유)은 가드 상수의 의도된 여유라 정보로 분류하고 유지.
 
 ## 핸드오프 선행 조건 (SPEC 작성 전에 닫는다)
 
-R4에서 닫힌 것: 구 선행 조건 1~5 전부(#3~#27·#29·#30 — 발견 목록 `→ 반영(R4)`, REVISIONS.md R4). 남은 것 2개:
-
-1. **R-2 법 상수 원문 1회 확인** — CLIP_RETENTION_DAYS·AUDIT_RETENTION_DAYS·AUDIT_REVIEW_INTERVAL_DAYS(03 상수 표 "가능성" 3건). law.go.kr 조문 확인 후 값이 다르면 03 상수 표 한 곳만 수정 → R5 + 버전 전파 + 검증 스크립트 재실행. (04 R-2)
-2. **R4 자율 결정의 사용자 확인** — 사용자 부재 중 단순한 쪽으로 정한 6건: EVENTS_PER_CAM_DAY_MAX 500→120(DL-023) · 백업에서 이벤트 메타 제외(DL-025) · Pi 재설치 = SSD 인증서 재사용(DL-024) · 릴레이 판정을 클라 `ice_state` 보고에 의존, main 승격은 신규 세션(DL-021) · 이벤트 capability 없는 카메라 등록 허용(DL-026) · E44·Event 파티션·password_enc 제거, INV-7 유지(DL-027). 뒤집으면 해당 DL의 "대안" 쪽으로 R5.
+1. 04 시퀀스·프라이버시 절·05 FR-014 매핑의 R1 잔재 정리: D01 경로, slug 표기(`device-offline`·`ptz-locked`), 클립 캐시 TTL(CLIP_CACHE_TTL_MIN), `events` type의 `clip_ready/purged` 제거, "파티션 DROP" 문구 제거, DL-013 문구 정정. (#8·#9·#16)
+2. 릴레이 판정·강등·relay-cap 메커니즘을 04·05에 확정 — 예: 릴레이 세션은 sub로만 시작, main 승격은 직결 확인 후 신규 세션; WS 클라→서버 `ice_state`·`first_frame` 메시지 추가. go2rtc ICE 바인딩(#19)과 함께 04 R-1 실증 항목에 편입. 03 미결정 절 갱신. (#4·#10·#19)
+3. 07 엣지 형상: Docker data-root와 log2ram 동기화 대상을 USB SSD로 명시(읽기전용 rootfs와 OTA 충돌 해소). `.env.example`에 SMTP·클레임 토큰·TURN realm 키 추가. 릴리스 등록 엔드포인트(또는 CI 경로)를 05에 추가. RB(Pi 부팅 불능) 절차를 인증서 재사용/재클레임 중 하나로 확정. (#3·#11·#12·#14)
+4. 03 정정: SC-008 부팅 상한 상수화, "60초"·엣지 9 "30초"·역량 진술 "1초"를 상수 이름 참조로, 프레임 드롭 허용치 상수화, CLIP_STORAGE_MIN_GB↔EVENTS_PER_CAM_DAY_MAX 정합(둘 중 하나 조정 + 07 VPS 디스크 상수), INV-1을 백업 보존과 정합(미러 vs 스냅샷 명시). (#5·#6·#7·#15·#20)
+5. 잔여 MEDIUM·LOW(#13 D03 상수 목록, #17 FR-018 실체, #18 이벤트 capability 없는 카메라, #21 "운영자" 용어, #22 YAGNI 4건, #23~#30)는 SPEC 작성 중 같이 닫고 03·04·05 버전을 올린다. R-2 법 상수 원문 1회 확인.
 
 ## 검토관 발견 목록 (원문, 심각도순)
 
@@ -1542,40 +1509,40 @@ R4에서 닫힌 것: 구 선행 조건 1~5 전부(#3~#27·#29·#30 — 발견 �
 **HIGH**
 
 2. **R1 #15 전파 누락 — 04 시퀀스가 구 토픽 프리픽스를 쓴다** — 04:134 `sites/{s}/devices/{d}/cmd/webrtc.offer` vs 05:119 `devices/{device_id}/cmd/{name}` 및 03 INV-3. 다이어그램↔계약 불일치이자 R1 반영 미완. → **이 턴에 반영(R3, 04 v1.2)**
-3. **읽기전용 rootfs(Overlay FS)와 앱 계층 OTA가 충돌한다** — 07:15,21-22. firstrun은 "compose pull → Overlay FS 활성 → 재부팅"인데, 이후 `cmd/deploy`의 digest pull은 `/var/lib/docker`(rootfs = RAM 상위 레이어)에 쓰인다 → 재부팅 시 롤백/배포 상태 소실, RAM 소모. 쓰기 구역 목록에 Docker data-root가 없다. FR-023·SC-010·ADR-4가 운영에서 성립하지 않는다. log2ram 동기화 대상 경로도 SSD로 bind되지 않으면 RAM에 떨어진다. → **반영(R4)**
-4. **릴레이 강등(FR-006·엣지 17)의 메커니즘이 미설계인데 03은 "미결정 0건"** — 03:41,110,257 · 04:55,129-143 · 05:79,115. 스트림은 offer 시점(`src=cam_{id}_sub|main`)에 고정되고 ICE 결과는 그 뒤에 결정된다. main→sub 강등은 재협상이 필요하지만 시퀀스에 없고, 서버가 "릴레이로 붙었다"를 아는 경로도 없다(WS 클라→서버는 `ping`만). relay-cap 429도 E27 시점엔 릴레이 필요 여부를 모른다. FR-003의 "메인스트림 전환"도 세션 중 전환 엔드포인트가 없다. → **반영(R4)**
-5. **SC-008이 측정 불가** — 03:123 · 06:33. "WATCHDOG_TIMEOUT_SEC + 부팅 시간"에서 부팅 시간이 상수가 아니라 pass/fail 상한이 없다. 같은 행의 "60초 안에 라이브 복귀"는 상수 표 밖 숫자. → **반영(R4)**
-6. **상수 표 밖 숫자 직접 기입(규칙 9)** — 03:98 엣지 9 "30초 안에 모션 5회"(= EVENT_COOLDOWN_SEC), 03:15,27 "1초"(= LIVE_LATENCY_P95), 03:123 "60초"; 04:55 "250Mbps × 2"·"약 5%"(R1 #10 부분 반영); 06:55 "30초"; 07:37 healthcheck `interval: 30s, retries: 3`(= HEALTHCHECK_*), 07:85 "1시간 창", 07:112 "30일 순환"(= CLIP_RETENTION_DAYS), 07:119 "30분". → **반영(R4)**
-7. **CLIP_STORAGE_MIN_GB와 EVENTS_PER_CAM_DAY_MAX가 서로 모순** — 03:203,213. 저장은 50이벤트/일로 산정(≈75GB×3=256GB)했는데 선언된 상한은 500이벤트/일 → 4캠×500×12.5MB×30일 ≈ 750GB. 상한 근처에서 FR-015 "보존기간 미달 삭제"가 상시 발동해 G3(보존 보장)이 깨진다. 썸네일 최악치(≈120GB, 04:209)도 07에 VPS 디스크 상수·볼륨 크기가 없다. → **반영(R4)**
+3. **읽기전용 rootfs(Overlay FS)와 앱 계층 OTA가 충돌한다** — 07:15,21-22. firstrun은 "compose pull → Overlay FS 활성 → 재부팅"인데, 이후 `cmd/deploy`의 digest pull은 `/var/lib/docker`(rootfs = RAM 상위 레이어)에 쓰인다 → 재부팅 시 롤백/배포 상태 소실, RAM 소모. 쓰기 구역 목록에 Docker data-root가 없다. FR-023·SC-010·ADR-4가 운영에서 성립하지 않는다. log2ram 동기화 대상 경로도 SSD로 bind되지 않으면 RAM에 떨어진다.
+4. **릴레이 강등(FR-006·엣지 17)의 메커니즘이 미설계인데 03은 "미결정 0건"** — 03:41,110,257 · 04:55,129-143 · 05:79,115. 스트림은 offer 시점(`src=cam_{id}_sub|main`)에 고정되고 ICE 결과는 그 뒤에 결정된다. main→sub 강등은 재협상이 필요하지만 시퀀스에 없고, 서버가 "릴레이로 붙었다"를 아는 경로도 없다(WS 클라→서버는 `ping`만). relay-cap 429도 E27 시점엔 릴레이 필요 여부를 모른다. FR-003의 "메인스트림 전환"도 세션 중 전환 엔드포인트가 없다.
+5. **SC-008이 측정 불가** — 03:123 · 06:33. "WATCHDOG_TIMEOUT_SEC + 부팅 시간"에서 부팅 시간이 상수가 아니라 pass/fail 상한이 없다. 같은 행의 "60초 안에 라이브 복귀"는 상수 표 밖 숫자.
+6. **상수 표 밖 숫자 직접 기입** — 03:98 엣지 9 "30초 안에 모션 5회"(= EVENT_COOLDOWN_SEC), 03:15,27 "1초"(= LIVE_LATENCY_P95), 03:123 "60초"; 04:55 "250Mbps × 2"·"약 5%"(R1 #10 부분 반영); 06:55 "30초"; 07:37 healthcheck `interval: 30s, retries: 3`(= HEALTHCHECK_*), 07:85 "1시간 창", 07:112 "30일 순환"(= CLIP_RETENTION_DAYS), 07:119 "30분".
+7. **CLIP_STORAGE_MIN_GB와 EVENTS_PER_CAM_DAY_MAX가 서로 모순** — 03:203,213. 저장은 50이벤트/일로 산정(≈75GB×3=256GB)했는데 선언된 상한은 500이벤트/일 → 4캠×500×12.5MB×30일 ≈ 750GB. 상한 근처에서 FR-015 "보존기간 미달 삭제"가 상시 발동해 G3(보존 보장)이 깨진다. 썸네일 최악치(≈120GB, 04:209)도 07에 VPS 디스크 상수·볼륨 크기가 없다.
 
 **MEDIUM**
 
-8. R1 #5 전파 부분 누락 — 04:308 프라이버시 절이 클립 캐시 수명을 STREAM_TOKEN_TTL_SEC로 쓴다(ADR-3·05 E42는 CLIP_CACHE_TTL_MIN). 03:39 FR-004도 "클립 재생 = STREAM_TOKEN_TTL_SEC 토큰"이라 서명 URL TTL과 캐시 TTL이 문서마다 뒤섞인다. DL-013 "새 상수 없음"도 정정되지 않았다. → **반영(R4)**
-9. 다이어그램↔계약 경로 불일치 — 04:199 `PUT /devices/{d}/events/{e}/thumbnail` vs 05:109 D01 `PUT /device/events/{event_id}/thumbnail`. 04 시퀀스 2의 `device_offline`·`ptz_locked`도 05 slug(`device-offline`·`ptz-locked`)와 표기가 다르다. → **반영(R4)**
-10. 07 SLO 측정이 05에 없는 메시지에 의존 — 07:62 "브라우저가 WS로 first_frame_ms 보고" vs 05:115 클라→서버 `ping`만. 계약 추가 없이는 SLO_LIVE_SUCCESS_PCT 산출 불가. → **반영(R4)**
-11. 릴리스 등록 경로 부재 — 07:48 "릴리스 등록(E19 RELEASE 행)"인데 E19는 GET(05:69). CI가 RELEASE를 쓰는 엔드포인트·인증 수단이 없다. → **반영(R4)**
-12. 이메일 발송 인프라 부재 — 07:85,88,89 P1 알람이 이메일을 쓰고 FR-019가 이메일 알림을 요구하지만 compose·`.env.example`에 SMTP 관련 항목이 없다. `.env.example`에는 firstrun 클레임 토큰 키, TURN realm/external-ip도 없다. → **반영(R4)**
-13. D03 기기 설정 상수 목록 불완전 — 05:112 "기기는 D03으로 자기 몫만"인데 CAM_RECONNECT_BACKOFF·MANUAL_REC_MAX_MIN·RINGBUF_SEGMENT_SEC·DEVICE_CERT_RENEW_BEFORE_DAYS·DEVICE_TURN_CRED_TTL_HOURS가 빠져 있다. → **반영(R4)**
-14. 런북 RB(Pi 부팅 불능) 자가모순 — 07:101 "기존 USB SSD 그대로 연결(인증서 보존)"인데 "자동 재클레임 → Admin 승인". 재클레임은 새 device_id를 만들고 `device_one_per_site`(05:262)에 걸린다. 인증서 재사용인지 재클레임(+구 기기 retire)인지 결정 필요. → **반영(R4)**
-15. INV-1이 백업에서 깨진다 — 07:109-111. pg_dump(EVENT 메타 포함)를 BACKUP_RETENTION_DAYS 보관하면 이벤트 메타가 최대 CLIP_RETENTION_DAYS + BACKUP_RETENTION_DAYS 존재. thumbs "백업도 파기 잡 대상"은 스냅샷 백업에선 실행 불가 — 미러(rsync --delete)인지 명시해야 한다. → **반영(R4)**
-16. 파기 보고 경로 이중화 — 05:123 `events` type에 `clip_ready`·`purged`(상태이지 유형이 아님, DDL CHECK 05:229와 불일치) + 05:124 `cmd/purge.report` — FR-014 매핑(05:297)이 둘 다 지목하고 "파티션 DROP"(R1 #1로 폐기)도 남아 있다. → **반영(R4)**
-17. FR-018 매핑 실체 없음 — 05:301 "07 설정"이라 했으나 07에 ALERT_DAILY_MAX 언급 0건. → **반영(R4)**
-18. 이벤트 capability 없는 카메라 미처리 — FR-002가 capability.events를 저장하지만 events=false(또는 MotionAlarm 토픽 없음)일 때 US-3(P1)이 성립하지 않는다. 엣지케이스·등록 경고 없음(03:37,84-107). → **반영(R4)**
-19. go2rtc ICE 포트 loopback 바인딩 vs STUN 직결 — 07:45 "8555는 localhost 바인딩"이면 srflx 후보 수집이 막혀 전 세션이 릴레이가 된다(가능성). 04 R-1 실증 항목(04:299)에 포함되어 있지 않다. → **반영(R4)**
-20. "프레임 드롭 0" 기준의 flaky 위험 — 03:126,130 · 06:36,40. WebRTC `framesDropped`는 정상 상태에서도 0이 아니어서 06의 flaky 0 정책(06:98)과 충돌한다. 허용치 상수가 필요하다. → **반영(R4)**
-21. 용어 드리프트 "운영자" — 03은 시설 운영자(사용자 페르소나, 03:27), 07은 알람 수신 운영 담당(07:84-91,120). 같은 단어가 두 역할. → **반영(R4)**
-22. YAGNI — INV-7 전 테이블 `workspace_id`(03:76)는 seed 7 non-goal(다중 테넌트)에 대한 hedge; Event 월 파티션(05:238)은 R1 이후 "지역성용"만 남아 일 1회 행 DELETE와 중복; CAMERA.password_enc(05:209) 서버 컬럼은 항상 null; E44·E26(05:77,99)은 FR 없는 엔드포인트. → **반영(R4)**
+8. R1 #5 전파 부분 누락 — 04:308 프라이버시 절이 클립 캐시 수명을 STREAM_TOKEN_TTL_SEC로 쓴다(ADR-3·05 E42는 CLIP_CACHE_TTL_MIN). 03:39 FR-004도 "클립 재생 = STREAM_TOKEN_TTL_SEC 토큰"이라 서명 URL TTL과 캐시 TTL이 문서마다 뒤섞인다. DL-013 "새 상수 없음"도 정정되지 않았다.
+9. 다이어그램↔계약 경로 불일치 — 04:199 `PUT /devices/{d}/events/{e}/thumbnail` vs 05:109 D01 `PUT /device/events/{event_id}/thumbnail`. 04 시퀀스 2의 `device_offline`·`ptz_locked`도 05 slug(`device-offline`·`ptz-locked`)와 표기가 다르다.
+10. 07 SLO 측정이 05에 없는 메시지에 의존 — 07:62 "브라우저가 WS로 first_frame_ms 보고" vs 05:115 클라→서버 `ping`만. 계약 추가 없이는 SLO_LIVE_SUCCESS_PCT 산출 불가.
+11. 릴리스 등록 경로 부재 — 07:48 "릴리스 등록(E19 RELEASE 행)"인데 E19는 GET(05:69). CI가 RELEASE를 쓰는 엔드포인트·인증 수단이 없다.
+12. 이메일 발송 인프라 부재 — 07:85,88,89 P1 알람이 이메일을 쓰고 FR-019가 이메일 알림을 요구하지만 compose·`.env.example`에 SMTP 관련 항목이 없다. `.env.example`에는 firstrun 클레임 토큰 키, TURN realm/external-ip도 없다.
+13. D03 기기 설정 상수 목록 불완전 — 05:112 "기기는 D03으로 자기 몫만"인데 CAM_RECONNECT_BACKOFF·MANUAL_REC_MAX_MIN·RINGBUF_SEGMENT_SEC·DEVICE_CERT_RENEW_BEFORE_DAYS·DEVICE_TURN_CRED_TTL_HOURS가 빠져 있다.
+14. 런북 RB(Pi 부팅 불능) 자가모순 — 07:101 "기존 USB SSD 그대로 연결(인증서 보존)"인데 "자동 재클레임 → Admin 승인". 재클레임은 새 device_id를 만들고 `device_one_per_site`(05:262)에 걸린다. 인증서 재사용인지 재클레임(+구 기기 retire)인지 결정 필요.
+15. INV-1이 백업에서 깨진다 — 07:109-111. pg_dump(EVENT 메타 포함)를 BACKUP_RETENTION_DAYS 보관하면 이벤트 메타가 최대 CLIP_RETENTION_DAYS + BACKUP_RETENTION_DAYS 존재. thumbs "백업도 파기 잡 대상"은 스냅샷 백업에선 실행 불가 — 미러(rsync --delete)인지 명시해야 한다.
+16. 파기 보고 경로 이중화 — 05:123 `events` type에 `clip_ready`·`purged`(상태이지 유형이 아님, DDL CHECK 05:229와 불일치) + 05:124 `cmd/purge.report` — FR-014 매핑(05:297)이 둘 다 지목하고 "파티션 DROP"(R1 #1로 폐기)도 남아 있다.
+17. FR-018 매핑 실체 없음 — 05:301 "07 설정"이라 했으나 07에 ALERT_DAILY_MAX 언급 0건.
+18. 이벤트 capability 없는 카메라 미처리 — FR-002가 capability.events를 저장하지만 events=false(또는 MotionAlarm 토픽 없음)일 때 US-3(P1)이 성립하지 않는다. 엣지케이스·등록 경고 없음(03:37,84-107).
+19. go2rtc ICE 포트 loopback 바인딩 vs STUN 직결 — 07:45 "8555는 localhost 바인딩"이면 srflx 후보 수집이 막혀 전 세션이 릴레이가 된다(가능성). 04 R-1 실증 항목(04:299)에 포함되어 있지 않다.
+20. "프레임 드롭 0" 기준의 flaky 위험 — 03:126,130 · 06:36,40. WebRTC `framesDropped`는 정상 상태에서도 0이 아니어서 06의 flaky 0 정책(06:98)과 충돌한다. 허용치 상수가 필요하다.
+21. 용어 드리프트 "운영자" — 03은 시설 운영자(사용자 페르소나, 03:27), 07은 알람 수신 운영 담당(07:84-91,120). 같은 단어가 두 역할.
+22. YAGNI — INV-7 전 테이블 `workspace_id`(03:76)는 seed 7 non-goal(다중 테넌트)에 대한 hedge; Event 월 파티션(05:238)은 R1 이후 "지역성용"만 남아 일 1회 행 DELETE와 중복; CAMERA.password_enc(05:209) 서버 컬럼은 항상 null; E44·E26(05:77,99)은 FR 없는 엔드포인트.
 
 **LOW**
 
-23. 02 집계 불일치 — 02:2,54 "31항목 / Asked 5 · Assumed 24"인데 표는 33행, Asked 마킹 행은 6(1·3·5·11·OTA·원격접근). → **반영(R4)**
-24. 06 절 제목 "SC — 03 v1.1"(06:23) vs 머리 "기준 03 v1.2". → **반영(R4)**
-25. 03 목표 표(03:20-22)에 SC-005·SC-015가 어느 목표에도 매핑되지 않음. → **반영(R4)**
-26. 권한 문구 불일치 — FR-028 "시청 권한만"(03:63) vs Viewer 스코프에 ptz/record/snapshot(05:17); FR-008 "Admin이 프리셋 이동"(03:43) vs E34 goto는 Viewer 스코프. → **반영(R4)**
-27. E11 `/device/claim`이 공개인데 규약(05:16)은 `/api/device/*` = mTLS 전용 — 예외를 명시해야 프록시 설정에서 막히지 않는다. → **반영(R4)**
+23. 02 집계 불일치 — 02:2,54 "31항목 / Asked 5 · Assumed 24"인데 표는 33행, Asked 마킹 행은 6(1·3·5·11·OTA·원격접근).
+24. 06 절 제목 "SC — 03 v1.1"(06:23) vs 머리 "".
+25. 03 목표 표(03:20-22)에 SC-005·SC-015가 어느 목표에도 매핑되지 않음.
+26. 권한 문구 불일치 — FR-028 "시청 권한만"(03:63) vs Viewer 스코프에 ptz/record/snapshot(05:17); FR-008 "Admin이 프리셋 이동"(03:43) vs E34 goto는 Viewer 스코프.
+27. E11 `/device/claim`이 공개인데 규약(05:16)은 `/api/device/*` = mTLS 전용 — 예외를 명시해야 프록시 설정에서 막히지 않는다.
 28. TURN_RELAY_MAX_MBPS 100 > 설계 최대 릴레이 51.2Mbps(SITES_MAX×VIEWER_MAX×sub×2) — 설계 한도 내에서는 SC-015 경로가 도달 불가(가드로는 유효). → 정보로 분류, 유지
-29. 07 알람 표에 큐 길이 알람이 없다 — 03 ALARM_WARN_PCT 근거는 "TURN·디스크·큐 공통"(03:240). caddy(TLS 종단)가 04 구조도에 없다. → **반영(R4)**
-30. DL-014 "대응 25건"(decision-log:54)은 R1 #9 행 추가 후 26행. → **반영(R4)**
+29. 07 알람 표에 큐 길이 알람이 없다 — 03 ALARM_WARN_PCT 근거는 "TURN·디스크·큐 공통"(03:240). caddy(TLS 종단)가 04 구조도에 없다.
+30. DL-014 "대응 25건"(decision-log:54)은 R1 #9 행 추가 후 26행.
 
 **문제없음 확인 (검토관 근거)**
 
@@ -1591,157 +1558,113 @@ R4에서 닫힌 것: 구 선행 조건 1~5 전부(#3~#27·#29·#30 — 발견 �
 - 시크릿: 어느 산출물에도 자격증명 값 없음.
 
 
-## 구현 핸드오프 (service-prompt-workflow SPEC 입력)
+## 구현 핸드오프 ((문서) SPEC 입력)
 
-/service-prompt-workflow 로 다음을 실행:
-<inputs>s4-rpi-ip-camera/03-prd.md (요구사항·상수 표 v1.3), 05-api-contract.md (계약 v1.2), 08-readiness-report.md (선행 조건 2개 · 첫 작업 3개)</inputs>
-<references>04-architecture.md, 06-test-design.md, 07-ops-design.md — 필요할 때만 읽는다</references>
-<preconditions>위 선행 조건 1~2를 SPEC 작성 전에 닫는다 (법 상수가 바뀌면 03 상수 표 → R5, 버전 전파, 검증 스크립트 재실행)</preconditions>
+/(문서) 로 다음을 실행:
+<inputs>s4-rpi-ip-camera/(문서) (요구사항·상수 표 v1.2), (문서) (계약 v1.1), (문서) (선행 조건 5개 · 첫 작업 3개)</inputs>
+<references>(문서), (문서), (문서) — 필요할 때만 읽는다</references>
+<preconditions>위 선행 조건 1~5를 SPEC 작성 전에 닫는다 (03·04·05 개정 → R4, 버전 전파, 검증 스크립트 재실행)</preconditions>
 <first_task>SPEC.md 작성 — 위 문서를 진실원으로, 낯선 구현자 실행 가능 수준(≥7/10)</first_task>
-<then>superpowers 설치 시 `superpowers:writing-plans` → 07 착수 자산의 첫 작업 3개(① R-1 실증: NAT 뒤 Pi → 브라우저 첫 프레임 ② 이벤트 파이프라인 얇게 끝까지 ③ 프로비저닝 + 감사 fail-closed)부터. ①에 R-1 실증 ⑤⑥(ice_state 판정 신뢰성·go2rtc 8555 LAN 바인딩)을 포함한다. brainstorming은 생략 — 이 프롬프트를 붙여 넣은 것이 설계 승인이다.</then>
+<then>superpowers 설치 시 `superpowers:writing-plans` → 07 착수 자산의 첫 작업 3개(① R-1 실증: NAT 뒤 Pi → 브라우저 첫 프레임 ② 이벤트 파이프라인 얇게 끝까지 ③ 프로비저닝 + 감사 fail-closed)부터. brainstorming은 생략 — 이 프롬프트를 붙여 넣은 것이 설계 승인이다.</then>
 UI 있음: BUILD·REVIEW에서 frontend-design-taste 적용 — dial) · 참조 `ux-principles-kr.md`
 <model_hints>
-opus: 판단 집약 — INV-1~7 불변식(파기·감사 fail-closed·토픽 격리·패스스루), TURN 자격증명 2계층과 릴레이 판정 `ice_state`·main 승격 세션(FR-005·006), 기기 인증서 발급·갱신(FR-001·030), 온디맨드 클립 singleflight·캐시(FR-013·016), OTA A/B 롤백(FR-023)
+opus: 판단 집약 — INV-1~7 불변식(파기·감사 fail-closed·토픽 격리·패스스루), TURN 자격증명 2계층과 릴레이 강등(FR-005·006), 기기 인증서 발급·갱신(FR-001·030), 온디맨드 클립 singleflight·캐시(FR-013·016), OTA A/B 롤백(FR-023)
 sonnet: 패턴 반복 — 엔드포인트 CRUD(E11~E49), 화면(live/clips/devices/admin), RED 테스트 작성(06 시나리오·계약 테스트), compose·Caddyfile·mosquitto.conf·turnserver.conf, alembic 마이그레이션(05 DDL)
 haiku: 기계적 — constants.yaml 로더, problems.yaml slug 표, .env.example, 문구·리네임·포맷
 </model_hints>
 
-<!-- ===== decision-log.md ===== -->
+
 # Decision Log — PiCam Watch
 
-런 시작: 2026-09-08 14:31 (평가 런 run-20260908-trim, 스킬 1.4.1, 세션 모델 Fable 5.1)
-평가 런 환경 규칙: 사용자 질문 불가 → A2 배치는 표로만 작성하고 전 문항 `Assumed(무응답)` 채택. GATE 1회, 재검토 없음.
+런 시작: 2026-09-08 14:31 (평가 런 run-20260908-trim, 참고자료 1.4.1, 세션 모델 Fable 5.1)
+평가 런 환경 규칙: 사용자 질문 불가 → 단계 배치는 표로만 작성하고 전 문항 `Assumed(무응답)` 채택. 최종 검토 1회, 재검토 없음.
 
-## DL-001 [A0] 강도 = full
+## DL-001 [단계] 강도 = full
 - 결정: full. 사용자 지정(`full`) + 신호 표(하드웨어/엣지 · 민감정보(영상) · 외부 연동 2개 이상).
 - 대안: lite — 기각(사용자 지정이 우선). spike — 기각(플랫폼·범위·핵심 루프 모두 확정).
 
-## DL-002 [A0] 서비스 유형 = 복합(IoT·엣지 + 관제 + 웹), 프로파일 P1 전부 + P3 일부
+## DL-002 [단계] 서비스 유형 = 복합(IoT·엣지 + 관제 + 웹), 프로파일 P1 전부 + P3 일부
 - 근거: 00-seed 감지된 제약. P3는 실시간성·알람 폭주·이력 증가·무중단 4항목만 적용(폐쇄망·프로토콜은 P1/외부연동 축이 덮음).
 
-## DL-003 [A0] 해석 8건을 Assumed로 고정 (00-seed "해석한 것")
-- 최상위 리스크: ①Pi=엣지 게이트웨이 ②서버 경유 원격 시청. A2 질문 1칸을 여기에 예약한다(질문 프로토콜 3).
+## DL-003 [단계] 해석 8건을 Assumed로 고정 (00-seed "해석한 것")
+- 최상위 리스크: ①Pi=엣지 게이트웨이 ②서버 경유 원격 시청. 단계 질문 1칸을 여기에 예약한다(질문 프로토콜 3).
 
-## 스킬·모델 사용 기록
-- [A0] 스킬 없음 (라우팅 표: 정규화는 모델만으로 충분). 메인, 세션 모델.
+## 참고자료·모델 사용 기록
+- [단계] 참고자료 없음 (라우팅 표: 정규화는 모델만으로 충분). 메인, 세션 모델.
 
-## DL-004 [A1] 스택 fit 판정 (01-recon "스택 후보 fit 판정" 표)
+## DL-004 [단계] 스택 fit 판정 (01-recon "스택 후보 fit 판정" 표)
 - 결정: go2rtc(중계) · Pi 5 4GB · Python+onvif-zeep-async(엣지) · MQTT mosquitto(제어) · WebRTC+coturn(시청) · FastAPI+PostgreSQL 16(서버) · SQLite WAL+USB SSD(엣지 저장) · Pi OS Lite+Overlay FS+log2ram(OS) · 앱 계층 A/B OTA · 웹 푸시.
 - 결정 요소: Pi 5 HW 인코더 부재 → 무재인코딩 패스스루가 축. 팀 1~2명 → 언어 1개(Python).
 - 기각: MediaMTX(프로토콜 폭 불필요), Pi 4(RTC 없음), Go/Node(언어 2개), RAUC/Mender/balena(규모 대비 과잉·유료·미확인), SD 저장(마모).
 
-## DL-005 [A1] 하드 제약 파생: 카메라 H.264 스트림 1개 필수, Pi 재인코딩 금지, 서버 단일 인스턴스
+## DL-005 [단계] 하드 제약 파생: 카메라 H.264 스트림 1개 필수, Pi 재인코딩 금지, 서버 단일 인스턴스
 - 근거: HA ONVIF 문서(H.264 탐색), Pi 5 공식 포럼(HW 인코더 없음).
 
-## DL-006~010 [A2] 질문 5건 전부 추천안 Assumed(무응답) — 평가 런 규칙
+## DL-006~010 [단계] 질문 5건 전부 추천안 Assumed(무응답) — 평가 런 규칙
 - DL-006 Q1 사용 맥락 = 스마트폰 단시간 확인 + 푸시 → 서브스트림 기본, 모바일 우선 UI
 - DL-007 Q2 배포 = 중앙 서버 경유(Pi 아웃바운드 MQTT + WebRTC/TURN)
 - DL-008 Q3 녹화 = 이벤트 클립, Pi USB SSD, CLIP_RETENTION_DAYS 순환, 서버는 썸네일·메타만
 - DL-009 Q4 카메라 = ONVIF S/T + RTSP H.264, PTZ는 capability 자동 노출
 - DL-010 Q5 현장 = 유인 → 앱 계층 A/B OTA, OS A/B·UPS non-goal(잔여 리스크 Accept)
 
-## 스킬·모델 사용 기록 (계속)
-- [A1] ecc:research-ops + ecc:search-first (sonnet 서브에이전트, general-purpose) — 검색 36회(WebSearch 24 + WebFetch 12), 131k 토큰, 7.4분. 미확인 9건을 명시해 돌려줌. 메인이 WebFetch 5회로 ONVIF 라이브러리 유지보수 근거(HA manifest)·FastAPI·raspi-config Overlay FS를 보강하고 fit 표 작성.
-- [A2] ecc:product-lens (메인, 세션 모델) — Mode 1 진단 7문을 register 상단에 흡수. 질문 Impact 판단에 "고통·안티골" 답을 사용.
+## 참고자료·모델 사용 기록 (계속)
+- [단계] (참고자료) + (참고자료) (sonnet 서브에이전트, general-purpose) — 검색 36회(WebSearch 24 + WebFetch 12), 131k 토큰, 7.4분. 미확인 9건을 명시해 돌려줌. 메인이 WebFetch 5회로 ONVIF 라이브러리 유지보수 근거(HA manifest)·FastAPI·raspi-config Overlay FS를 보강하고 fit 표 작성.
+- [단계] (참고자료) (메인, 세션 모델) — Mode 1 진단 7문을 register 상단에 흡수. 질문 Impact 판단에 "고통·안티골" 답을 사용.
 
-## DL-011 [A3] 상수 표 확정 (03-prd "상수 표") — 설계 결정 상수 일괄
+## DL-011 [단계] 상수 표 확정 (03-prd "상수 표") — 설계 결정 상수 일괄
 - LIVE_LATENCY_P95 1.0s(WebRTC 200~500ms의 2배 여유) · LIVE_FIRST_FRAME_P95 3.0s · PTZ_CMD_LATENCY_P95 1.0s · DEVICE_OFFLINE_DETECT_SEC 60(keepalive 20×1.5+여유) · ALERT_DELIVERY_P95 30s · CLIP_PRE/POST 5/15s · PURGE_MAX_DELAY_HOURS 24(법 5일보다 엄격) · VIEWER_MAX 5 · UPLINK_MIN_MBPS 30 · SD_WRITE_MAX_MB_DAY 50 · OTA_ROLLBACK_MAX_MIN 5 등.
 - 근거 유형을 넷으로 분리: 출처 URL / 실측 / 설계 결정 DL-# / 미확인. 미확인 2건(TURN_RELAY_COST, KR_UPLOAD_AVG_MBPS)은 SC에 쓰지 않음.
 - 법 관련 상수(CLIP_RETENTION_DAYS 30, AUDIT_RETENTION_DAYS 365, AUDIT_REVIEW_INTERVAL_DAYS 30)는 출처 URL을 붙였으나 조문 원문 미인출 → "가능성" 표기. 확인 후 상수 표 한 곳만 수정.
 
-## DL-012 [A3] 목표 3·스토리 5(P1 4개)·FR 29(P0 16·P1 11·P2 2)·SC 14·INV 7
+## DL-012 [단계] 목표 3·스토리 5(P1 4개)·FR 29(P0 16·P1 11·P2 2)·SC 14·INV 7
 - INV-2(감사 로그와 토큰 발급 같은 트랜잭션, fail-closed)와 INV-7(workspace_id 전 테이블)은 product-capability의 "숨은 제약을 드러내라" 규칙에서 나옴.
 - FR-010: 오프라인 기기에 PTZ 명령 큐잉 금지 — 지연 실행되는 PTZ는 사용자 의도와 어긋나 위험. 즉시 실패.
 
-## 스킬·모델 사용 기록 (계속)
-- [A3] ecc:product-capability (메인) — 역량 진술·불변식 INV-1~7·상태 전이 4종을 PRD에 흡수. frontend-design-taste (메인) — dial DENSITY 5/MOTION 3/VARIANCE 3(라이브 화면 7), 상태 4종 강제. 사전조사 검색 3회(WebSearch 1 + WebFetch 2, 1회 403).
+## 참고자료·모델 사용 기록 (계속)
+- [단계] (참고자료) (메인) — 역량 진술·불변식 INV-1~7·상태 전이 4종을 PRD에 흡수. frontend-design-taste (메인) — dial DENSITY 5/MOTION 3/VARIANCE 3(라이브 화면 7), 상태 4종 강제. 사전조사 검색 3회(WebSearch 1 + WebFetch 2, 1회 403).
 
-## DL-013 [A4] ADR-1~7 (04-architecture "검토한 대안" 표 — ADR 형식 흡수, docs/adr 별도 파일 없음)
-- ADR-2 MQTT 5 단일 채널(시그널링 포함) — 브로커 메시지 상한 64KB. ADR-3 클립 온디맨드 업로드 + 서버 캐시(초안은 STREAM_TOKEN_TTL_SEC 재사용 — R1 #5에서 CLIP_CACHE_TTL_MIN 신설로 정정, DL-016; R4 #8). ADR-5 coturn 자체 호스팅. ADR-6 웹 푸시 PWA(iOS는 홈 화면 추가 필요). ADR-7 서버 단일 인스턴스.
+## DL-013 [단계] ADR-1~7 (04-architecture "검토한 대안" 표 — ADR 형식 흡수, docs/adr 별도 파일 없음)
+- ADR-2 MQTT 5 단일 채널(시그널링 포함) — 브로커 메시지 상한 64KB. ADR-3 클립 온디맨드 업로드 + 서버 캐시(STREAM_TOKEN_TTL_SEC 재사용, 새 상수 없음). ADR-5 coturn 자체 호스팅. ADR-6 웹 푸시 PWA(iOS는 홈 화면 추가 필요). ADR-7 서버 단일 인스턴스.
 - 잔여 리스크 R-1(go2rtc NAT 뒤 TURN 동작 — README는 8555 포트 개방 안내) → 워킹 스켈레톤 첫 작업. R-2 법 상수 원문 확인 → 핸드오프 선행 조건. R-3 OS 벽돌·R-4 LAN 물리 보안 Accept.
 
-## DL-014 [A4] 위협모델 — 경계 6개(B1~B6) × STRIDE 6, 대응 26건 (Mitigate 22 · Eliminate 2 · Transfer 1 · Accept 1) — R1 #9 행 추가 후 재집계(R4 #30)
+## DL-014 [단계] 위협모델 — 경계 6개(B1~B6) × STRIDE 6, 대응 25건 (Mitigate 21 · Eliminate 2 · Transfer 1 · Accept 1)
 
-## 스킬·모델 사용 기록 (계속)
-- [A4] ecc:architecture-decision-records (메인) — ADR 표 형식(결정·대안·왜·결과). ecc:security-review (메인) — 체크리스트를 ③ 대응 표와 말미 적용 문장에 반영. 사전조사 WebFetch 1회(go2rtc README).
-- [A4 검토] fresh-reviewer (fable, fresh) — 04 독립 검토 1회 (결과는 DL-015에 기록).
+## 참고자료·모델 사용 기록 (계속)
+- [단계] (참고자료) (메인) — ADR 표 형식(결정·대안·왜·결과). (참고자료) (메인) — 체크리스트를 ③ 대응 표와 말미 적용 문장에 반영. 사전조사 WebFetch 1회(go2rtc README).
+- [단계 검토] 독립 검토관 (fable, fresh) — 04 독립 검토 1회 (결과는 DL-015에 기록).
 
-## 재개 — 2026-09-09 01:52 (2026-09-08 15:00경 세션 한도 429로 중단. 00~05·NEXT·decision-log 존재, 다시 만들지 않음. A4 검토관 회신은 코디네이터가 `_a4-review.md`로 보존)
+## 재개 — 2026-09-09 01:52 (2026-09-08 15:00경 세션 한도 429로 중단. 00~05·NEXT·decision-log 존재, 다시 만들지 않음. 단계 검토관 회신은 코디네이터가 `_a4-review.md`로 보존)
 
-## DL-015 [A4 검토 반영] fresh-reviewer(fable) 16건 — 타당성 필터링 결과 전부 채택, 거짓 양성 0 → REVISIONS.md R1
+## DL-015 [단계 검토 반영] 독립 검토관(fable) 16건 — 타당성 필터링 결과 전부 채택, 거짓 양성 0 → REVISIONS.md R1
 - HIGH 4: #1 Event 월 파티션 DROP이 INV-1 위반 → 행 DELETE 일 1회. #2 TURN 대역 미대조 → VPS_LINE_MBPS·TURN_RELAY_MAX_MBPS + 릴레이 sub 고정(FR-006·SC-015·엣지 17·18). #3 FR-021 미커버 → agent 카메라 연결 감시 책임. #4 CA·인증서 갱신 부재 → ca 모듈 + FR-030 + D04.
 - MEDIUM 7: 클립 singleflight/원자적 rename/CLIP_CACHE_TTL_MIN(#5) · CMD_TIMEOUT_SEC·webrtc.close·session_id 멱등·trickle(#6) · TURN 자격증명 2계층 + LIVE_SESSION_MAX_MIN(#7) · RINGBUF_TMPFS_MB(#8) · STRIDE ③ B6-R/B6-E/B5-D 추가(#9) · 04 숫자 제거(#10) · 참가자 이름 일치(#11).
 - LOW 5: THUMB_MAX_KB(#12) · 골든 시그널 문구(#13) · clock_synced 통일(#14) · MQTT 토픽 `devices/{device_id}/` + ACL %u(#15) · 레지스트리 외부화 GHCR(#16).
 - 판정 CONCERNS → 보강 완료. 재검토 없음(예산). 검토 결과 원문: `_a4-review.md`.
 
 ## DL-016 [R1] 상수 14개 추가 (03 v1.1 상수 표): VPS_LINE_MBPS 1000 · TURN_RELAY_MAX_MBPS 100 · LIVE_SESSION_MAX_MIN 60 · TURN_CRED_TTL_MIN 90 · DEVICE_TURN_CRED_TTL_HOURS 24 · CMD_TIMEOUT_SEC 10 · CLIP_CACHE_TTL_MIN 30 · DEVICE_CERT_VALID_DAYS 365 · DEVICE_CERT_RENEW_BEFORE_DAYS 30 · RINGBUF_SEGMENT_SEC 2 · RINGBUF_TMPFS_MB 256 · MQTT_MSG_MAX_KB 64 · OTA_RETRY_MAX 1 · THUMB_MAX_KB 200. 전부 설계 결정.
-- 버전 전파: 03 v1.0→v1.1, 04 v1.1(기준 03 v1.1), 05 v1.1(기준 03 v1.1). 같은 턴에 반영, 적용 대기 배지 없음.
+- 버전 전파: 03 v1.0→v1.1, 04 v1.1(), 05 v1.1(). 같은 턴에 반영, 적용 대기 배지 없음.
 
-## 스킬·모델 사용 기록 (계속)
-- [A5] ecc:api-design + ecc:postgres-patterns (메인) — 레이트리밋 헤더·Problem slug 표·커서·인덱스/파티션/타입 관례. 충돌 처리: URL 버저닝→미디어타입, 자체 에러 봉투→RFC 9457, offset→커서, bigint ID 권고→ULID text(시간순, 기기 생성 멱등 필요). 사전조사 WebFetch 1회(IETF Idempotency-Key draft-07).
+## 참고자료·모델 사용 기록 (계속)
+- [단계] (참고자료) + (참고자료) (메인) — 레이트리밋 헤더·Problem slug 표·커서·인덱스/파티션/타입 관례. 충돌 처리: URL 버저닝→미디어타입, 자체 에러 봉투→RFC 9457, offset→커서, bigint ID 권고→ULID text(시간순, 기기 생성 멱등 필요). 사전조사 WebFetch 1회(IETF Idempotency-Key draft-07).
 
-## DL-017 [A6] 레이어 5종(단위·통합·계약·E2E·실기) — SC 15건 + P0/P1 FR 28건 전부 시나리오, INV는 속성 테스트, flaky 0 정책(Playwright retries 1, 재시도 통과는 통과 아님)
+## DL-017 [단계] 레이어 5종(단위·통합·계약·E2E·실기) — SC 15건 + P0/P1 FR 28건 전부 시나리오, INV는 속성 테스트, flaky 0 정책(Playwright retries 1, 재시도 통과는 통과 아님)
 - 실기 계층을 명시: SC-001·002·003·004·008·013은 목킹으로 증명 불가 → 릴리스 게이트. 장비 목록은 07 착수 자산.
 - 충돌 처리: tdd-workflow 80% 일률 → 리스크 기반(P0 ≥90 · R-1/R-2 100% · P1 ≥70 · UI/P2 스모크).
 
-## DL-018 [A7] 운영 상수 17개 (R2, 03 v1.2) + 배포·관측·알림·복구 설계
+## DL-018 [단계] 운영 상수 17개 (R2, 03 v1.2) + 배포·관측·알림·복구 설계
 - 엣지 A/B는 앱 계층(ADR-4) — updater가 Docker 소켓을 쓰는 유일한 컨테이너라 agent와 분리. 골든 이미지는 pi-gen, 클레임 토큰은 Imager 커스터마이즈로 주입.
 - docker-patterns "compose 프로덕션 금지"는 규모 근거로 미채택(ADR-7). 알람 8종 ↔ 런북 RB-1~9 1:1. 클립·기기 SQLite는 백업 없음(설계: Q3 30일 순환, SSD 보존이 복구 수단).
 
-## 스킬·모델 사용 기록 (계속)
-- [A6] ecc:tdd-workflow + ecc:e2e-testing (메인) — RED 우선·POM·flaky 격리 관례. 사전조사 WebFetch 1회(Playwright retries).
-- [A7] ecc:deployment-patterns + ecc:docker-patterns (메인) — CI/CD 단계·헬스체크·compose 보안 옵션·.env 검증. 사전조사 WebFetch 1회(log2ram README).
+## 참고자료·모델 사용 기록 (계속)
+- [단계] (참고자료) + (참고자료) (메인) — RED 우선·POM·flaky 격리 관례. 사전조사 WebFetch 1회(Playwright retries).
+- [단계] (참고자료) + (참고자료) (메인) — CI/CD 단계·헬스체크·compose 보안 옵션·.env 검증. 사전조사 WebFetch 1회(log2ram README).
 
-## DL-019 [GATE] 독립 검토관(fable, fresh context) 1회 — 판정 CONCERNS (CRITICAL 1 · HIGH 6 · MEDIUM 15 · LOW 8, 거짓 양성 0)
+## DL-019 [최종 검토] 독립 검토관(fable, fresh context) 1회 — 판정 CONCERNS (CRITICAL 1 · HIGH 6 · MEDIUM 15 · LOW 8, 거짓 양성 0)
 - 이 턴 반영: #1 웹 프론트엔드·Caddy fit 행(01) — 결정 요소는 팀 스택·PWA 푸시·자동 TLS. #2 04 시퀀스 토픽 프리픽스를 05 규약으로 정정 → 04 v1.2 (R3).
 - 이관: HIGH #3~#7(rootfs↔OTA 충돌, 릴레이 강등 메커니즘, SC-008 측정 불가, 상수 직접 기입, 저장 상수 모순)과 MEDIUM·LOW 전부를 08 핸드오프 선행 조건 5개로. 재검토 없음(예산 규칙).
-- [재개] 2026-09-09 06:25 — 생성 에이전트가 06:00 한도(429)로 종료(07까지 저장). check_package(CRITICAL 0 · HIGH 0)·GATE·08은 메인 세션이 수행.
-
-## DL-020 [R4 #3] Docker data-root·log2ram 동기화 대상 = USB SSD
-- 결정: firstrun이 `/etc/docker/daemon.json` data-root=/mnt/data/docker, log2ram HDD_LOG=/mnt/data/log을 설정한 뒤 Overlay FS를 켠다. 쓰기 구역에 둘을 명시(07).
-- 왜: rootfs 읽기전용이면 `/var/lib/docker`가 RAM 상위 레이어에 떨어져 OTA 배포·롤백 상태가 재부팅에 소실(FR-023·SC-010 불성립). 대안 — Overlay FS 포기: SD 마모 대책(SC-013) 상실이라 기각.
-
-## DL-021 [R4 #4·#10·#19] 릴레이 판정 — 모든 세션 sub 시작, 클라 `ice_state`·`first_frame` 보고, main = 직결 확인 후 신규 세션
-- 결정: 스트림은 offer 시점에 고정되므로 세션 중 강등·재협상을 두지 않는다. ① 모든 E27 세션은 sub로 시작 ② 브라우저가 getStats selected pair로 `ice_state{relayed}`를, 첫 프레임 시 `first_frame{first_frame_ms}`를 E29 WS로 보고 ③ main은 relayed=false로 보고된 활성 세션을 `direct_session_id`로 참조하는 신규 세션(승격 중 2세션 공존, VIEWER_MAX 포함) ④ relayed=true인 main 세션은 `main-requires-direct`, 합계가 TURN_RELAY_MAX_MBPS를 넘기는 릴레이 세션은 `viewer-limit`(relay-cap)로 WS error 후 종료 ⑤ `stream_effective` 메시지 제거 ⑥ go2rtc 8555는 LAN 바인딩(localhost면 srflx 수집 불가 → 전 세션 릴레이).
-- 왜: 가장 단순한 결정 — go2rtc 스트림 전환 API·재협상이 필요 없고, 서버가 릴레이 여부를 아는 유일한 경로(클라 보고)를 SLO 지표(#10)와 겸한다. 대안 — 서버가 coturn 세션 로그로 판정: 세션↔TURN 할당 상관이 불명확해 기각. relay-cap의 E27 429는 판정 불가라 폐기(SC-015·엣지 18 정정).
-- 영향: 03 FR-003·006·SC-015·엣지 17·18, 04 난점 표·시퀀스 1·B4·R-1 ⑤⑥, 05 slug·E27·E29·WS·FR 매핑, 06 FR-003·006·SC-015, 07 SLO·첫 작업 1.
-
-## DL-022 [R4 #5·#6·#20] 상수 5개 추가 + 상수 표 밖 숫자 제거
-- 추가: PI_BOOT_MAX_SEC 120 · AGENT_RECOVER_MAX_SEC 60 · FRAME_DROP_MAX_PCT 1 · ALARM_EVAL_WINDOW_MIN 60 · OFFLINE_ESCALATE_MIN 30 (전부 설계 결정).
-- 제거: 03 "1초"(역량 진술·US-1·근거) → LIVE_LATENCY_P95, 엣지 9 "30초" → EVENT_COOLDOWN_SEC, SC-008 "60초·부팅 시간" → AGENT_RECOVER_MAX_SEC·PI_BOOT_MAX_SEC; 04 "250Mbps × 2·약 5%" → 상수 산식·TURN_RELAY_MAX_MBPS 비교; 06 "30초" → EVENT_COOLDOWN_SEC; 07 healthcheck 30s/3 → HEALTHCHECK_*, "1시간 창" → ALARM_EVAL_WINDOW_MIN, "30일 순환" → CLIP_RETENTION_DAYS, "30분" → OFFLINE_ESCALATE_MIN. SC-011·015 "프레임 드롭 0" → ≤ FRAME_DROP_MAX_PCT(정상 상태에도 0이 아니라 flaky 0 정책과 충돌).
-
-## DL-023 [R4 #7] EVENTS_PER_CAM_DAY_MAX 500 → 120, VPS_DISK_MIN_GB 80 추가
-- 결정: 상한을 낮춰 CLIP_STORAGE_MIN_GB 256과 정합(최악 ≈ 180GB ≤ 256 × 0.9). 대안 — SSD를 1TB로: 원가 상승, 그리고 120건/카메라/일도 소상공인 시설 모션 빈도로 충분히 큰 상한이라 기각. 상한 초과는 FR-015(예비 미달 삭제)가 처리. VPS 디스크는 thumbs 최악치(≈29GB) + clipcache + pgdata 산식으로 80GB.
-- 영향: 03 상수 표(2행 + CLIP_STORAGE_MIN_GB 근거), 07 서버 형상.
-
-## DL-024 [R4 #14] Pi 재설치 = SSD 인증서 재사용, 재클레임은 SSD 손상·인증서 만료 시만
-- 결정: firstrun이 `/mnt/data/certs/device.crt`를 발견하면 클레임을 건너뛰고 같은 device_id로 재접속(Admin 승인 불필요). 대안 — 항상 재클레임 + 구 기기 retire: 새 device_id·`device_one_per_site` 충돌·카메라 재등록이 따라와 기각.
-- 영향: 07 firstrun·장애 표·백업 표, 03 RTO_DEVICE_MIN 근거.
-
-## DL-025 [R4 #15] 백업과 INV-1 — pg_dump에서 event(·idempotency_key) 데이터 제외, thumbs는 rsync --delete 미러
-- 결정: 백업에 CLIP_RETENTION_DAYS를 넘긴 이벤트 메타·썸네일이 남지 않게 한다(INV-1 문구 유지). 미러는 purge-job 직후 같은 크론에서 실행. 비용: 서버 복원 후 이벤트 목록은 새 이벤트부터(클립 원본은 Pi SSD에 그대로, Pi 파기 잡 독립 동작).
-- 대안 — INV-1 범위를 "운영 저장소"로 좁히고 백업은 BACKUP_RETENTION_DAYS 상한: 법 해석 리스크(백업도 보유)라 기각. 이벤트 재동기 명령 추가: 범위 확장이라 기각.
-- 영향: 07 백업·장애 표, 03 RPO_SERVER_HOURS·BACKUP_RETENTION_DAYS 근거.
-
-## DL-026 [R4 #18] 이벤트 capability 없는 카메라 — 등록 허용 + `no-motion-events` 경고 + 이벤트 UI 비노출
-- 결정: E22 201 응답에 warnings[], 03 엣지케이스 19, 06 FR-002 시나리오. US-3은 그 카메라에 적용되지 않음을 화면 문구로 알린다. 대안 — 등록 거부: 라이브·PTZ만으로도 가치가 있어 기각.
-
-## DL-027 [R4 #22] YAGNI 4건 — 3건 제거, INV-7은 유지
-- 제거: Event 월 파티션(일 1회 DELETE와 중복), CAMERA.password_enc 서버 컬럼(항상 null — 기기 SQLite에만), E44 DELETE /events(FR·스토리 없음; AUDIT_LOG `event.delete`·04 B6-R 문구도 제거). E26 DELETE /cameras는 Camera `removed` 전이(FR-002 역방향)로 FR-002 매핑에 편입.
-- 유지: INV-7 workspace_id — 제거하면 ERD·DDL·B1 대응·스코프 규약 전면 수정이라 비용 > 이득. 단일 workspace 고정은 그대로.
-
-## DL-028 [R4 #11·#12·#17·#21·#26·#27] 계약·형상 공백 메우기
-- E51 POST /releases(CI `Authorization: Bearer` CI_RELEASE_TOKEN, Idempotency-Key) — CI 마지막 단계가 RELEASE 행을 쓴다. `.env.example`에 SMTP_URL·SMTP_FROM·CI_RELEASE_TOKEN·TURN_REALM·TURN_EXTERNAL_IP·PICAM_CLAIM_TOKEN·DOCKER_DATA_ROOT·LOG2RAM_HDD_PATH 추가; 이메일은 외부 SMTP 릴레이(컨테이너 없음).
-- FR-018 요약 규칙을 07 알림 절에 명문화(사이트별 일 카운터, 요약 1건/일, offline 알림 제외). 용어: 07의 알람 수신자는 "운영 담당"(03 용어집 추가)으로 사용자 페르소나 "운영자"와 분리.
-- 권한 문구: FR-008(프리셋 이동은 Viewer), FR-028·US-5(Viewer 스코프 전체) — 05 스코프 표 기준으로 03 정정. E11 `/device/claim`은 mTLS 예외로 05 규약·07 caddy·04 caddy 노드에 명시.
-
-## DL-029 [R4 #8·#9·#13·#16·#23·#24·#25·#29·#30] 전파·정정(기계적)
-- 04 프라이버시 절 캐시 TTL → CLIP_CACHE_TTL_MIN, DL-013 문구 정정 · 04 시퀀스 D01 경로·slug kebab-case · D03 상수 목록 12개 보강 · `events` 페이로드에 status 필드(type에서 clip_ready·purged 제거, 파기 보고는 `cmd/purge.report` 응답만) · 02 집계(33행, Asked 6행/질문 5) · 06 절 제목 03 v1.3 · G1←SC-015, G2←SC-005 · 07 큐 길이 알람 행(OFFLINE_QUEUE_MAX × ALARM_WARN_PCT) + 04 구조도 caddy 노드 · DL-014 26건.
-
-## [GATE 패치] R4 — 반영 27건 / 이관 0건 (#28은 정보로 유지) · 2026-09-09
-- 남은 선행 조건: R-2 법 상수 원문 확인 1회, R4 자율 결정(DL-020~028)의 사용자 확인. 재검토 없음(예산 규칙). check_package: CRITICAL 0 · HIGH 0.
+- [재개] 2026-09-09 06:25 — 생성 에이전트가 06:00 한도(429)로 종료(07까지 저장). (검증 스크립트)(CRITICAL 0 · HIGH 0)·최종 검토·08은 메인 세션이 수행.
 
 ## 비용 기록
-- 강도 full · 서브에이전트: A1 조사(sonnet, 기록은 위 스킬 사용 기록), A4 독립 검토관(fable), GATE 검토관(fable) — 검토관 토큰 GATE 검토관 15.7만 · A4 검토관 6.4만
+- 강도 full · 서브에이전트: 단계 조사(sonnet, 기록은 위 참고자료 사용 기록), 단계 독립 검토관(fable), 최종 검토 검토관(fable) — 검토관 토큰 최종 검토 검토관 15.7만 · 단계 검토관 6.4만
 - 소요: 2026-09-08 14:31 시작 → 2026-09-09 06:25 마감. 한도 중단 2회(09-08 15:00, 09-09 06:00), 재개 2회, 재개 시 컨텍스트 압축 1회(대화 58만 토큰 > 20만 한도).
 - 검색 횟수·메인 토큰: 미상 — 에이전트가 보고 전에 종료. 다음 런은 단계마다 decision-log에 누적 기록하도록.
