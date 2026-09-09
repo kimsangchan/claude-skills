@@ -13,8 +13,8 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 disable-model-invocation: true
 argument-hint: "[--tools antigravity,cursor]"
 metadata:
-  version: "1.0.2"
-  updated: "2026-09-08"
+  version: "1.0.3"
+  updated: "2026-09-09"
 ---
 
 # Catch-Up (세션 이어받기 부트스트랩)
@@ -58,11 +58,12 @@ metadata:
 - **스코프 폴더 후보**를 추린다: 코드/역할 디렉토리(예: `server` `client` `tools` `data` `packages/*`).
   자동 확정하지 말고 후보를 제시해 **사용자 확인**.
 - 기존 CLAUDE.md가 크면 그 **프로젝트 상세 섹션 목록**을 뽑아 "어디로 이관"할지 매핑 초안을 만든다
-  (→ AGENTS.md / → 해당 스코프 CLAUDE.md). 행동규칙 4종은 루트 CLAUDE.md에 남긴다.
+  (→ AGENTS.md / → 해당 스코프 CLAUDE.md). 행동규칙은 루트 CLAUDE.md의 Karpathy 가이드라인 4절(템플릿 원문 대응)만 남긴다.
+  기존 CLAUDE.md에 다른 행동규칙이 있으면 프로젝트 규칙은 AGENTS.md로 옮기고, 일반 행동규칙은 이 4절로 교체를 제안한다(승인 후).
 
 ### 3. PROPOSE — 초안 제시 (아직 쓰지 않음)
 `templates/`에서 초안을 만들어 **diff/신규파일 목록으로 제시**한다:
-- `CLAUDE.md` ← `templates/CLAUDE.md.tmpl` (행동규칙 + 상단 `@AGENTS.md`)
+- `CLAUDE.md` ← `templates/CLAUDE.md.tmpl` (Karpathy 가이드라인 4절 원문 대응 + 상단 `@AGENTS.md`. 출처·동기화 커밋은 템플릿 머리 주석)
 - `AGENTS.md` ← `templates/AGENTS.md.tmpl` (프로젝트명·스택·네비 포인터·Session start 지시·NEXT 포인터 채움 + 기존 상세 이관)
 - `NEXT.md` ← `templates/NEXT.md.tmpl` (마커만). 기존 NEXT가 있으면 **진행중 1~3건만** 남기고 완료분은 WORKLOG History로.
 - `WORKLOG.md` ← `templates/WORKLOG.md.tmpl` (Current State + History). 기존 히스토리를 옮길 때도 결정·제약·버린 대안·미결·정확한 이름과 숫자는 줄이지 않는다.
