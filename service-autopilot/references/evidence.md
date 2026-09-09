@@ -95,7 +95,9 @@
 - 남긴 것: 택소노미, 라우팅·모델 표, 질문 프로토콜, check_package, 형식 계약(ID·버전 줄·상수 표 열), GATE fresh-context 검토, 예산·재개.
 - 훅: ponytail 서브에이전트 주입을 구현 타입으로 한정(`PONYTAIL_SUBAGENT_MATCHER`), 검토·판정은 `fresh-reviewer` 타입. 죽은 suggest-compact 훅 제거.
 - A/B 결과(`eval/runs/run-20260908-trim/RESULT.md`): 1라운드 1.4.1이 4패 2무 → 패치 라운드를 같게 준 재대결은 종합 tie, 1.4.1이 완전성·근거성 승, 범위 절제 패.
-  각본 제거는 무해로 확정. 결정 변수는 GATE 뒤 패치 라운드 유무. 남은 문제는 A0 해석의 범위 팽창 → 1.4.3 후보.
+  각본 제거는 무해로 확정. 결정 변수는 GATE 뒤 패치 라운드 유무. 남은 문제는 A0 해석의 범위 팽창.
+- 1.4.3(2026-09-09): 실행 절차 2에 "CONCERNS + HIGH ≥1 → 패치 1회 후 마감", A0·질문 프로토콜에 "확장 해석은 축소 기본값 + 질문 1칸".
+  근거는 위 A/B 두 라운드(같은 문서가 패치 유무로 4패↔무승부, 범위 절제는 두 judge 4회 전부 확장 해석을 감점).
 - 2026-09-09 추가 반영(Anthropic Fable 5.1 가이드): SKILL·fresh-reviewer `effort: high`(긴 산출물은 xhigh보다 high), model-routing effort 규칙,
   GATE 검토관에 "수량 주장은 확인한 것만". 실측 사실: 서브에이전트 컨텍스트 상한 20만 토큰(재개 시 58만 토큰 대화가 압축됨), 한도 리셋 명령은 이 계정에서 대상 아님.
 
