@@ -4,3 +4,6 @@ __pycache__/
 # 평가 런의 재생성 가능 파일 (blind_prep.py가 만든다)
 service-autopilot/eval/runs/*/*-judge-*.md
 service-autopilot/eval/runs/*/*-doc[12].md
+
+# 서드파티 스킬 — `graphify install` 로 언제든 다시 만든다
+graphify/
